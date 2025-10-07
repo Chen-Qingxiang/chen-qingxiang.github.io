@@ -1,3 +1,12 @@
-theme: jekyll-theme-slate
-title: chen-qingxiang
-description: blog
+title: Qingxiang Chen
+description: Personal site & blog
+url: https://chen-qingxiang.github.io
+language: en
+timezone: Australia/Sydney
+permalink: /blog/:title/
+# GitHub Pages built-in theme
+theme: jekyll-theme-cayman
+# Optional: add more metadata later (twitter, linkedin, etc.)
+author:
+name: Chen Qingxiang
+github_username: chen-qingxiang
