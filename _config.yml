@@ -4,8 +4,6 @@ url: https://chen-qingxiang.github.io
 language: en
 timezone: Australia/Sydney
 permalink: /blog/:title/
-# Publish scheduled posts so upcoming work can be previewed publicly
-future: true
 # GitHub Pages built-in theme
 theme: jekyll-theme-cayman
 # Optional: add more metadata later (twitter, linkedin, etc.)
