@@ -1,10 +1,12 @@
 ---
-
 layout: default
 title: "showtime — a zoomable, layer‑first timeline for learning history"
 tags: [showtime, timeline, history, design-notes]
 description: Why I built a minimal, CSV‑driven timeline for studying history; principles, interaction design, and roadmap.
---------------------------------------------------------------------------------------------------------------------------
+
+---
+
+---
 
 > TL;DR — **showtime** is a single‑file, HTML5‑Canvas timeline for learners and researchers. It loads multiple CSV files as **stacked layers**, supports deep zoom & pan, and lets you **reorder or delete layers** on the fly. It exists because I couldn’t find a timeline tool that matched how I actually compare history across regions and periods.
 
