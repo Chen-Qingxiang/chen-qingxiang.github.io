@@ -1,7 +1,23 @@
 ---
 layout: default
-title: 首页
+title: Home
 ---
-# 欢迎来到我的博客
-- [🎬 showtime · 时间轴工具](https://chen-qingxiang.github.io/showtime/)
-- 这里以后写博文
+
+
+# Hi, I'm Chen Qingxiang
+I build simple tools that make learning and research smoother. This site hosts my personal projects, notes and some ideas (maybe).
+
+
+## Projects
+- 🎬 [showtime — a zoomable timeline tool](https://chen-qingxiang.github.io/showtime/)
+
+
+## Latest posts
+<ul>
+{% for post in site.posts limit:10 %}
+<li>
+<a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+<small> — {{ post.date | date: "%Y-%m-%d" }}</small>
+</li>
+{% endfor %}
+</ul>
