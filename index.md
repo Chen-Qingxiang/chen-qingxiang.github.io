@@ -13,10 +13,11 @@ I build simple tools that make learning and research smoother. This site hosts m
 
 
 ## Latest posts
-{% if site.posts.size > 0 %}
+<ul>
 {% for post in site.posts limit:10 %}
-- [{{ post.title }}]({{ post.url | relative_url }}) — {{ post.date | date: "%Y-%m-%d" }}
+<li>
+<a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+<small> — {{ post.date | date: "%Y-%m-%d" }}</small>
+</li>
 {% endfor %}
-{% else %}
-_No posts published yet._
-{% endif %}
+</ul>
