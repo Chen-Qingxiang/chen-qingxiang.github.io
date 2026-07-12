@@ -5,7 +5,7 @@ tags: [complexity, chaos, logistic-map, visualization]
 description: A lightweight interactive page for exploring the logistic map, bifurcation, cobweb diagrams, and sensitivity to initial conditions.
 ---
 
-> **Project:** [Logistic Map Explorer](https://chen-qingxiang.github.io/logistic-map/)
+> **Project:** [Logistic Map Explorer]({{ "/complexity/logistic-map/" | relative_url }})
 
 The logistic map is one of the smallest models I know that makes chaos visible. It is defined by a single recurrence:
 
@@ -50,4 +50,4 @@ The cobweb diagram shows the same process geometrically: each iteration moves ve
 
 Open the project here:
 
-[https://chen-qingxiang.github.io/logistic-map/](https://chen-qingxiang.github.io/logistic-map/)
+[{{ "/complexity/logistic-map/" | relative_url }}]({{ "/complexity/logistic-map/" | relative_url }})

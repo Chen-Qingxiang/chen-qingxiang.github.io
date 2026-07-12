@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elementary Cellular Automata</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">One-dimensional cellular automata</p>
+        <h1>Elementary Cellular Automata</h1>
+        <p class="intro">
+          Explore binary cellular automata where each row evolves from the row
+          above it. Space runs left to right; time runs downward.
+        </p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls-panel" aria-labelledby="controls-title">
+        <div class="panel-heading">
+          <h2 id="controls-title">Controls</h2>
+          <p id="statusText" class="status" aria-live="polite"></p>
+        </div>
+
+        <div class="control-grid">
+          <label>
+            Rule
+            <input id="ruleInput" type="number" min="0" max="255" step="1" value="30">
+          </label>
+
+          <label>
+            Width
+            <input id="widthInput" type="number" min="8" max="1200" step="1" value="161">
+          </label>
+
+          <label>
+            Steps
+            <input id="stepsInput" type="number" min="1" max="1000" step="1" value="140">
+          </label>
+
+          <label>
+            Cell size
+            <input id="cellSizeInput" type="number" min="1" max="12" step="1" value="4">
+          </label>
+
+          <label>
+            Initial condition
+            <select id="initialConditionInput">
+              <option value="single">Single center cell</option>
+              <option value="random">Random</option>
+            </select>
+          </label>
+
+          <label>
+            Random density
+            <span class="range-row">
+              <input id="densityInput" type="range" min="0" max="1" step="0.01" value="0.5">
+              <output id="densityOutput" for="densityInput">50%</output>
+            </span>
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button id="renderButton" type="button">Render</button>
+          <button id="randomizeButton" type="button" class="secondary">Randomize</button>
+        </div>
+
+        <div class="preset-row" aria-label="Rule presets">
+          <button type="button" data-rule="30">Rule 30</button>
+          <button type="button" data-rule="54">Rule 54</button>
+          <button type="button" data-rule="90">Rule 90</button>
+          <button type="button" data-rule="110">Rule 110</button>
+          <button type="button" data-rule="150">Rule 150</button>
+          <button type="button" data-rule="184">Rule 184</button>
+        </div>
+      </section>
+
+      <section class="panel rule-panel" aria-labelledby="rule-table-title">
+        <div class="panel-heading">
+          <h2 id="rule-table-title">Rule table</h2>
+          <p class="rule-bits" id="ruleBitsText"></p>
+        </div>
+        <div id="ruleTable" class="rule-table" aria-live="polite"></div>
+      </section>
+
+      <section class="canvas-section" aria-labelledby="canvas-title">
+        <div class="canvas-heading">
+          <div>
+            <h2 id="canvas-title">Evolution</h2>
+            <p>x-axis = space, y-axis = time</p>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="automataCanvas" width="644" height="560">
+            This visualization requires a browser with canvas support.
+          </canvas>
+        </div>
+      </section>
+
+      <section class="explain" aria-labelledby="explain-title">
+        <h2 id="explain-title">What this shows</h2>
+        <div class="explain-grid">
+          <article>
+            <h3>Elementary automata</h3>
+            <p>
+              An elementary cellular automaton is a row of cells that can each
+              be off or on. A new row is computed from every three-cell
+              neighborhood in the previous row: left, center, and right.
+            </p>
+          </article>
+
+          <article>
+            <h3>Rule numbers</h3>
+            <p>
+              The rule number is an 8-bit lookup table. Its bits define the
+              output for neighborhoods 111, 110, 101, 100, 011, 010, 001, and
+              000, in that order.
+            </p>
+          </article>
+
+          <article>
+            <h3>Notable rules</h3>
+            <p>
+              Rule 30 creates chaotic, random-looking patterns. Rule 90 draws
+              the Sierpinski triangle. Rule 110 supports complex moving
+              structures and is computationally universal. Rule 184 models
+              particle-like traffic flow.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

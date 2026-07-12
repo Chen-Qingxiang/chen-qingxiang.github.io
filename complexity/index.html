@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Complexity Playground</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17211b;
+        --muted: #5c665f;
+        --line: #d8dfd8;
+        --paper: #fbfcf8;
+        --panel: #ffffff;
+        --green: #2f7d57;
+        --amber: #b66b2c;
+        --red: #a9473a;
+        --blue: #346f8f;
+        --violet: #6f5a9a;
+        --shadow: 0 18px 55px rgba(23, 33, 27, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 15% 12%, rgba(47, 125, 87, 0.14), transparent 26%),
+          radial-gradient(circle at 82% 10%, rgba(182, 107, 44, 0.15), transparent 28%),
+          linear-gradient(180deg, #f5f7f0 0%, var(--paper) 44%, #f7f4ed 100%);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        min-height: 54vh;
+        display: grid;
+        align-items: end;
+        padding: 44px 0 38px;
+      }
+
+      nav {
+        position: absolute;
+        inset: 24px 0 auto 0;
+      }
+
+      .nav-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .home-link {
+        color: var(--muted);
+        font-size: 0.95rem;
+        text-decoration: none;
+      }
+
+      .home-link:hover {
+        color: var(--ink);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.78fr);
+        gap: 42px;
+        align-items: end;
+      }
+
+      .hero-copy {
+        max-width: 740px;
+      }
+
+      .eyebrow {
+        color: var(--green);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0;
+        margin: 0 0 14px;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(3rem, 8vw, 7.4rem);
+        line-height: 0.92;
+        letter-spacing: 0;
+      }
+
+      .intro {
+        max-width: 620px;
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: 1.12rem;
+      }
+
+      .system-sketch {
+        min-height: 310px;
+        border: 1px solid rgba(23, 33, 27, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.68);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .node {
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        border-radius: 999px;
+        background: var(--green);
+        box-shadow: 0 0 0 5px rgba(47, 125, 87, 0.12);
+      }
+
+      .node:nth-child(2n) {
+        background: var(--amber);
+        box-shadow: 0 0 0 5px rgba(182, 107, 44, 0.13);
+      }
+
+      .node:nth-child(3n) {
+        background: var(--blue);
+        box-shadow: 0 0 0 5px rgba(52, 111, 143, 0.13);
+      }
+
+      .edge {
+        position: absolute;
+        height: 1px;
+        background: rgba(23, 33, 27, 0.15);
+        transform-origin: left center;
+      }
+
+      .orbit {
+        position: absolute;
+        border: 1px solid rgba(23, 33, 27, 0.12);
+        border-radius: 50%;
+      }
+
+      .tools {
+        padding: 18px 0 64px;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 20px;
+        margin-bottom: 18px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(1.55rem, 3vw, 2.4rem);
+        letter-spacing: 0;
+      }
+
+      .count {
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .tool-card {
+        display: grid;
+        min-height: 234px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.82);
+        text-decoration: none;
+        box-shadow: 0 10px 30px rgba(23, 33, 27, 0.05);
+        transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      .tool-card:hover,
+      .tool-card:focus-visible {
+        transform: translateY(-3px);
+        border-color: rgba(47, 125, 87, 0.54);
+        box-shadow: 0 18px 40px rgba(23, 33, 27, 0.12);
+        outline: none;
+      }
+
+      .kicker {
+        align-self: start;
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .tool-card h3 {
+        margin: 16px 0 10px;
+        font-size: 1.28rem;
+        letter-spacing: 0;
+      }
+
+      .tool-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.96rem;
+      }
+
+      .meta {
+        align-self: end;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 22px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .arrow {
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      footer {
+        padding: 0 0 40px;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      @media (max-width: 920px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .system-sketch {
+          min-height: 230px;
+        }
+
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        .shell {
+          width: min(100% - 22px, 1120px);
+        }
+
+        header {
+          min-height: auto;
+          padding-top: 88px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-head {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .tool-card {
+          min-height: 204px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="shell nav-row">
+        <a class="home-link" href="/">Qingxiang Chen</a>
+        <a class="home-link" href="#tools">Tools</a>
+      </div>
+    </nav>
+
+    <header>
+      <div class="shell hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Reading tools after Complexity</p>
+          <h1>Complexity Playground</h1>
+          <p class="intro">
+            A single home for small interactive models: cellular automata, nonlinear maps,
+            genetic algorithms, networks, scaling laws, entropy, and high-dimensional geometry.
+          </p>
+        </div>
+        <div class="system-sketch" aria-hidden="true">
+          <div class="orbit" style="inset: 28px 70px 70px 28px;"></div>
+          <div class="orbit" style="inset: 82px 24px 28px 88px;"></div>
+          <div class="edge" style="left: 18%; top: 23%; width: 48%; transform: rotate(19deg);"></div>
+          <div class="edge" style="left: 31%; top: 70%; width: 46%; transform: rotate(-32deg);"></div>
+          <div class="edge" style="left: 24%; top: 46%; width: 56%; transform: rotate(8deg);"></div>
+          <div class="edge" style="left: 55%; top: 28%; width: 25%; transform: rotate(77deg);"></div>
+          <div class="node" style="left: 16%; top: 20%;"></div>
+          <div class="node" style="left: 64%; top: 35%;"></div>
+          <div class="node" style="left: 28%; top: 65%;"></div>
+          <div class="node" style="left: 75%; top: 50%;"></div>
+          <div class="node" style="left: 42%; top: 43%;"></div>
+          <div class="node" style="left: 58%; top: 74%;"></div>
+        </div>
+      </div>
+    </header>
+
+    <main id="tools" class="tools">
+      <div class="shell">
+        <div class="section-head">
+          <h2>Tools</h2>
+          <div class="count">9 interactive pages</div>
+        </div>
+
+        <div class="grid">
+          <a class="tool-card" style="--accent: var(--red);" href="./logistic-map/">
+            <span class="kicker">Nonlinear dynamics</span>
+            <div>
+              <h3>Logistic Map Explorer</h3>
+              <p>Bifurcation, cobweb diagrams, time series, and sensitivity to initial conditions.</p>
+            </div>
+            <span class="meta"><span>Map</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--blue);" href="./cellular-automata/">
+            <span class="kicker">Simple rules</span>
+            <div>
+              <h3>Elementary Cellular Automata</h3>
+              <p>Rule 30, Rule 90, Rule 110, Rule 184, and custom one-dimensional rules.</p>
+            </div>
+            <span class="meta"><span>Automata</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--green);" href="./game-of-life/">
+            <span class="kicker">Emergence</span>
+            <div>
+              <h3>Conway's Game of Life</h3>
+              <p>Classic Life patterns, step controls, density changes, and grid editing.</p>
+            </div>
+            <span class="meta"><span>Grid</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--violet);" href="./genetic-algorithm-playground/">
+            <span class="kicker">Evolution</span>
+            <div>
+              <h3>Genetic Algorithm Playground</h3>
+              <p>Compare selection, mutation, crossover, and landscapes such as OneMax and NK.</p>
+            </div>
+            <span class="meta"><span>GA</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--amber);" href="./robby-ga/">
+            <span class="kicker">Agent behavior</span>
+            <div>
+              <h3>Robby GA</h3>
+              <p>Evolve local policies for a small robot collecting cans in a grid world.</p>
+            </div>
+            <span class="meta"><span>Robot</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--blue);" href="./network-science-lab/">
+            <span class="kicker">Networks</span>
+            <div>
+              <h3>Network Science Lab</h3>
+              <p>Generate networks, inspect degree patterns, robustness, diffusion, and centrality.</p>
+            </div>
+            <span class="meta"><span>Graph</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--green);" href="./scaling-laws/">
+            <span class="kicker">Power laws</span>
+            <div>
+              <h3>Scaling Laws Explorer</h3>
+              <p>Explore log-log relationships, allometry, city scaling, and exponent changes.</p>
+            </div>
+            <span class="meta"><span>Scale</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--red);" href="./information-entropy/">
+            <span class="kicker">Information</span>
+            <div>
+              <h3>Information Entropy Explorer</h3>
+              <p>Play with Shannon information, entropy curves, distributions, and randomness.</p>
+            </div>
+            <span class="meta"><span>Entropy</span><span class="arrow">Open</span></span>
+          </a>
+
+          <a class="tool-card" style="--accent: var(--violet);" href="./shape-of-high-dimensions/">
+            <span class="kicker">Geometry</span>
+            <div>
+              <h3>The Shape of High Dimensions</h3>
+              <p>Visual intuition for concentration, volume, distance, and high-dimensional shape.</p>
+            </div>
+            <span class="meta"><span>Dimension</span><span class="arrow">Open</span></span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="shell">
+        Built as one consolidated shelf for the small reading tools that used to live as separate pages.
+      </div>
+    </footer>
+  </body>
+</html>

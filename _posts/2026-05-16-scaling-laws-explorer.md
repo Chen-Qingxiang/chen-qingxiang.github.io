@@ -5,7 +5,7 @@ tags: [complexity, scaling-laws, power-laws, allometry, visualization]
 description: An interactive visualizer for power laws, log-log plots, biological allometry, and scaling exponents.
 ---
 
-> **Project:** [Scaling Laws Explorer](https://chen-qingxiang.github.io/scaling-laws/)
+> **Project:** [Scaling Laws Explorer]({{ "/complexity/scaling-laws/" | relative_url }})
 
 Scaling laws describe how one quantity changes with the size of a system. A common form is:
 
@@ -61,4 +61,4 @@ Then compare `β = 2/3`, `β = 3/4`, and `β = 1`. The differences are modest at
 
 Open the project here:
 
-[https://chen-qingxiang.github.io/scaling-laws/](https://chen-qingxiang.github.io/scaling-laws/)
+[{{ "/complexity/scaling-laws/" | relative_url }}]({{ "/complexity/scaling-laws/" | relative_url }})

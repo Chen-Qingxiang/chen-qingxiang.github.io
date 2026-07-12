@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scaling Laws Explorer</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-grid">
+      <div>
+        <p class="eyebrow">Interactive scaling laws</p>
+        <h1>Scaling Laws Explorer</h1>
+      </div>
+      <p class="header-copy">
+        Explore how power laws connect size, exponent, and outcome across biology,
+        cities, and networks.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel" id="power-law-explorer">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">1. Power Law Explorer</p>
+          <h2>Y = Y0 * M<sup>β</sup></h2>
+        </div>
+        <div class="formula-pill" id="currentFormula">Y = 1 * M^0.75</div>
+      </div>
+
+      <div class="control-grid explorer-controls">
+        <label class="control">
+          <span>Exponent β <strong id="betaValue">0.75</strong></span>
+          <input id="betaInput" type="range" min="0.2" max="1.5" step="0.01" value="0.75">
+        </label>
+
+        <label class="control">
+          <span>Coefficient Y0</span>
+          <input id="y0Input" type="number" min="0.01" max="100" step="0.1" value="1">
+        </label>
+
+        <label class="control">
+          <span>M min</span>
+          <input id="mMinInput" type="number" min="0.0001" step="0.1" value="1">
+        </label>
+
+        <label class="control">
+          <span>M max</span>
+          <input id="mMaxInput" type="number" min="0.001" step="1" value="1000">
+        </label>
+
+        <label class="control">
+          <span>Sample points <strong id="pointsValue">200</strong></span>
+          <input id="pointsInput" type="range" min="20" max="600" step="10" value="200">
+        </label>
+
+        <fieldset class="segmented">
+          <legend>Scale</legend>
+          <label>
+            <input type="radio" name="plotScale" value="linear" checked>
+            <span>Linear</span>
+          </label>
+          <label>
+            <input type="radio" name="plotScale" value="loglog">
+            <span>Log-log</span>
+          </label>
+        </fieldset>
+
+        <div class="preset-group" aria-label="Exponent presets">
+          <button type="button" data-explorer-beta="0.6666666667">β = 2/3</button>
+          <button type="button" data-explorer-beta="0.75">β = 3/4</button>
+          <button type="button" data-explorer-beta="1">β = 1</button>
+          <button type="button" data-explorer-beta="1.15">β = 1.15</button>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <canvas id="explorerCanvas" aria-label="Power law explorer plot"></canvas>
+      </div>
+
+      <div class="insight-strip">
+        <p><strong>β &lt; 1</strong> means sublinear scaling: Y grows more slowly than M.</p>
+        <p><strong>β = 1</strong> means linear scaling: Y changes proportionally with M.</p>
+        <p><strong>β &gt; 1</strong> means superlinear scaling: Y grows faster than M.</p>
+      </div>
+      <p class="compact-note" id="exponentMeaning"></p>
+    </section>
+
+    <section class="panel" id="log-log-view">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">2. Log-Log View</p>
+          <h2>log(Y) = log(Y0) + β log(M)</h2>
+        </div>
+        <div class="formula-pill">Current slope: <span id="logSlopeValue">0.75</span></div>
+      </div>
+
+      <div class="plot-card">
+        <canvas id="logCanvas" aria-label="Log-log power law plot"></canvas>
+      </div>
+
+      <div class="two-column-text">
+        <p>On ordinary axes, power laws can look curved. On log-log axes, an exact power law becomes a straight line.</p>
+        <p>The exponent β is the slope of that line, which is why log-log plots are commonly used to inspect scaling relationships.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="allometry">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">3. Biological Allometry Examples</p>
+          <h2>Idealized body-mass scaling</h2>
+        </div>
+      </div>
+
+      <div class="toggle-row" aria-label="Allometry curve toggles">
+        <label><input id="showAllometryLinear" type="checkbox" checked> β = 1 linear</label>
+        <label><input id="showAllometrySurface" type="checkbox" checked> β = 2/3 surface-like</label>
+        <label><input id="showAllometryMetabolic" type="checkbox" checked> β = 3/4 metabolic</label>
+        <label><input id="showAnimalMarkers" type="checkbox" checked> illustrative animals</label>
+      </div>
+
+      <div class="plot-card">
+        <canvas id="allometryCanvas" aria-label="Biological allometry comparison plot"></canvas>
+      </div>
+
+      <div class="two-column-text">
+        <p>Many biological quantities scale with body mass by approximate power laws. Metabolic rate is often discussed in relation to exponents near 3/4.</p>
+        <p>Surface-area arguments often produce a 2/3 exponent. These curves are model ideas, not exact laws for every species.</p>
+      </div>
+      <p class="compact-note">Animal markers use rough masses only for scale intuition: mouse, rat, rabbit, cat, human, horse, and elephant.</p>
+    </section>
+
+    <section class="panel" id="city-network">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">4. City / Network Scaling Examples</p>
+          <h2>Y = a * N<sup>β</sup></h2>
+        </div>
+        <div class="formula-pill" id="cityFormula">Y = 1 * N^1.15</div>
+      </div>
+
+      <div class="control-grid city-controls">
+        <label class="control">
+          <span>Preset interpretation</span>
+          <select id="cityPreset">
+            <option value="infrastructure">Infrastructure-like, β = 0.85</option>
+            <option value="linear">Linear scaling, β = 1</option>
+            <option value="output" selected>Socioeconomic output, β = 1.15</option>
+            <option value="custom">Custom β</option>
+          </select>
+        </label>
+
+        <label class="control">
+          <span>Exponent β <strong id="cityBetaValue">1.15</strong></span>
+          <input id="cityBetaInput" type="range" min="0.5" max="1.4" step="0.01" value="1.15">
+        </label>
+
+        <label class="control">
+          <span>N min</span>
+          <input id="cityNMinInput" type="number" min="1" step="1000" value="10000">
+        </label>
+
+        <label class="control">
+          <span>N max</span>
+          <input id="cityNMaxInput" type="number" min="10" step="10000" value="10000000">
+        </label>
+      </div>
+
+      <div class="plot-card">
+        <canvas id="cityCanvas" aria-label="City and network scaling comparison plot"></canvas>
+      </div>
+
+      <p class="compact-note" id="cityInterpretation"></p>
+      <div class="two-column-text">
+        <p>Sublinear scaling means larger systems need proportionally less of something per unit.</p>
+        <p>Superlinear scaling means larger systems produce proportionally more of something per unit. Exponents summarize broad tendencies; they do not replace system-specific explanation.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="notes">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">5. Notes and Interpretation</p>
+          <h2>What the exponent changes</h2>
+        </div>
+      </div>
+
+      <div class="notes-grid">
+        <div class="note-list">
+          <p>A power law is not just "a big curve". The exponent β tells how one quantity changes when scale changes.</p>
+          <p>Doubling M changes Y by a factor of 2<sup>β</sup>: about 1.68 for β = 3/4, 2.00 for β = 1, and 2.22 for β = 1.15.</p>
+          <p>Scaling laws are often approximate empirical regularities or model consequences. A good scaling plot suggests a pattern; it does not by itself explain the mechanism.</p>
+        </div>
+
+        <div class="calculator" aria-label="Doubling calculator">
+          <h3>Multiplier calculator</h3>
+          <label class="control">
+            <span>Exponent β <strong id="calcBetaValue">0.75</strong></span>
+            <input id="calcBetaInput" type="range" min="0.2" max="1.5" step="0.01" value="0.75">
+          </label>
+          <label class="control">
+            <span>Scale factor</span>
+            <input id="scaleFactorInput" type="number" min="0.01" step="0.1" value="2">
+          </label>
+          <output id="calculatorOutput">2^0.75 = 1.68</output>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Built as a static GitHub Pages project for /scaling-laws/.</div>
+  </footer>
+
+  <noscript>
+    <p class="noscript">This explorer needs JavaScript enabled to draw the interactive plots.</p>
+  </noscript>
+</body>
+</html>

@@ -5,7 +5,7 @@ tags: [complexity, cellular-automata, rule-30, rule-110, visualization]
 description: An interactive visualizer for one-dimensional elementary cellular automata, including Rule 30, Rule 90, Rule 110, and Rule 184.
 ---
 
-> **Project:** [Elementary Cellular Automata](https://chen-qingxiang.github.io/cellular-automata/)
+> **Project:** [Elementary Cellular Automata]({{ "/complexity/cellular-automata/" | relative_url }})
 
 Elementary cellular automata are one-dimensional systems with binary cells. Each cell updates from three values: the left neighbor, itself, and the right neighbor.
 
@@ -58,4 +58,4 @@ For Rule 184, switch to a random initial condition. Read `1` as a car and `0` as
 
 Open the project here:
 
-[https://chen-qingxiang.github.io/cellular-automata/](https://chen-qingxiang.github.io/cellular-automata/)
+[{{ "/complexity/cellular-automata/" | relative_url }}]({{ "/complexity/cellular-automata/" | relative_url }})

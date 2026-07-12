@@ -5,7 +5,7 @@ tags: [complexity, genetic-algorithm, fitness-landscape, nk-landscape, visualiza
 description: An interactive playground comparing a simple genetic algorithm on OneMax, deceptive trap functions, and NK landscapes.
 ---
 
-> **Project:** [Genetic Algorithm Playground](https://chen-qingxiang.github.io/genetic-algorithm-playground/)
+> **Project:** [Genetic Algorithm Playground]({{ "/complexity/genetic-algorithm-playground/" | relative_url }})
 
 This project is an interactive playground for a simple genetic algorithm. The goal is to compare how the same algorithm behaves on different fitness landscapes.
 
@@ -62,4 +62,4 @@ Finally, try the NK landscape and increase `K`. The search usually becomes less 
 
 Open the project here:
 
-[https://chen-qingxiang.github.io/genetic-algorithm-playground/](https://chen-qingxiang.github.io/genetic-algorithm-playground/)
+[{{ "/complexity/genetic-algorithm-playground/" | relative_url }}]({{ "/complexity/genetic-algorithm-playground/" | relative_url }})

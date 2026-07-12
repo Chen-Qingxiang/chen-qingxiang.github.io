@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Robby GA</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-copy">
+        <p class="eyebrow">Interactive genetic algorithm example</p>
+        <h1>Robby the Robot</h1>
+        <p>
+          Robby is an agent in a grid world. It sees only its current cell and four
+          neighboring cells. A policy maps each local percept to an action, and a
+          genetic algorithm can evolve policies by evaluating average score across
+          many random worlds.
+        </p>
+        <p class="compact-note">
+          The policy is the genotype: 243 integer genes, one action per percept.
+          Fitness comes from behavior in an environment, not directly from the genome.
+          Good policies are discovered through repeated evaluation, selection,
+          crossover, and mutation.
+        </p>
+      </div>
+      <div class="header-facts" aria-label="Robby facts">
+        <div><strong>3^5</strong><span>percepts</span></div>
+        <div><strong>243</strong><span>genes</span></div>
+        <div><strong>7</strong><span>actions</span></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel demo-panel" aria-labelledby="demo-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Section 2</p>
+            <h2 id="demo-title">Robby Demo</h2>
+          </div>
+          <p>
+            Watch a selected policy act in one world. The current percept is encoded
+            as a policy index, and the policy entry selects the action.
+          </p>
+        </div>
+
+        <div class="demo-layout">
+          <div class="canvas-wrap">
+            <canvas id="worldCanvas" width="520" height="520" aria-label="Robby grid world"></canvas>
+          </div>
+
+          <div class="control-stack">
+            <div class="stats-grid">
+              <div><span>Score</span><strong id="demoScore">0</strong></div>
+              <div><span>Step</span><strong id="demoStep">0 / 200</strong></div>
+              <div><span>Percept</span><strong id="demoPercept">-</strong></div>
+              <div><span>Action</span><strong id="demoAction">-</strong></div>
+            </div>
+
+            <div class="controls">
+              <label>
+                Policy
+                <select id="policySelector">
+                  <option value="random">Random policy</option>
+                  <option value="hand">Hand-coded simple policy</option>
+                  <option value="best" disabled>Best evolved policy</option>
+                </select>
+              </label>
+              <label>
+                Grid size
+                <input id="gridSizeInput" type="number" min="4" max="30" step="1" value="10">
+              </label>
+              <label>
+                Can probability
+                <input id="demoCanProbInput" type="range" min="0" max="1" step="0.05" value="0.5">
+                <output id="demoCanProbValue">0.50</output>
+              </label>
+              <label>
+                Speed
+                <input id="speedInput" type="range" min="1" max="30" step="1" value="8">
+                <output id="speedValue">8 steps/s</output>
+              </label>
+            </div>
+
+            <div class="button-row">
+              <button id="newWorldButton" type="button">Generate random world</button>
+              <button id="resetEpisodeButton" type="button">Reset episode</button>
+              <button id="stepButton" type="button">Step once</button>
+              <button id="runPauseButton" type="button">Run</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="trainer-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Section 3</p>
+            <h2 id="trainer-title">Genetic Algorithm Trainer</h2>
+          </div>
+          <p>
+            Evolve a population of 243-gene policies. Fitness is the average score
+            over multiple random episodes.
+          </p>
+        </div>
+
+        <div class="trainer-layout">
+          <div class="controls trainer-controls">
+            <label>
+              Population
+              <input id="populationInput" type="number" min="10" max="500" step="10" value="100">
+            </label>
+            <label>
+              Generations
+              <input id="generationsInput" type="number" min="1" max="1000" step="1" value="100">
+            </label>
+            <label>
+              Mutation probability
+              <input id="mutationInput" type="number" min="0" max="0.2" step="0.001" value="0.01">
+            </label>
+            <label>
+              Crossover probability
+              <input id="crossoverInput" type="number" min="0" max="1" step="0.05" value="0.7">
+            </label>
+            <label>
+              Tournament size
+              <input id="tournamentInput" type="number" min="2" max="20" step="1" value="2">
+            </label>
+            <label>
+              Trials per policy
+              <input id="trialsInput" type="number" min="1" max="200" step="1" value="20">
+            </label>
+            <label>
+              Episode steps
+              <input id="episodeStepsInput" type="number" min="10" max="1000" step="10" value="200">
+            </label>
+            <label>
+              Can probability
+              <input id="trainCanProbInput" type="number" min="0" max="1" step="0.05" value="0.5">
+            </label>
+            <label>
+              Seed
+              <input id="seedInput" type="text" value="robby-1">
+            </label>
+            <label class="checkbox-label">
+              <input id="elitismInput" type="checkbox" checked>
+              Elitism
+            </label>
+          </div>
+
+          <div class="training-summary">
+            <div class="stats-grid">
+              <div><span>Generation</span><strong id="generationStat">0 / 100</strong></div>
+              <div><span>Best score</span><strong id="bestStat">-</strong></div>
+              <div><span>Average score</span><strong id="averageStat">-</strong></div>
+              <div><span>Status</span><strong id="trainingStatus">Idle</strong></div>
+            </div>
+
+            <div class="button-row">
+              <button id="trainButton" type="button">Train</button>
+              <button id="stopButton" type="button" disabled>Stop</button>
+              <button id="resetTrainingButton" type="button">Reset training</button>
+              <button id="randomSeedButton" type="button">Randomize seed</button>
+            </div>
+
+            <div class="canvas-wrap chart-wrap">
+              <canvas id="fitnessCanvas" width="720" height="320" aria-label="Fitness history chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="policy-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Section 4</p>
+            <h2 id="policy-title">Policy Inspection</h2>
+          </div>
+          <p>
+            Inspect aggregate action counts and a few important percepts. One gene
+            is hard to interpret alone; behavior emerges from many percept-action
+            choices over time.
+          </p>
+        </div>
+
+        <div class="inspection-layout">
+          <div>
+            <h3>Action summary</h3>
+            <div id="actionSummary" class="summary-bars"></div>
+          </div>
+          <div>
+            <h3>Percept examples</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Example</th>
+                    <th>Current</th>
+                    <th>North</th>
+                    <th>South</th>
+                    <th>West</th>
+                    <th>East</th>
+                    <th>Index</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="perceptTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel notes-panel" aria-labelledby="notes-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Section 5</p>
+            <h2 id="notes-title">Notes and Interpretation</h2>
+          </div>
+        </div>
+        <ul>
+          <li>Robby differs from OneMax because fitness is not directly read from the genome.</li>
+          <li>A policy must be tested in an environment, and the same policy can score differently in different random worlds.</li>
+          <li>Averaging over many trials makes fitness more stable.</li>
+          <li>Mutation explores new actions; crossover recombines parts of policies; selection amplifies better average behavior.</li>
+          <li>GA can improve policies, but it is not guaranteed to find an optimal strategy.</li>
+          <li>High fitness depends on reward design, environment distribution, and evaluation settings.</li>
+        </ul>
+      </section>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

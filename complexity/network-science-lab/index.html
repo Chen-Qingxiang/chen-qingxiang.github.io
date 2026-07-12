@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Science Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <p class="eyebrow">Complexity Science Playground</p>
+      <h1>Network Science Lab</h1>
+      <p class="intro">
+        Network science studies systems made of nodes and edges. Social networks, web pages,
+        transportation systems, food webs, and biological interactions can all be explored this way.
+      </p>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <nav class="tabs" aria-label="Lab modules">
+      <button id="generator-tab" class="tab-button active" type="button" data-tab="generator">Network Generator</button>
+      <button id="robustness-tab" class="tab-button" type="button" data-tab="robustness">Robustness / Attack</button>
+      <button id="diffusion-tab" class="tab-button" type="button" data-tab="diffusion">Diffusion / Spreading</button>
+      <button id="centrality-tab" class="tab-button" type="button" data-tab="centrality">Centrality / PageRank</button>
+    </nav>
+
+    <section class="tab-panel active" id="generator" aria-labelledby="generator-tab">
+      <div class="module-grid">
+        <aside class="control-panel">
+          <h2>Generator</h2>
+
+          <label>
+            Model
+            <select id="modelSelect">
+              <option value="er">Erdos-Renyi random graph</option>
+              <option value="ws">Watts-Strogatz small-world</option>
+              <option value="ba">Barabasi-Albert preferential attachment</option>
+            </select>
+          </label>
+
+          <label>
+            Nodes N
+            <input id="nodeCount" type="number" min="8" max="180" step="1" value="64">
+          </label>
+
+          <div class="param-group" data-model-param="er">
+            <label>
+              Edge probability p
+              <input id="erProbability" type="number" min="0" max="1" step="0.01" value="0.06">
+            </label>
+          </div>
+
+          <div class="param-group hidden" data-model-param="ws">
+            <label>
+              Neighbor count k
+              <input id="wsK" type="number" min="2" max="30" step="2" value="6">
+            </label>
+            <label>
+              Rewiring probability beta
+              <input id="wsBeta" type="number" min="0" max="1" step="0.01" value="0.12">
+            </label>
+            <p class="hint">Odd k values are rounded down to keep a symmetric ring lattice.</p>
+          </div>
+
+          <div class="param-group hidden" data-model-param="ba">
+            <label>
+              Edges per new node m
+              <input id="baM" type="number" min="1" max="12" step="1" value="2">
+            </label>
+          </div>
+
+          <label>
+            Seed
+            <input id="seedInput" type="text" value="network-lab">
+          </label>
+
+          <div class="button-row">
+            <button id="randomSeedButton" type="button" class="secondary-button">Random seed</button>
+            <button id="generateButton" type="button" class="primary-button">Generate</button>
+          </div>
+        </aside>
+
+        <div class="visual-area">
+          <div class="canvas-wrap large">
+            <canvas id="networkCanvas" aria-label="Generated network visualization"></canvas>
+          </div>
+          <div class="info-grid">
+            <section class="metrics-panel">
+              <h2>Metrics</h2>
+              <div id="metricsList" class="metrics-list"></div>
+            </section>
+            <section class="plot-panel">
+              <h2>Degree Distribution</h2>
+              <div class="canvas-wrap small">
+                <canvas id="degreeCanvas" aria-label="Degree histogram"></canvas>
+              </div>
+            </section>
+          </div>
+          <section class="note-panel">
+            <h2>Model Note</h2>
+            <p id="modelNote"></p>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="robustness" aria-labelledby="robustness-tab">
+      <div class="module-grid">
+        <aside class="control-panel">
+          <h2>Attack Simulation</h2>
+          <p class="compact-copy">
+            Random removal approximates random failure. Targeted removal approximates hub attack.
+          </p>
+
+          <label>
+            Removal mode
+            <select id="attackMode">
+              <option value="random">Random node removal</option>
+              <option value="targeted">Target highest-degree nodes</option>
+            </select>
+          </label>
+
+          <div class="button-stack">
+            <button id="removeOneButton" type="button" class="secondary-button">Remove one node</button>
+            <button id="removeFiveButton" type="button" class="secondary-button">Remove 5%</button>
+            <button id="removeTenButton" type="button" class="secondary-button">Remove 10%</button>
+            <button id="resetAttackButton" type="button" class="primary-button">Reset network</button>
+          </div>
+
+          <div id="attackStats" class="stats-box"></div>
+        </aside>
+
+        <div class="visual-area">
+          <div class="canvas-wrap large">
+            <canvas id="attackCanvas" aria-label="Robustness simulation network"></canvas>
+          </div>
+          <section class="plot-panel">
+            <h2>Largest Component Over Removal</h2>
+            <div class="canvas-wrap small">
+              <canvas id="attackSeriesCanvas" aria-label="Giant component time series"></canvas>
+            </div>
+          </section>
+          <section class="note-panel">
+            <h2>Robustness Note</h2>
+            <p>
+              Scale-free-like networks often tolerate random failures, but targeted removal of hubs
+              can fragment them quickly.
+            </p>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="diffusion" aria-labelledby="diffusion-tab">
+      <div class="module-grid">
+        <aside class="control-panel">
+          <h2>SI Spreading</h2>
+          <p class="compact-copy">
+            Infected nodes try to infect susceptible neighbors each step and remain infected.
+          </p>
+
+          <label>
+            Infection probability
+            <input id="infectionProbability" type="number" min="0" max="1" step="0.01" value="0.22">
+          </label>
+
+          <div class="button-stack">
+            <button id="randomSourceButton" type="button" class="secondary-button">Random source</button>
+            <button id="stepDiffusionButton" type="button" class="secondary-button">Step</button>
+            <button id="startPauseButton" type="button" class="primary-button">Start</button>
+            <button id="resetDiffusionButton" type="button" class="secondary-button">Reset</button>
+          </div>
+
+          <p class="hint">Click a node in the canvas to choose the infection source.</p>
+          <div id="diffusionStats" class="stats-box"></div>
+        </aside>
+
+        <div class="visual-area">
+          <div class="canvas-wrap large">
+            <canvas id="diffusionCanvas" aria-label="Diffusion simulation network"></canvas>
+          </div>
+          <section class="plot-panel">
+            <h2>Infected Fraction Over Time</h2>
+            <div class="canvas-wrap small">
+              <canvas id="diffusionSeriesCanvas" aria-label="Infected fraction time series"></canvas>
+            </div>
+          </section>
+          <section class="note-panel">
+            <h2>Spreading Note</h2>
+            <p>
+              Hubs can accelerate spreading. Network structure affects whether local transmission
+              remains contained or becomes global.
+            </p>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="centrality" aria-labelledby="centrality-tab">
+      <div class="module-grid">
+        <aside class="control-panel">
+          <h2>Centrality</h2>
+          <p class="compact-copy">
+            Degree counts direct connections. PageRank-like centrality rewards nodes linked to other
+            central nodes.
+          </p>
+
+          <label>
+            Color and size by
+            <select id="centralityMode">
+              <option value="pagerank">PageRank</option>
+              <option value="degree">Degree</option>
+              <option value="infected">Infected status</option>
+            </select>
+          </label>
+
+          <div class="stats-box">
+            PageRank uses damping 0.85 for 50 iterations and treats the network as undirected.
+          </div>
+        </aside>
+
+        <div class="visual-area">
+          <div class="canvas-wrap large">
+            <canvas id="centralityCanvas" aria-label="Centrality network visualization"></canvas>
+          </div>
+          <section class="table-panel">
+            <h2>Top Nodes</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Node</th>
+                    <th>Degree</th>
+                    <th>PageRank</th>
+                  </tr>
+                </thead>
+                <tbody id="centralityTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-note">
+      <p>
+        Network-level behavior is shaped by structure. Hubs, clustering, path length, and component
+        structure affect spreading, robustness, and centrality.
+      </p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -5,7 +5,7 @@ tags: [complexity, information-theory, entropy, shannon, visualization]
 description: An interactive page for exploring Shannon information, entropy, probability distributions, random sequences, and compressibility.
 ---
 
-> **Project:** [Information Entropy Explorer](https://chen-qingxiang.github.io/information-entropy/)
+> **Project:** [Information Entropy Explorer]({{ "/complexity/information-entropy/" | relative_url }})
 
 Shannon information measures surprise. For an event with probability `p`, the information content is:
 
@@ -60,4 +60,4 @@ Finally, generate finite sequences and compare theoretical entropy with empirica
 
 Open the project here:
 
-[https://chen-qingxiang.github.io/information-entropy/](https://chen-qingxiang.github.io/information-entropy/)
+[{{ "/complexity/information-entropy/" | relative_url }}]({{ "/complexity/information-entropy/" | relative_url }})

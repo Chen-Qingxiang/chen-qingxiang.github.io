@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Logistic Map Explorer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-content">
+        <p class="eyebrow">Deterministic chaos</p>
+        <h1>Logistic Map Explorer</h1>
+        <p class="lead">
+          The logistic map is defined by
+          <span class="formula">x<sub>t+1</sub> = r x<sub>t</sub> (1 - x<sub>t</sub>)</span>.
+          It is deterministic: the next value is fully determined by the current value and
+          <span class="formula">r</span>. As <span class="formula">r</span> increases, the system can move from a
+          stable fixed point to periodic cycles and then to chaos.
+        </p>
+      </div>
+    </header>
+
+    <main>
+      <section class="controls-band" aria-labelledby="main-controls-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <h2 id="main-controls-title">Controls</h2>
+            <p>Adjust the parameter, initial condition, and iteration limits. All plots update together.</p>
+          </div>
+
+          <div class="controls-layout">
+            <div class="control-group">
+              <label for="rRange">Parameter r</label>
+              <div class="inline-control">
+                <input id="rRange" type="range" min="0" max="4" step="0.0001" value="3.7">
+                <input id="rNumber" type="number" min="0" max="4" step="0.0001" value="3.7">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="x0Range">Initial value x0</label>
+              <div class="inline-control">
+                <input id="x0Range" type="range" min="0" max="1" step="0.0001" value="0.2">
+                <input id="x0Number" type="number" min="0" max="1" step="0.0001" value="0.2">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="iterationsInput">Iterations</label>
+              <input id="iterationsInput" type="number" min="20" max="2000" step="10" value="200">
+            </div>
+
+            <div class="control-group">
+              <label for="transientInput">Transient iterations</label>
+              <input id="transientInput" type="number" min="0" max="1000" step="10" value="50">
+            </div>
+
+            <div class="control-actions">
+              <button id="renderButton" type="button">Render</button>
+              <button id="resetButton" type="button" class="secondary">Reset</button>
+            </div>
+          </div>
+
+          <div class="presets" aria-label="Preset values">
+            <button type="button" data-r="2.5">Stable fixed point</button>
+            <button type="button" data-r="3.2">Period-2</button>
+            <button type="button" data-r="3.5">Period-4</button>
+            <button type="button" data-r="3.9">Chaotic</button>
+            <button type="button" data-r="3.56995">Edge-ish</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="visual-band" aria-labelledby="time-series-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <h2 id="time-series-title">Time Series</h2>
+            <p>The sequence can settle to one value, alternate through cycles, or behave irregularly.</p>
+          </div>
+          <div class="canvas-frame">
+            <canvas id="timeCanvas" width="900" height="420" aria-label="Time series plot of x over iteration t"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="visual-band alt" aria-labelledby="cobweb-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <h2 id="cobweb-title">Cobweb Diagram</h2>
+            <p>The path moves vertically to the curve and horizontally to the diagonal, showing each iteration.</p>
+          </div>
+          <div class="canvas-frame square-frame">
+            <canvas id="cobwebCanvas" width="700" height="700" aria-label="Cobweb diagram for the logistic map"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="visual-band" aria-labelledby="bifurcation-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <h2 id="bifurcation-title">Bifurcation Diagram</h2>
+            <p>Long-run values reveal period-doubling and chaotic regions as r varies.</p>
+          </div>
+
+          <div class="bifurcation-controls">
+            <div class="control-group">
+              <label for="bifRMin">r min</label>
+              <input id="bifRMin" type="number" min="0" max="4" step="0.01" value="2.5">
+            </div>
+            <div class="control-group">
+              <label for="bifRMax">r max</label>
+              <input id="bifRMax" type="number" min="0" max="4" step="0.01" value="4">
+            </div>
+            <div class="control-group">
+              <label for="bifSamples">Samples</label>
+              <input id="bifSamples" type="number" min="100" max="1400" step="50" value="700">
+            </div>
+            <div class="control-group">
+              <label for="bifIterations">Iterations per r</label>
+              <input id="bifIterations" type="number" min="100" max="2000" step="50" value="550">
+            </div>
+          </div>
+
+          <div class="canvas-frame">
+            <canvas id="bifurcationCanvas" width="1000" height="560" aria-label="Bifurcation diagram of long-run x values over r"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="visual-band alt" aria-labelledby="sensitivity-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <h2 id="sensitivity-title">Sensitivity</h2>
+            <p>
+              In chaotic regions, two very close initial values can diverge quickly. This illustrates why
+              deterministic systems can still be difficult to predict long-term.
+            </p>
+          </div>
+
+          <div class="sensitivity-controls">
+            <div class="control-group">
+              <label for="epsilonInput">Epsilon</label>
+              <input id="epsilonInput" type="number" min="0.000000001" max="0.1" step="0.000001" value="0.000001">
+            </div>
+          </div>
+
+          <div class="canvas-frame">
+            <canvas id="sensitivityCanvas" width="900" height="420" aria-label="Sensitivity plot comparing nearby initial values"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Static, dependency-free logistic map explorer for GitHub Pages.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Genetic Algorithm Playground</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <h1>Genetic Algorithm Playground</h1>
+        <p>
+          Compare a simple genetic algorithm across smooth, deceptive, and rugged
+          binary fitness landscapes.
+        </p>
+      </div>
+    </header>
+
+    <main class="wrap app-shell">
+      <section class="panel problem-panel" aria-labelledby="problem-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="problem-title">Fitness Landscape</h2>
+            <p>Choose the problem that defines how each genome is scored.</p>
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Problem selector">
+          <button class="tab is-active" type="button" data-problem="onemax" role="tab" aria-selected="true">
+            OneMax
+          </button>
+          <button class="tab" type="button" data-problem="trap" role="tab" aria-selected="false">
+            Deceptive Trap
+          </button>
+          <button class="tab" type="button" data-problem="nk" role="tab" aria-selected="false">
+            NK Landscape
+          </button>
+        </div>
+
+        <div id="problemExplanation" class="explanation"></div>
+      </section>
+
+      <section class="grid two-column">
+        <section class="panel" aria-labelledby="controls-title">
+          <div class="section-heading">
+            <div>
+              <h2 id="controls-title">GA Controls</h2>
+              <p>Shared parameters for initialization, selection, crossover, mutation, and replacement.</p>
+            </div>
+          </div>
+
+          <form id="controlForm" class="controls">
+            <label>
+              <span>Population size</span>
+              <input id="populationSize" type="number" min="10" max="1000" step="1" value="100">
+            </label>
+
+            <label>
+              <span>Genome length</span>
+              <input id="genomeLength" type="number" min="4" max="200" step="1" value="40">
+            </label>
+
+            <label>
+              <span>Generations</span>
+              <input id="generations" type="number" min="1" max="1000" step="1" value="150">
+            </label>
+
+            <label>
+              <span>Crossover probability</span>
+              <input id="crossoverProbability" type="number" min="0" max="1" step="0.01" value="0.70">
+            </label>
+
+            <label>
+              <span>Mutation probability per bit</span>
+              <input id="mutationProbability" type="number" min="0" max="1" step="0.001" value="0.01">
+            </label>
+
+            <label>
+              <span>Tournament size</span>
+              <input id="tournamentSize" type="number" min="1" max="50" step="1" value="2">
+            </label>
+
+            <label>
+              <span>Random seed</span>
+              <div class="inline-control">
+                <input id="randomSeed" type="text" value="42" autocomplete="off">
+                <button id="randomizeSeed" class="secondary" type="button">Randomize</button>
+              </div>
+            </label>
+
+            <label class="checkbox-row">
+              <input id="elitism" type="checkbox" checked>
+              <span>Elitism preserves the best individual each generation</span>
+            </label>
+
+            <div id="trapControls" class="subcontrols" hidden>
+              <h3>Trap Parameters</h3>
+              <label>
+                <span>Block size K</span>
+                <input id="trapBlockSize" type="number" min="2" max="20" step="1" value="5">
+              </label>
+              <p id="trapLengthHint" class="hint"></p>
+              <div class="table-wrap">
+                <table id="trapTable" aria-label="Trap block fitness table"></table>
+              </div>
+            </div>
+
+            <div id="nkControls" class="subcontrols" hidden>
+              <h3>NK Parameters</h3>
+              <label>
+                <span>Interaction K</span>
+                <input id="nkK" type="number" min="0" max="39" step="1" value="2">
+              </label>
+              <p id="nkHint" class="hint"></p>
+              <div id="nkDependencies" class="dependency-list" aria-live="polite"></div>
+            </div>
+
+            <div class="actions">
+              <button id="runButton" type="button">Run GA</button>
+              <button id="resetButton" class="secondary" type="button">Reset</button>
+              <button id="hillClimbButton" class="secondary" type="button" hidden>
+                Run Hill Climbing vs GA
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel" aria-labelledby="summary-title">
+          <div class="section-heading">
+            <div>
+              <h2 id="summary-title">Run Summary</h2>
+              <p>Final population metrics and global-optimum status when known.</p>
+            </div>
+          </div>
+
+          <dl id="summaryGrid" class="summary-grid">
+            <div>
+              <dt>Best fitness</dt>
+              <dd id="summaryBest">-</dd>
+            </div>
+            <div>
+              <dt>Average fitness</dt>
+              <dd id="summaryAverage">-</dd>
+            </div>
+            <div>
+              <dt>Diversity</dt>
+              <dd id="summaryDiversity">-</dd>
+            </div>
+            <div>
+              <dt>Generations</dt>
+              <dd id="summaryGenerations">-</dd>
+            </div>
+            <div>
+              <dt>Optimum status</dt>
+              <dd id="summarySuccess">Not run</dd>
+            </div>
+          </dl>
+
+          <div class="best-box">
+            <h3>Best Individual</h3>
+            <p id="bestFitness" class="fitness-readout">Run the GA to see the best genome.</p>
+            <pre id="bestGenome" aria-label="Best genome bit string">-</pre>
+          </div>
+
+          <div id="hillClimbResult" class="comparison-box" hidden></div>
+        </section>
+      </section>
+
+      <section class="grid two-column chart-grid" aria-label="Charts">
+        <section class="panel chart-panel">
+          <div class="chart-heading">
+            <div>
+              <h2>Fitness History</h2>
+              <p>Best and average fitness per generation.</p>
+            </div>
+            <div class="legend">
+              <span><i class="swatch best"></i>Best</span>
+              <span><i class="swatch average"></i>Average</span>
+            </div>
+          </div>
+          <canvas id="fitnessChart" width="720" height="360" aria-label="Fitness history chart"></canvas>
+        </section>
+
+        <section class="panel chart-panel">
+          <div class="chart-heading">
+            <div>
+              <h2>Diversity</h2>
+              <p>Average pairwise Hamming distance, normalized from 0 to 1.</p>
+            </div>
+            <div class="legend">
+              <span><i class="swatch diversity"></i>Diversity</span>
+            </div>
+          </div>
+          <canvas id="diversityChart" width="720" height="360" aria-label="Diversity history chart"></canvas>
+        </section>
+      </section>
+
+      <section class="panel notes-panel" aria-labelledby="notes-title">
+        <h2 id="notes-title">Notes</h2>
+        <p>
+          A genetic algorithm is not guaranteed to find the global optimum.
+          Performance depends on population diversity, mutation, crossover,
+          selection pressure, and the structure of the fitness landscape.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

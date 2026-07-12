@@ -5,7 +5,7 @@ tags: [complexity, network-science, graphs, scale-free, visualization]
 description: An interactive network science lab with random graphs, small-world networks, preferential attachment, robustness, diffusion, and centrality.
 ---
 
-> **Project:** [Network Science Lab](https://chen-qingxiang.github.io/network-science-lab/)
+> **Project:** [Network Science Lab]({{ "/complexity/network-science-lab/" | relative_url }})
 
 Network science studies systems made of nodes and edges. Social networks, web pages, transport systems, biological interactions, and citation networks can all be described this way.
 
@@ -49,4 +49,4 @@ Then compare random removal with targeted removal. Removing a few hubs can damag
 
 Open the project here:
 
-[https://chen-qingxiang.github.io/network-science-lab/](https://chen-qingxiang.github.io/network-science-lab/)
+[{{ "/complexity/network-science-lab/" | relative_url }}]({{ "/complexity/network-science-lab/" | relative_url }})

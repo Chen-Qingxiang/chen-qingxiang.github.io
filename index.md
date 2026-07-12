@@ -11,44 +11,37 @@ I build simple tools that make learning and research smoother. This site hosts m
 
 ### Complexity Playground
 
-Small interactive demos inspired by my reading of *Complexity*. They are mostly lightweight visual tools for exploring simple rules, nonlinear dynamics, evolution, networks, scaling, and information.
+[Open the consolidated playground]({{ "/complexity/" | relative_url }}) for the small interactive demos inspired by my reading of *Complexity*. They now live together as one collection for simple rules, nonlinear dynamics, evolution, networks, scaling, information, and high-dimensional geometry.
 
-- 🌀 [Logistic Map Explorer](https://chen-qingxiang.github.io/logistic-map/)  
-  Explore the logistic map, bifurcation, cobweb diagrams, and sensitivity to initial conditions.
+- [Logistic Map Explorer]({{ "/complexity/logistic-map/" | relative_url }}): Explore the logistic map, bifurcation, cobweb diagrams, and sensitivity to initial conditions.
 
-- 🔳 [Elementary Cellular Automata](https://chen-qingxiang.github.io/cellular-automata/)  
-  Visualize one-dimensional cellular automata, including Rule 30, Rule 90, Rule 110, and Rule 184.
+- [Elementary Cellular Automata]({{ "/complexity/cellular-automata/" | relative_url }}): Visualize one-dimensional cellular automata, including Rule 30, Rule 90, Rule 110, and Rule 184.
 
-- 🧬 [Conway's Game of Life](https://chen-qingxiang.github.io/game-of-life/)  
-  Play with classic Life patterns such as block, blinker, glider, and Gosper glider gun.
+- [Conway's Game of Life]({{ "/complexity/game-of-life/" | relative_url }}): Play with classic Life patterns such as block, blinker, glider, and Gosper glider gun.
 
-- 🧪 [Genetic Algorithm Playground](https://chen-qingxiang.github.io/genetic-algorithm-playground/)  
-  Compare a simple genetic algorithm on OneMax, deceptive trap functions, and NK landscapes.
+- [Genetic Algorithm Playground]({{ "/complexity/genetic-algorithm-playground/" | relative_url }}): Compare a simple genetic algorithm on OneMax, deceptive trap functions, and NK landscapes.
 
-- 🤖 [Robby GA](https://chen-qingxiang.github.io/robby-ga/)  
-  Evolve policies for Robby the Robot in a grid world with cans, local perception, and rewards.
+- [Robby GA]({{ "/complexity/robby-ga/" | relative_url }}): Evolve policies for Robby the Robot in a grid world with cans, local perception, and rewards.
 
-- 🕸️ [Network Science Lab](https://chen-qingxiang.github.io/network-science-lab/)  
-  Generate and compare random, small-world, and preferential-attachment networks.
+- [Network Science Lab]({{ "/complexity/network-science-lab/" | relative_url }}): Generate and compare random, small-world, and preferential-attachment networks.
 
-- 📈 [Scaling Laws Explorer](https://chen-qingxiang.github.io/scaling-laws/)  
-  Explore power laws, log-log plots, biological allometry, and scaling exponents.
+- [Scaling Laws Explorer]({{ "/complexity/scaling-laws/" | relative_url }}): Explore power laws, log-log plots, biological allometry, and scaling exponents.
 
-- 🎲 [Information Entropy Explorer](https://chen-qingxiang.github.io/information-entropy/)  
-  Play with Shannon information, entropy, probability distributions, randomness, and compressibility.
+- [Information Entropy Explorer]({{ "/complexity/information-entropy/" | relative_url }}): Play with Shannon information, entropy, probability distributions, randomness, and compressibility.
+
+- [The Shape of High Dimensions]({{ "/complexity/shape-of-high-dimensions/" | relative_url }}): Build intuition for concentration, volume, distance, and high-dimensional geometry.
 
 ### Other tools
 
-- 🎬 [showtime — a zoomable timeline tool](https://chen-qingxiang.github.io/showtime/)  
-  A CSV-driven timeline viewer for comparing events across layers, periods, and historical contexts.
+- [showtime, a zoomable timeline tool](https://chen-qingxiang.github.io/showtime/): A CSV-driven timeline viewer for comparing events across layers, periods, and historical contexts.
 
-## Latest posts
+## Latest Posts
 
 <ul>
 {% for post in site.posts limit:10 %}
 <li>
 <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-<small> — {{ post.date | date: "%Y-%m-%d" }}</small>
+<small> - {{ post.date | date: "%Y-%m-%d" }}</small>
 </li>
 {% endfor %}
 </ul>

@@ -5,7 +5,7 @@ tags: [complexity, game-of-life, cellular-automata, visualization]
 description: An interactive Conway's Game of Life page with block, blinker, glider, and Gosper glider gun presets.
 ---
 
-> **Project:** [Conway's Game of Life](https://chen-qingxiang.github.io/game-of-life/)
+> **Project:** [Conway's Game of Life]({{ "/complexity/game-of-life/" | relative_url }})
 
 Conway's Game of Life is a two-dimensional cellular automaton. Each cell is either alive or dead. Each update depends only on the eight neighboring cells.
 
@@ -52,4 +52,4 @@ Finally, try the Gosper glider gun. It periodically emits gliders. This is the m
 
 Open the project here:
 
-[https://chen-qingxiang.github.io/game-of-life/](https://chen-qingxiang.github.io/game-of-life/)
+[{{ "/complexity/game-of-life/" | relative_url }}]({{ "/complexity/game-of-life/" | relative_url }})
