@@ -1,10 +1,12 @@
 title: Qingxiang Chen
-description: Research tools for history, science, and curious minds
+description: Personal site & blog
 url: https://chen-qingxiang.github.io
 language: en
 timezone: Australia/Sydney
 permalink: /blog/:title/
+# GitHub Pages built-in theme
 theme: jekyll-theme-cayman
+# Optional: add more metadata later (twitter, linkedin, etc.)
 author:
-  name: Qingxiang Chen
-github_username: Chen-Qingxiang
+name: Chen Qingxiang
+github_username: chen-qingxiang
