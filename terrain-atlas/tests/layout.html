@@ -1,0 +1,5 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>山海图 · 布局验证</title>
+<style>body{margin:14px;font:15px system-ui;background:#e4e6dd;color:#203b3a}button{padding:10px;margin:4px}#layout-frame{display:block;border:0;transform-origin:top left}#report{white-space:pre-wrap;max-height:100px;overflow:auto}#stage{overflow:auto}</style>
+<h1>布局验证</h1><p>使用真实页面 HTML / CSS 和共享面板、色标事件。触屏输入条件为模拟；此页不渲染地图。</p>
+<button data-size="1920,1080,false">桌面大窗口</button><button data-size="960,720,false">桌面小窗口</button><button data-size="390,844,true">手机竖屏</button><button data-size="844,390,true">手机横屏</button><button id="check">检查浮层占位</button>
+<pre id="report">选择尺寸</pre><div id="stage"><iframe id="layout-frame" title="山海图界面"></iframe></div><script type="module" src="./layout.mjs"></script></html>

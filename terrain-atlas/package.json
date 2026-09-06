@@ -1,13 +1,16 @@
 {
   "name": "terrain-atlas",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "山海图：可调地形夸张的三维地理研究地图",
   "scripts": {
     "check": "node scripts/check.mjs",
     "test": "node --test tests/*.test.mjs",
-    "dev": "python3 -m http.server 4173"
+    "dev": "vite"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "7.3.1"
+  }
 }

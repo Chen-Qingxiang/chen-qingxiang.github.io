@@ -27,7 +27,7 @@ test('Adjacent terrain grids have exactly matching shared edges',()=>{
 });
 test('Untrusted view settings cannot inject keys or invalid numeric values',()=>{
   assert.equal(cleanSettings({scale:Infinity}).scale,30);assert.equal(cleanSettings({scale:-2}).scale,1);
-  assert.equal(cleanSettings({scale:200}).scale,100);assert.equal(cleanSettings({palette:'__proto__'}).palette,'atlas');
+  assert.equal(cleanSettings({scale:200}).scale,200);assert.equal(cleanSettings({palette:'__proto__'}).palette,'atlas');
   assert.equal(cleanSettings({mode:'invalid',cities:'false'}).mode,'3d');
   assert.deepEqual(parseCoordinates('116.4，39.9'),{lon:116.4,lat:39.9});assert.equal(parseCoordinates('181,0'),null);
   assert.equal(parseCoordinates('<script>,1'),null);
@@ -55,7 +55,8 @@ test('Pinned data is complete and bilingual city lookup returns real coordinates
     const rows=(await Promise.all(d.files.map(path=>readFile(new URL('../'+path,import.meta.url),'utf8').then(JSON.parse)))).flat();
     assert.equal(rows.length,d.count);
     if(key==='cities')cities=rows;
-    else for(const line of rows){assert(line.length>=2);for(const [lon,lat] of line)assert(Number.isFinite(lon)&&Math.abs(lon)<=180.001&&Number.isFinite(lat)&&Math.abs(lat)<=90);}
+    else if(key==='landforms')for(const p of rows){assert(Number.isFinite(p.lon)&&Math.abs(p.lon)<=180);assert(Number.isFinite(p.lat)&&Math.abs(p.lat)<=90);}
+    else for(const line of key==='rivers'?rows.flatMap(r=>r.lines):rows){assert(line.length>=2);for(const [lon,lat] of line)assert(Number.isFinite(lon)&&Math.abs(lon)<=180.001&&Number.isFinite(lat)&&Math.abs(lat)<=90);}
   }
   assert.equal(cities.length,7342);
   for(const query of ['北京','Beijing','成都','Chengdu','Granada'])assert(searchCities(cities,query).length>0,query);

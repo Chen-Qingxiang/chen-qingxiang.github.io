@@ -1,5 +1,4 @@
-import {prepareLines} from './core.js';
-import {prepareRivers, riverVisible} from './cartography.js';
+import {prepareLines} from '../../src/core.js';
 
 export async function loadDataset(manifest, key) {
   const batches = await Promise.all(manifest.datasets[key].files.map(async path => {
@@ -8,7 +7,7 @@ export async function loadDataset(manifest, key) {
     return response.json();
   }));
   const records = batches.flat();
-  return key === 'cities' || key === 'landforms' ? records : key === 'rivers' ? prepareRivers(records) : prepareLines(records);
+  return key === 'cities' ? records : prepareLines(records);
 }
 
 export class OverlayImageryProvider {
@@ -36,9 +35,7 @@ export class OverlayImageryProvider {
       ctx.lineWidth = layer.width || 1.5; ctx.strokeStyle = layer.color; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       if (layer.dash) ctx.setLineDash(layer.dash); else ctx.setLineDash([]);
       ctx.beginPath();
-      for (const line of layer.lines) {
-        if (layer.riverDetail !== undefined && !riverVisible(line,layer.riverDetail,level)) continue;
-        const {points,bbox}=line;
+      for (const {points, bbox} of layer.lines) {
         if (bbox[2]<west || bbox[0]>east || bbox[3]<south || bbox[1]>north) continue;
         let previous;
         for (const p of points) {

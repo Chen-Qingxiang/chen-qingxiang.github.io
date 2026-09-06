@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>数据与许可 · 山海图</title><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css"></head>
 <body class="source-page"><main>
 <a href="./">← 返回山海图</a>
-<h1>山川有来源</h1><p>山海图 · Terrain Atlas 的数据、使用边界与第三方署名。发布基线：2026-09-06。</p>
+<h1>山川有来源</h1><p>山海图 · Terrain Atlas 的数据、使用边界与第三方署名。V1.1 更新：2026-09-07。</p>
 <h2>这幅地图表示什么</h2>
 <p>这是现代地形、海底深度和现代地理参照的探索工具。垂直高度可以夸张，城市和边界的水平位置保持不变。色标和探针使用未夸张的米值。它不提供历史疆域时间轴，也不把现代地貌解释为某一历史时期的地貌。</p>
 <p>应用的代码和界面独立编写，交互灵感来自 <a href="https://portal.gplates.org/cesium/?view=topo15">GPlates Topography</a>，不是 GPlates 官方产品，也不使用其服务器、品牌素材或应用源码。</p>
@@ -26,21 +26,23 @@
 <li>United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey.</li>
 </ul>
 <p lang="en">The U.S. Government ETOPO1 material incorporated in this visualization is not subject to copyright protection within the United States. Data have been resampled and styled for visualization. No data provider has endorsed these modifications. ETOPO1 is not to be used for navigation.</p>
-<h2 id="vectors">城市、边界与河流</h2>
+<h2 id="vectors">城市、边界、水系与地貌</h2>
 <p>Made with <a href="https://www.naturalearthdata.com/">Natural Earth</a>. 数据版本固定为 <a href="https://github.com/nvkelso/natural-earth-vector/tree/v5.1.2">v5.1.2</a>，属于公有领域，<a href="https://www.naturalearthdata.com/about/terms-of-use/">可修改与再分发</a>。</p>
 <table><thead><tr><th>图层</th><th>原始数据</th><th>本项目处理</th></tr></thead><tbody>
 <tr><td>城市 / 聚落</td><td>1:10m populated places</td><td>7,342 个精选地点，中英文及替代名、坐标、标签等级</td></tr>
 <tr><td>国家陆地边界</td><td>1:50m admin-0 boundary lines land</td><td>提取线条，约 0.015° 容差简化</td></tr>
 <tr><td>省 / 州边界</td><td>1:10m admin-1 states provinces lines</td><td>提取线条，约 0.015° 容差简化</td></tr>
-<tr><td>主要河流</td><td>1:50m rivers lake centerlines</td><td>提取线条，约 0.015° 容差简化</td></tr>
+<tr><td>三级水系 / 河名</td><td>1:10m rivers lake centerlines，原始 SHP / DBF</td><td>1,473 个源记录；保留中英文、scalerank、min_zoom、min_label；线条约 0.015° 容差简化</td></tr>
+<tr><td>三级地貌名称</td><td>1:10m geography regions polys</td><td>422 个大型地貌；保留 NAME_ZH、NAME、SCALERANK、MIN_LABEL 等，生成内部文字锚点，不绘制原区域轮廓</td></tr>
 </tbody></table>
 <p>这里的 1:10m 和 1:50m 是 1:1,000 万和 1:5,000 万制图比例尺，不是米级分辨率。基础图层用于概览，并不覆盖全部城镇、河道或县乡边界。国家边界不包含完整海岸线或海域主张线；边界与命名沿用上游数据，不代表本项目对争议地区的立场。</p>
+<p>河流原始属性表保留中文名；同版本的 GeoJSON 导出缺少这些属性，因此本项目直接读取固定版 Shapefile，并对 SHP、DBF、PRJ、CPG 分别保存 SHA-256。数据包含塔里木河、孔雀河，未找到开都河的独立记录。珠江水系沿用上游西江等河段名称。地貌仅保留山脉、高原、盆地、平原、沙漠及部分河谷、三角洲等类别，标签位置不是自然区域的精确中心。</p>
 <p><a href="./data/manifest.json">数据清单</a>记录了下载地址、源文件 SHA-256、输出分片和处理容差。</p>
 <h2 id="software">软件许可</h2>
 <ul><li>山海图原创代码与文档：Copyright © 2026 Qingxiang Chen，<a href="./LICENSE">MIT License</a>。</li>
 <li>CesiumJS 1.145.0：Copyright Cesium GS, Inc. and contributors，Apache License 2.0。引擎未经本项目修改。<a href="./licenses/CESIUM-LICENSE.md">完整许可证及随包第三方声明</a>、<a href="./licenses/CESIUM-ThirdParty.json">ThirdParty.json</a>、<a href="./licenses/CESIUM-ThirdParty.extra.json">ThirdParty.extra.json</a>。</li>
 <li>地理数据保留各自许可；本项目的 MIT 许可不替代数据或第三方软件的条款。</li></ul>
 <h2>文件与网络</h2>
-<p>GeoJSON 在当前浏览器解析，不上传到服务器。第一版的导入图层仅在本次页面会话中保留，刷新后需重新导入；分享链接仅携带相机和显示设置。软件会向 jsDelivr / unpkg 请求地图引擎，向 AWS 请求视野中的高程瓦片。基础矢量数据来自本站。没有 API 密钥、账号或统计追踪。</p>
+<p>GeoJSON 在当前浏览器解析，不上传到服务器。导入图层仅在本次页面会话中保留，刷新后需重新导入；分享链接仅携带相机和显示设置。软件会向 jsDelivr / unpkg 请求地图引擎，向 AWS 请求视野中的高程瓦片。基础矢量数据来自本站。没有 API 密钥、账号或统计追踪。</p>
 <p>这是研究观察工具，不能用于精密测绘、工程或航海决策。详细用法、部署方式与已知限制见 <a href="https://github.com/Chen-Qingxiang/chen-qingxiang.github.io/tree/main/terrain-atlas">项目 README</a>。</p>
 </main></body></html>

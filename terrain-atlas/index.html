@@ -27,16 +27,18 @@
       <section class="control-section">
         <div class="section-head"><h2>地形起伏</h2><span class="tag">陆地 + 海底</span></div>
         <div class="scale-heading"><label for="scale">高度夸张</label><div><output id="scale-value" for="scale">30<span>×</span></output><small id="scale-percent">3000%</small></div></div>
-        <input id="scale" type="range" min="1" max="100" value="30" step="1" aria-describedby="scale-explanation">
-        <div class="range-labels"><span>真实比例 1×</span><span>100×</span></div>
-        <div class="presets" aria-label="高度倍率预设"><button data-scale="1">1×</button><button data-scale="5">5×</button><button data-scale="10">10×</button><button data-scale="30" class="active">30×</button><button data-scale="50">50×</button><button data-scale="100">100×</button></div>
+        <input id="scale" type="range" min="1" max="200" value="30" step="1" aria-describedby="scale-explanation">
+        <div class="range-labels"><span>真实比例 1×</span><span>200×</span></div>
+        <div class="presets" aria-label="高度倍率预设"><button data-scale="1">1×</button><button data-scale="10">10×</button><button data-scale="30" class="active">30×</button><button data-scale="50">50×</button><button data-scale="100">100×</button><button data-scale="200">200×</button></div>
         <p class="caption" id="scale-explanation">只放大垂直起伏，不改变水平距离。</p>
       </section>
       <section class="control-section">
         <h2>地形配色</h2>
         <div class="palette-grid" role="group" aria-label="地形配色">
           <button class="palette active" data-palette="atlas" aria-pressed="true"><span class="swatch atlas"></span>山海</button>
-          <button class="palette" data-palette="vivid" aria-pressed="false"><span class="swatch vivid"></span>经典地形</button>
+          <button class="palette" data-palette="vivid" aria-pressed="false"><span class="swatch vivid"></span>强地形</button>
+          <button class="palette" data-palette="school" aria-pressed="false"><span class="swatch school"></span>地图册</button>
+          <button class="palette" data-palette="ocean" aria-pressed="false"><span class="swatch ocean"></span>海底增强</button>
           <button class="palette" data-palette="earth" aria-pressed="false"><span class="swatch earth"></span>纸上山川</button>
           <button class="palette" data-palette="gray" aria-pressed="false"><span class="swatch gray"></span>灰度研究</button>
         </div>
@@ -48,7 +50,10 @@
         <label class="toggle-row"><span><i class="layer-symbol cities-symbol"></i>城市地名</span><input id="cities" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
         <label class="toggle-row"><span><i class="layer-symbol countries-symbol"></i>国家边界</span><input id="countries" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
         <label class="toggle-row"><span><i class="layer-symbol provinces-symbol"></i>省 / 州边界</span><input id="provinces" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
-        <label class="toggle-row"><span><i class="layer-symbol rivers-symbol"></i>主要河流</span><input id="rivers" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row"><span><i class="layer-symbol rivers-symbol"></i>水系</span><input id="rivers" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <div class="detail-switch" role="group" aria-label="水系详细度"><button data-detail="riverDetail" data-level="0" aria-pressed="false">精简</button><button data-detail="riverDetail" data-level="1" aria-pressed="true">标准</button><button data-detail="riverDetail" data-level="2" aria-pressed="false">详细</button></div>
+        <label class="toggle-row"><span><i class="layer-symbol landform-symbol" aria-hidden="true">山</i>地貌名称</span><input id="landforms" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+        <div class="detail-switch" role="group" aria-label="地貌名称详细度"><button data-detail="landformDetail" data-level="0" aria-pressed="false">精简</button><button data-detail="landformDetail" data-level="1" aria-pressed="true">标准</button><button data-detail="landformDetail" data-level="2" aria-pressed="false">详细</button></div>
         <label class="toggle-row"><span><i class="layer-symbol grid-symbol"></i>经纬网</span><input id="grid" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
         <details class="fine-control"><summary>线条不透明度 <span id="opacity-value">85%</span></summary><label class="sr-only" for="opacity">参照线条不透明度</label><input id="opacity" type="range" min="0" max="100" value="85"></details>
         <div id="custom-layers" class="custom-layers"></div>
@@ -69,17 +74,19 @@
   </nav>
   <nav class="navigation" aria-label="地图导航">
     <button id="north" title="朝北俯视" aria-label="朝北俯视">N<span>↑</span></button>
+    <button id="north-lock" title="锁定北向" aria-label="北向锁定" aria-pressed="false"><span aria-hidden="true">N</span><small>锁定</small></button>
     <button id="zoom-in" title="放大" aria-label="放大">＋</button><button id="zoom-out" title="缩小" aria-label="缩小">−</button>
     <button id="tilt" title="切换俯视 / 倾斜" aria-label="切换俯视和倾斜">◩</button>
     <button id="home" title="回到初始视图（0）" aria-label="回到初始视图">⌂</button>
   </nav>
   <section id="selection" class="selection" hidden aria-label="选中地点"><button id="selection-close" class="icon-button" aria-label="关闭地点详情">×</button><p class="eyebrow" id="selection-type">地点</p><h2 id="selection-name"></h2><p id="selection-region"></p><dl><div><dt>经纬度</dt><dd id="selection-coords"></dd></div><div><dt>地表高程</dt><dd id="selection-height">读取中…</dd></div></dl><button id="selection-fly" class="outline-button">重新定位到这里</button></section>
-  <aside class="legend" aria-label="高程色标"><div><strong>地表高程</strong><span>m · 未夸张</span></div><div class="legend-ramp" id="legend-ramp"></div><div class="legend-values"><span>−11,000</span><span>0</span><span>9,000</span></div></aside>
+  <button id="legend-toggle" class="legend-toggle" aria-label="显示高程色标" aria-controls="legend" aria-expanded="false"><span aria-hidden="true"></span>色标</button>
+  <aside id="legend" class="legend" aria-label="高程色标"><div><strong id="legend-name">山海</strong><span>m · 未夸张</span></div><div class="legend-ramp" id="legend-ramp"></div><div class="legend-values"><span>−11,000</span><span>0</span><span>9,000</span></div></aside>
   <div class="map-status"><span id="load-dot" class="status-dot busy"></span><span id="load-status" role="status">正在准备地图…</span><span class="status-divider"></span><span id="coordinates">拖拽旋转 · 滚轮缩放 · Ctrl + 拖拽倾斜</span></div>
   <div id="credits" class="credits"></div>
   <div id="toast" class="toast" role="status" hidden></div>
   <div id="loading" class="loading-screen"><img src="./icon.svg" width="56" height="56" alt=""><h2>山海之间，正在展开</h2><p id="loading-message">加载三维地图引擎…</p><div class="loading-track"><span></span></div></div>
-  <dialog id="help"><div class="dialog-head"><h2>探索山海图</h2><button id="help-close" class="icon-button" aria-label="关闭帮助">×</button></div><p>用真实高程搭建的地球。海水不遮挡海底，山体和海沟都可以放大起伏。</p><ul><li><strong>拖拽</strong>旋转或平移，<strong>滚轮 / 双指捏合</strong>缩放。</li><li><strong>Ctrl + 拖拽 / 鼠标中键拖拽 / 双指同向拖动</strong>调整倾斜；右侧 ◩ 可直接切换。</li><li>按 <kbd>/</kbd> 搜索城市；按 <kbd>0</kbd> 回到初始视图。也可输入 <code>116.4,39.9</code> 定位。</li><li>点击地形查看经纬度和当前地形网格的近似高程。高程读数始终以未夸张的米为单位。</li><li>导入 WGS84 GeoJSON 后，点显示为标记，线和面边缘叠加在地形上。导入文件只在当前页面会话保留；刷新前请保留原文件。</li></ul><p>现代地形、城市和边界仅作为历史研究参照，不代表某一朝代的地貌或疆域。地图不是测绘或导航产品；极区 ±85.05° 以外没有高程数据。</p><p>分享链接包含视角和显示设置，不包含你导入的文件。</p><a href="./sources.html" target="_blank" rel="noopener">查看数据来源、精度与许可 ↗</a></dialog>
+  <dialog id="help"><div class="dialog-head"><h2>探索山海图</h2><button id="help-close" class="icon-button" aria-label="关闭帮助">×</button></div><p>用真实高程搭建的地球。海水不遮挡海底，山体和海沟都可以放大起伏。</p><ul><li><strong>拖拽</strong>旋转或平移，<strong>滚轮 / 双指捏合</strong>缩放。</li><li><strong>Ctrl + 拖拽 / 鼠标中键拖拽 / 双指同向拖动</strong>调整倾斜；右侧 ◩ 可直接切换。</li><li><strong>北向锁定</strong>让平移、缩放保持朝北；触屏默认开启。在锁定状态使用右侧 <strong>◩</strong> 倾斜，双指手势只缩放，不改变朝向。解锁后恢复自由倾斜 / 环绕。</li><li>水系与地貌各有三级详细度；名称会按地图尺度与文字避让自动显示，详细模式也不会一次显示所有名字。</li><li>按 <kbd>/</kbd> 搜索城市；按 <kbd>0</kbd> 回到初始视图。也可输入 <code>116.4,39.9</code> 定位。</li><li>点击地形查看经纬度和当前地形网格的近似高程。高程读数始终以未夸张的米为单位。</li><li>导入 WGS84 GeoJSON 后，点显示为标记，线和面边缘叠加在地形上。导入文件只在当前页面会话保留；刷新前请保留原文件。</li></ul><p>现代地形、城市和边界仅作为历史研究参照，不代表某一朝代的地貌或疆域。地图不是测绘或导航产品；极区 ±85.05° 以外没有高程数据。</p><p>分享链接包含视角和显示设置，不包含你导入的文件。</p><a href="./sources.html" target="_blank" rel="noopener">查看数据来源、精度与许可 ↗</a></dialog>
   <noscript><div class="noscript">山海图需要启用 JavaScript 才能显示地图。</div></noscript>
   <script type="module" src="./src/bootstrap.js"></script>
 </body>

@@ -1,4 +1,4 @@
-import {MAX_LEVEL, MAX_LATITUDE, clamp, decodeTerrarium, heightGrid, makeColorTable, tileCoordinate, fromMercator} from './core.js';
+import {MAX_LEVEL, MAX_LATITUDE, clamp, decodeTerrarium, heightGrid, makeColorTable, tileCoordinate, fromMercator} from '../../src/core.js';
 
 const TILE_URL = 'https://elevation-tiles-prod.s3.amazonaws.com/terrarium';
 const creditHTML = 'Terrain Tiles · <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Mapzen / AWS</a> · <a href="./sources.html#terrain" target="_blank" rel="noopener">数据来源与许可</a>';
@@ -11,15 +11,6 @@ export class ElevationStore {
     this.onStatus = onStatus;
     this.loaded = 0;
     this.failures = 0;
-  }
-  prune() {
-    // Pending promises are shared by terrain and imagery. Evict only decoded tiles,
-    // including after a burst finishes with no subsequent insertion to trigger LRU.
-    if (this.cache.size <= 192) return;
-    for (const [key, entry] of this.cache) {
-      if (this.cache.size <= 192) break;
-      if (entry.done) this.cache.delete(key);
-    }
   }
   async schedule(task) {
     if (this.active >= 10) await new Promise(resolve => this.queue.push(resolve));
@@ -57,7 +48,7 @@ export class ElevationStore {
           ctx.drawImage(bitmap, 0, 0); bitmap.close();
           const rgba = ctx.getImageData(0, 0, 256, 256).data, heights = new Float32Array(256 * 256);
           for (let i = 0; i < heights.length; i++) heights[i] = decodeTerrarium(rgba[i*4], rgba[i*4+1], rgba[i*4+2]);
-          this.loaded++; entry.done = true; this.prune();
+          this.loaded++; entry.done = true;
           return heights;
         } catch (error) {
           lastError = error;
@@ -68,7 +59,12 @@ export class ElevationStore {
       throw lastError;
     });
     this.cache.set(key, entry);
-    this.prune();
+    if (this.cache.size > 192) {
+      for (const [oldKey, oldEntry] of this.cache) {
+        if (this.cache.size <= 192) break;
+        if (oldEntry.done) this.cache.delete(oldKey);
+      }
+    }
     return entry.promise;
   }
   async grid(x, y, level) {
@@ -124,33 +120,21 @@ export class TerrainImageryProvider {
     const ctx = canvas.getContext('2d'), pixels = ctx.createImageData(256,256), rgba = pixels.data;
     const centerLat = fromMercator(0, (y + 0.5) / 2**level)[1] * Math.PI / 180;
     const resolution = 40075016.686 * Math.cos(centerLat) / (256 * 2**level);
-    paintTerrain(heights, this.colors, rgba, this.relief, resolution, level);
+    const strength = clamp(6 - level * 0.32, 1.4, 6);
+    for (let py = 0; py < 256; py++) for (let px = 0; px < 256; px++) {
+      const i = py*256 + px, c = (clamp(Math.round(heights[i]), -11000, 9000) + 11000)*3;
+      let shade = 1;
+      if (this.relief) {
+        const dx = (heights[py*256+Math.min(255,px+1)]-heights[py*256+Math.max(0,px-1)]) / (resolution*(px===0||px===255?1:2));
+        const dy = (heights[Math.min(255,py+1)*256+px]-heights[Math.max(0,py-1)*256+px]) / (resolution*(py===0||py===255?1:2));
+        const nx = -dx*strength, ny = -dy*strength;
+        const light = (nx*-0.5 + ny*-0.5 + 0.7071) / Math.sqrt(nx*nx+ny*ny+1);
+        shade = clamp(0.55 + Math.max(0,light)*0.64, 0.55, 1.16);
+      }
+      for (let j=0;j<3;j++) rgba[i*4+j] = this.colors[c+j]*shade;
+      rgba[i*4+3] = 255;
+    }
     ctx.putImageData(pixels,0,0);
     return canvas;
-  }
-}
-
-export function paintTerrain(heights, colors, rgba, relief, resolution, level) {
-  if (!relief) {
-    for (let i=0, p=0; i<65536; i++, p+=4) {
-      const c=(clamp(Math.round(heights[i]),-11000,9000)+11000)*3;
-      rgba[p]=colors[c]; rgba[p+1]=colors[c+1]; rgba[p+2]=colors[c+2]; rgba[p+3]=255;
-    }
-    return;
-  }
-  const factor=clamp(6-level*0.32,1.4,6)/resolution;
-  for (let y=0; y<256; y++) {
-    const row=y*256, above=(y===0?0:y-1)*256, below=(y===255?255:y+1)*256;
-    const fy=(y===0||y===255)?factor:factor*.5;
-    for (let x=0; x<256; x++) {
-      const i=row+x, p=i*4, c=(clamp(Math.round(heights[i]),-11000,9000)+11000)*3;
-      const nx=-(heights[row+(x===255?255:x+1)]-heights[row+(x===0?0:x-1)])*((x===0||x===255)?factor:factor*.5);
-      const ny=-(heights[below+x]-heights[above+x])*fy;
-      const light=(-.5*nx-.5*ny+.7071)/Math.sqrt(nx*nx+ny*ny+1);
-      // Flat ground stays at ~1.0. Shadow minimum rises from .55 to .76:
-      // hue carries elevation; shade only supports the shape.
-      const shade=Math.min(1.1,.76+Math.max(0,light)*.34);
-      rgba[p]=colors[c]*shade; rgba[p+1]=colors[c+1]*shade; rgba[p+2]=colors[c+2]*shade; rgba[p+3]=255;
-    }
   }
 }

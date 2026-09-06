@@ -20,9 +20,15 @@ export const PALETTES = {
   atlas: {name: '山海', stops: [
     [-11000, '#081c35'], [-6000, '#154566'], [-3500, '#307789'], [-500, '#76afb3'], [-1, '#b4d2cb'],
     [0, '#b8c29b'], [250, '#a2b285'], [1000, '#8c9a69'], [2200, '#b3a071'], [4000, '#c7b899'], [6500, '#ded7c8'], [9000, '#ffffff']]},
-  vivid: {name: '经典地形', stops: [
-    [-11000, '#090847'], [-6500, '#12379a'], [-3000, '#1877c2'], [-1, '#8dd9e0'],
-    [0, '#3a963f'], [600, '#9bbe54'], [1600, '#dfd572'], [3000, '#d99e53'], [4800, '#b87050'], [7000, '#e8d6cd'], [9000, '#ffffff']]},
+  vivid: {name: '强地形', stops: [
+    [-11000, '#030a39'], [-7000, '#08276c'], [-4000, '#075aab'], [-1500, '#159cbd'], [-1, '#8fe0df'],
+    [0, '#3c9b46'], [250, '#76b646'], [900, '#c5ca48'], [1800, '#edc65a'], [3000, '#d48b3c'], [4500, '#9f5c34'], [6000, '#c2aea0'], [7500, '#e6e5df'], [9000, '#ffffff']]},
+  school: {name: '地图册', stops: [
+    [-11000, '#78abc9'], [-6000, '#93c5dd'], [-2000, '#bbdfea'], [-1, '#d8eef0'],
+    [0, '#80b969'], [200, '#a7c876'], [800, '#d9d990'], [1600, '#ecda9c'], [2800, '#d5b17a'], [4200, '#b58a60'], [6000, '#d3c7b3'], [8000, '#f5f2e8'], [9000, '#ffffff']]},
+  ocean: {name: '海底增强', stops: [
+    [-11000, '#090e32'], [-8000, '#24205c'], [-6000, '#23477f'], [-4000, '#277b9d'], [-2500, '#38a9b6'], [-1000, '#83d2ca'], [-1, '#d1efdc'],
+    [0, '#d1d0bc'], [1500, '#c5bea5'], [3500, '#b7ac98'], [6500, '#d7d1c4'], [9000, '#f4f1e7']]},
   earth: {name: '纸上山川', stops: [
     [-11000, '#475661'], [-5000, '#7b9298'], [-1, '#d7e3dd'], [0, '#e4dabd'],
     [1000, '#d1bf96'], [3000, '#b79b73'], [5500, '#9f8268'], [9000, '#f6f0e4']]},
@@ -53,13 +59,15 @@ export function heightGrid(tiles, size = 65) {
 }
 
 export const DEFAULTS = Object.freeze({scale: 30, palette: 'atlas', relief: true, countries: true,
-  provinces: false, rivers: false, grid: false, cities: true, opacity: 85, colorOpacity: 100, mode: '3d'});
-export function cleanSettings(raw = {}) {
-  const s = {...DEFAULTS};
-  for (const key of ['relief', 'countries', 'provinces', 'rivers', 'grid', 'cities']) if (typeof raw[key] === 'boolean') s[key] = raw[key];
-  for (const [key, low, high] of [['scale', 1, 100], ['opacity', 0, 100], ['colorOpacity', 0, 100]]) {
+  provinces: false, rivers: false, riverDetail: 1, landforms: true, landformDetail: 1, northLock: false, grid: false, cities: true, opacity: 85, colorOpacity: 100, mode: '3d'});
+export function cleanSettings(raw = {}, touch = false) {
+  if (!raw || typeof raw !== 'object') raw = {};
+  const s = {...DEFAULTS, northLock: touch};
+  for (const key of ['relief', 'countries', 'provinces', 'rivers', 'grid', 'cities', 'landforms', 'northLock']) if (typeof raw[key] === 'boolean') s[key] = raw[key];
+  for (const [key, low, high] of [['scale', 1, 200], ['opacity', 0, 100], ['colorOpacity', 0, 100]]) {
     if (Number.isFinite(Number(raw[key])) && raw[key] !== null && raw[key] !== '') s[key] = clamp(Number(raw[key]), low, high);
   }
+  for (const key of ['riverDetail','landformDetail']) if ([0,1,2].includes(raw[key])) s[key] = raw[key];
   if (Object.hasOwn(PALETTES, raw.palette)) s.palette = raw.palette;
   if (['3d', '2d', '2.5d'].includes(raw.mode)) s.mode = raw.mode;
   return s;

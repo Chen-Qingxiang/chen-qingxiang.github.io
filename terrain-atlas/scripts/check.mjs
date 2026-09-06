@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 async function walk(dir) {
   const entries = await readdir(dir, {withFileTypes:true});
-  return (await Promise.all(entries.map(e => e.isDirectory() ? walk(resolve(dir,e.name)) : resolve(dir,e.name)))).flat();
+  return (await Promise.all(entries.filter(e=>!['node_modules','.git'].includes(e.name)).map(e => e.isDirectory() ? walk(resolve(dir,e.name)) : resolve(dir,e.name)))).flat();
 }
 const files = await walk(root);
 let scripts = 0, links = 0;

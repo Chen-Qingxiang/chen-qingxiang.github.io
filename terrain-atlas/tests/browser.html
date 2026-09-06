@@ -1,0 +1,7 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>山海图 · 浏览器验证</title>
+<style>body{font:16px system-ui;margin:24px;background:#f4f3ec;color:#203b3a}button{padding:12px;margin:5px}pre{white-space:pre-wrap}#gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}figure{margin:0}canvas{width:100%;height:auto}figcaption{padding:8px}#layout-frame{border:1px solid #777;max-width:100%}</style>
+<h1>山海图 · 浏览器验证</h1><p>真实 Canvas 瓦片计算基准。此页不把二维检查当作 WebGL / 真机验收。</p>
+<button id="benchmark">运行瓦片基准</button><button id="gallery-button">检查六套配色</button>
+<label>区域 <select id="region"><option value="china">中国全境</option><option value="tibet">青藏高原</option><option value="mediterranean">地中海</option><option value="pacific">东太平洋海底</option></select></label>
+<pre id="results">等待运行</pre><div id="gallery"></div>
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.145.0/Build/Cesium/Cesium.js"></script><script type="module" src="./browser.mjs"></script></html>

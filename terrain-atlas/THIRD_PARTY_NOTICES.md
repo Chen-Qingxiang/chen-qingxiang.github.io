@@ -27,9 +27,13 @@ Processing: Terrarium PNG decoding, consistent pixel-origin resampling to shared
 - Website and terms: <https://www.naturalearthdata.com/about/terms-of-use/>
 - Pinned source: <https://github.com/nvkelso/natural-earth-vector/tree/v5.1.2>
 - License: public domain. Made with Natural Earth.
-- Included datasets: `ne_10m_populated_places`, `ne_50m_admin_0_boundary_lines_land`, `ne_10m_admin_1_states_provinces_lines`, `ne_50m_rivers_lake_centerlines`.
-- Processing: selecting city properties, simplifying line coordinates at approximately 0.015 degrees tolerance, rounding line coordinates to four decimals and city coordinates to five decimals, splitting output into static JSON files.
-- Reproducible source URLs, original file SHA-256 values and output counts are recorded in [data/manifest.json](data/manifest.json).
+- Included datasets: `ne_10m_populated_places`, `ne_50m_admin_0_boundary_lines_land`, `ne_10m_admin_1_states_provinces_lines`, `ne_10m_rivers_lake_centerlines` (SHP/DBF/PRJ/CPG), `ne_10m_geography_regions_polys` (GeoJSON).
+- Processing: selecting bilingual city, river and landform properties; deriving interior label anchors from selected physical regions without distributing or rendering their polygon boundaries; simplifying line coordinates at approximately 0.015 degrees tolerance, rounding line coordinates to four decimals and city coordinates to five decimals, splitting output into static JSON files.
+- Reproducible source URLs, original file SHA-256 values (separately for each river source component) and output counts are recorded in [data/manifest.json](data/manifest.json).
+
+## Development tooling
+
+Vite 7.3.1 (MIT) is a development-only dependency, pinned by package-lock.json. It is not included in the published map runtime. Its own dependency notices are included in the installed npm packages.
 
 ## GPlates inspiration
 

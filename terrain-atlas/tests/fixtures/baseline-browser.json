@@ -1,0 +1,74 @@
+{
+  "date": "2026-09-06T18:27:59.052Z",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+  "viewport": [
+    1363,
+    936,
+    1
+  ],
+  "note": "Network excluded; actual 256×256 Canvas allocation, paint and putImageData included; not WebGL frame time",
+  "terrain": {
+    "v1-shade-true": {
+      "medianMs": 1.6,
+      "p95Ms": 2,
+      "totalMs": 55.7,
+      "calls": 32
+    },
+    "v1-shade-false": {
+      "medianMs": 0.8,
+      "p95Ms": 1.2,
+      "totalMs": 27.7,
+      "calls": 32
+    },
+    "current-shade-true": {
+      "medianMs": 1.7,
+      "p95Ms": 2.4,
+      "totalMs": 55.5,
+      "calls": 32
+    },
+    "current-shade-false": {
+      "medianMs": 0.8,
+      "p95Ms": 0.9,
+      "totalMs": 26.7,
+      "calls": 32
+    }
+  },
+  "overlay": {
+    "v1-empty": {
+      "medianMs": 0,
+      "p95Ms": 0.1,
+      "totalMs": 1.5,
+      "calls": 32
+    },
+    "current-empty": {
+      "medianMs": 0,
+      "p95Ms": 0.2,
+      "totalMs": 1.8,
+      "calls": 32
+    },
+    "v1-countries": {
+      "medianMs": 0,
+      "p95Ms": 0.6,
+      "totalMs": 4.6,
+      "calls": 32
+    },
+    "current-countries": {
+      "medianMs": 0.1,
+      "p95Ms": 0.5,
+      "totalMs": 5,
+      "calls": 32
+    },
+    "v1-provinces": {
+      "medianMs": 0.3,
+      "p95Ms": 0.8,
+      "totalMs": 11.7,
+      "calls": 32
+    },
+    "current-provinces": {
+      "medianMs": 0.3,
+      "p95Ms": 0.8,
+      "totalMs": 11.8,
+      "calls": 32
+    }
+  }
+}
