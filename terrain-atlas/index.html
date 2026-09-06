@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102832">
+  <meta name="description" content="山海图 Terrain Atlas：可调地形夸张的三维地球，结合城市搜索、现代行政边界、河流和自己的研究图层。">
+  <title>山海图 · Terrain Atlas</title>
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main id="globe" aria-label="交互地图：拖拽旋转，滚轮缩放，按住 Ctrl 拖拽倾斜" tabindex="0"></main>
+  <aside class="panel" id="panel" aria-label="地图控制">
+    <header class="brand">
+      <img src="./icon.svg" width="42" height="42" alt="">
+      <div><h1>山海图<span>Terrain Atlas</span></h1><p>把历史放回山川之间</p></div>
+      <button id="panel-toggle" class="icon-button" aria-label="收起控制面板" aria-expanded="true" title="收起控制面板">−</button>
+    </header>
+    <div class="panel-body">
+      <div class="search-wrap">
+        <label for="search" class="sr-only">搜索城市或经纬度</label>
+        <div class="search-field"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="城市 / 经度,纬度" autocomplete="off" spellcheck="false" aria-controls="search-results"><kbd>/</kbd></div>
+        <div id="search-results" class="search-results" hidden aria-label="搜索结果"></div>
+        <p class="caption" id="search-hint">正在加载城市索引…</p>
+      </div>
+      <section class="control-section">
+        <div class="section-head"><h2>地形起伏</h2><span class="tag">陆地 + 海底</span></div>
+        <div class="scale-heading"><label for="scale">高度夸张</label><div><output id="scale-value" for="scale">30<span>×</span></output><small id="scale-percent">3000%</small></div></div>
+        <input id="scale" type="range" min="1" max="100" value="30" step="1" aria-describedby="scale-explanation">
+        <div class="range-labels"><span>真实比例 1×</span><span>100×</span></div>
+        <div class="presets" aria-label="高度倍率预设"><button data-scale="1">1×</button><button data-scale="5">5×</button><button data-scale="10">10×</button><button data-scale="30" class="active">30×</button><button data-scale="50">50×</button><button data-scale="100">100×</button></div>
+        <p class="caption" id="scale-explanation">只放大垂直起伏，不改变水平距离。</p>
+      </section>
+      <section class="control-section">
+        <h2>地形配色</h2>
+        <div class="palette-grid" role="group" aria-label="地形配色">
+          <button class="palette active" data-palette="atlas" aria-pressed="true"><span class="swatch atlas"></span>山海</button>
+          <button class="palette" data-palette="vivid" aria-pressed="false"><span class="swatch vivid"></span>经典地形</button>
+          <button class="palette" data-palette="earth" aria-pressed="false"><span class="swatch earth"></span>纸上山川</button>
+          <button class="palette" data-palette="gray" aria-pressed="false"><span class="swatch gray"></span>灰度研究</button>
+        </div>
+        <label class="toggle-row"><span>山体明暗</span><input id="relief" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+        <details class="fine-control"><summary>色彩不透明度 <span id="color-opacity-value">100%</span></summary><label class="sr-only" for="color-opacity">地形色彩不透明度</label><input id="color-opacity" type="range" min="0" max="100" value="100"></details>
+      </section>
+      <section class="control-section">
+        <div class="section-head"><h2>参照图层</h2><span class="tag">现代地理</span></div>
+        <label class="toggle-row"><span><i class="layer-symbol cities-symbol"></i>城市地名</span><input id="cities" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row"><span><i class="layer-symbol countries-symbol"></i>国家边界</span><input id="countries" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row"><span><i class="layer-symbol provinces-symbol"></i>省 / 州边界</span><input id="provinces" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row"><span><i class="layer-symbol rivers-symbol"></i>主要河流</span><input id="rivers" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row"><span><i class="layer-symbol grid-symbol"></i>经纬网</span><input id="grid" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <details class="fine-control"><summary>线条不透明度 <span id="opacity-value">85%</span></summary><label class="sr-only" for="opacity">参照线条不透明度</label><input id="opacity" type="range" min="0" max="100" value="85"></details>
+        <div id="custom-layers" class="custom-layers"></div>
+        <button id="import-button" class="outline-button">＋ 导入自己的图层 <small>GeoJSON</small></button>
+        <input id="import-file" type="file" accept=".geojson,.json,application/geo+json,application/json" multiple hidden>
+        <p class="caption">文件只在本机读取，适合叠加研究地点与边界。</p>
+      </section>
+      <section class="control-section places-section">
+        <h2>从这里探索</h2>
+        <div class="place-grid"><button data-place="china">中国全境 <span>↗</span></button><button data-place="tibet">青藏高原 <span>↗</span></button><button data-place="sichuan">四川盆地 <span>↗</span></button><button data-place="mediterranean">地中海 <span>↗</span></button><button data-place="atlantic">大西洋海岭 <span>↗</span></button><button data-place="andes">安第斯山脉 <span>↗</span></button></div>
+      </section>
+      <footer class="panel-footer"><button id="help-open">操作帮助</button><a href="./sources.html" target="_blank" rel="noopener">数据与许可 ↗</a><a href="https://github.com/Chen-Qingxiang/chen-qingxiang.github.io/tree/main/terrain-atlas" target="_blank" rel="noopener">源码 ↗</a></footer>
+    </div>
+  </aside>
+  <nav class="map-toolbar" aria-label="视图与分享">
+    <div class="mode-switch" role="group" aria-label="地图模式"><button data-mode="3d" class="active" aria-pressed="true">3D 地球</button><button data-mode="2d" aria-pressed="false">2D 地图</button><button data-mode="2.5d" aria-pressed="false">2.5D</button></div>
+    <button id="share" title="复制当前视图链接">分享视图 ↗</button>
+  </nav>
+  <nav class="navigation" aria-label="地图导航">
+    <button id="north" title="朝北俯视" aria-label="朝北俯视">N<span>↑</span></button>
+    <button id="zoom-in" title="放大" aria-label="放大">＋</button><button id="zoom-out" title="缩小" aria-label="缩小">−</button>
+    <button id="tilt" title="切换俯视 / 倾斜" aria-label="切换俯视和倾斜">◩</button>
+    <button id="home" title="回到初始视图（0）" aria-label="回到初始视图">⌂</button>
+  </nav>
+  <section id="selection" class="selection" hidden aria-label="选中地点"><button id="selection-close" class="icon-button" aria-label="关闭地点详情">×</button><p class="eyebrow" id="selection-type">地点</p><h2 id="selection-name"></h2><p id="selection-region"></p><dl><div><dt>经纬度</dt><dd id="selection-coords"></dd></div><div><dt>地表高程</dt><dd id="selection-height">读取中…</dd></div></dl><button id="selection-fly" class="outline-button">重新定位到这里</button></section>
+  <aside class="legend" aria-label="高程色标"><div><strong>地表高程</strong><span>m · 未夸张</span></div><div class="legend-ramp" id="legend-ramp"></div><div class="legend-values"><span>−11,000</span><span>0</span><span>9,000</span></div></aside>
+  <div class="map-status"><span id="load-dot" class="status-dot busy"></span><span id="load-status" role="status">正在准备地图…</span><span class="status-divider"></span><span id="coordinates">拖拽旋转 · 滚轮缩放 · Ctrl + 拖拽倾斜</span></div>
+  <div id="credits" class="credits"></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <div id="loading" class="loading-screen"><img src="./icon.svg" width="56" height="56" alt=""><h2>山海之间，正在展开</h2><p id="loading-message">加载三维地图引擎…</p><div class="loading-track"><span></span></div></div>
+  <dialog id="help"><div class="dialog-head"><h2>探索山海图</h2><button id="help-close" class="icon-button" aria-label="关闭帮助">×</button></div><p>用真实高程搭建的地球。海水不遮挡海底，山体和海沟都可以放大起伏。</p><ul><li><strong>拖拽</strong>旋转或平移，<strong>滚轮 / 双指捏合</strong>缩放。</li><li><strong>Ctrl + 拖拽 / 鼠标中键拖拽 / 双指同向拖动</strong>调整倾斜；右侧 ◩ 可直接切换。</li><li>按 <kbd>/</kbd> 搜索城市；按 <kbd>0</kbd> 回到初始视图。也可输入 <code>116.4,39.9</code> 定位。</li><li>点击地形查看经纬度和当前地形网格的近似高程。高程读数始终以未夸张的米为单位。</li><li>导入 WGS84 GeoJSON 后，点显示为标记，线和面边缘叠加在地形上。导入文件只在当前页面会话保留；刷新前请保留原文件。</li></ul><p>现代地形、城市和边界仅作为历史研究参照，不代表某一朝代的地貌或疆域。地图不是测绘或导航产品；极区 ±85.05° 以外没有高程数据。</p><p>分享链接包含视角和显示设置，不包含你导入的文件。</p><a href="./sources.html" target="_blank" rel="noopener">查看数据来源、精度与许可 ↗</a></dialog>
+  <noscript><div class="noscript">山海图需要启用 JavaScript 才能显示地图。</div></noscript>
+  <script type="module" src="./src/bootstrap.js"></script>
+</body>
+</html>

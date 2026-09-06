@@ -1,0 +1,20 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {"name": "示例地点 A（非历史数据）"},
+      "geometry": {"type": "Point", "coordinates": [116.4, 39.9]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "示例地点 B（非历史数据）"},
+      "geometry": {"type": "Point", "coordinates": [112.45, 34.62]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "格式示例线，非真实路线"},
+      "geometry": {"type": "LineString", "coordinates": [[116.4, 39.9], [114.5, 38], [112.45, 34.62]]}
+    }
+  ]
+}
