@@ -1,6 +1,7 @@
 import {applyStaticLanguage, initialLanguage, t} from './i18n.js';
 
 const language = applyStaticLanguage(initialLanguage());
+const localFixes = document.createElement('link'); localFixes.rel = 'stylesheet'; localFixes.href = './ui-fixes.css'; document.head.append(localFixes);
 const bases = [
   'https://cdn.jsdelivr.net/npm/cesium@1.145.0/Build/Cesium/',
   'https://unpkg.com/cesium@1.145.0/Build/Cesium/',
