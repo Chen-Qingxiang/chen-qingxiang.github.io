@@ -23,8 +23,9 @@ async function boot() {
   }
   if (!loaded) throw new Error('地图引擎暂时无法连接。请检查网络后重试（需访问 jsDelivr 或 unpkg）。');
   loadingMessage.textContent = '连接地形与城市数据…';
-  const {start} = await import('./app.js');
+  const [{start}, {installTouchRecovery}] = await Promise.all([import('./app.js'), import('./touch.js')]);
   await start(window.Cesium);
+  installTouchRecovery(document.querySelector('#globe canvas'));
 }
 boot().catch(error => {
   console.error(error);
