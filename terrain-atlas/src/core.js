@@ -20,7 +20,8 @@ export const PALETTES = {
   atlas: {name: '山海', stops: [
     [-11000, '#081c35'], [-6000, '#154566'], [-3500, '#307789'], [-500, '#76afb3'], [-1, '#b4d2cb'],
     [0, '#b8c29b'], [250, '#a2b285'], [1000, '#8c9a69'], [2200, '#b3a071'], [4000, '#c7b899'], [6500, '#ded7c8'], [9000, '#ffffff']]},
-  topo15: {name: 'Topo15', stops: [
+  // Keep the historic key for backwards-compatible saved/shared views; the public name is Global Relief.
+  topo15: {name: 'Global Relief', stops: [
     [-11000, '#0a0079'], [-10000, '#240099'], [-8000, '#000ecb'], [-6000, '#0d48e7'], [-5000, '#1277f4'],
     [-4000, '#16a0fc'], [-3000, '#2cbaff'], [-2000, '#43c9ff'], [-1000, '#64dfff'], [-1, '#b9e8ff'],
     [0, '#30b24c'], [100, '#a0de89'], [200, '#d2e19f'], [500, '#fcd7ad'], [1000, '#f1c780'],
@@ -64,7 +65,7 @@ export function heightGrid(tiles, size = 65) {
   return result;
 }
 
-export const DEFAULTS = Object.freeze({scale: 30, palette: 'atlas', language: 'en', relief: true, countries: true,
+export const DEFAULTS = Object.freeze({scale: 30, palette: 'topo15', language: 'en', relief: true, countries: true,
   provinces: false, rivers: false, riverDetail: 1, landforms: true, landformDetail: 1, northLock: false, grid: false, cities: true, opacity: 85, colorOpacity: 100, mode: '3d'});
 export function cleanSettings(raw = {}, touch = false) {
   if (!raw || typeof raw !== 'object') raw = {};
