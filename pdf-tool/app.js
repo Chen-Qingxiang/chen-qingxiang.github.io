@@ -3,11 +3,17 @@
 
   const { PDFDocument } = window.PDFLib;
 
-  const A4 = { width: 595.28, height: 841.89 };
   const state = {
     extract: { file: null, pageCount: 0, previewUrl: null },
     merge: [],
-    layout: { file: null, pageCount: 0, previewUrl: null },
+    layout: {
+      fileA: null,
+      fileB: null,
+      pageCountA: 0,
+      pageCountB: 0,
+      previewUrlA: null,
+      previewUrlB: null,
+    },
   };
 
   const $ = (id) => document.getElementById(id);
@@ -229,6 +235,7 @@
     if (!files.length) return;
 
     setStatus('merge-status', `正在读取 ${files.length} 个文件…`);
+    let lastError = '';
     for (const file of files) {
       try {
         const pageCount = await getPageCount(file);
@@ -238,11 +245,13 @@
           pageCount,
         });
       } catch (error) {
-        setStatus('merge-status', `${file.name}：${friendlyError(error)}`, 'error');
+        lastError = `${file.name}：${friendlyError(error)}`;
       }
     }
     renderMergeList();
-    if (state.merge.length >= 2) {
+    if (lastError) {
+      setStatus('merge-status', lastError, 'error');
+    } else if (state.merge.length >= 2) {
       const totalPages = state.merge.reduce((sum, item) => sum + item.pageCount, 0);
       setStatus('merge-status', `已就绪：${state.merge.length} 个文件，共 ${totalPages} 页。`, 'ok');
     }
@@ -304,147 +313,148 @@
     }
   });
 
-  // Crop and layout
-  $('layout-file').addEventListener('change', async (event) => {
-    const file = event.target.files?.[0];
-    state.layout.file = null;
-    state.layout.pageCount = 0;
-    $('layout-run').disabled = true;
-    setStatus('layout-status');
+  // Two-file ID scan combine
+  function updateLayoutReadyStatus() {
+    const ready = Boolean(state.layout.fileA && state.layout.fileB);
+    $('layout-run').disabled = !ready;
+
+    if (ready) {
+      const extraA = state.layout.pageCountA > 1 ? `；正面 PDF 有 ${state.layout.pageCountA} 页，仅使用第 1 页` : '';
+      const extraB = state.layout.pageCountB > 1 ? `；反面 PDF 有 ${state.layout.pageCountB} 页，仅使用第 1 页` : '';
+      setStatus('layout-status', `两份扫描已就绪${extraA}${extraB}。`, 'ok');
+    } else if (state.layout.fileA || state.layout.fileB) {
+      setStatus('layout-status', '再选择另一份扫描 PDF 即可合成。');
+    } else {
+      setStatus('layout-status');
+    }
+  }
+
+  async function handleLayoutFile(side, file) {
+    const isA = side === 'A';
+    const fileKey = isA ? 'fileA' : 'fileB';
+    const countKey = isA ? 'pageCountA' : 'pageCountB';
+    const urlKey = isA ? 'previewUrlA' : 'previewUrlB';
+    const metaId = isA ? 'layout-meta-a' : 'layout-meta-b';
+    const previewId = isA ? 'layout-preview-a' : 'layout-preview-b';
+
+    state.layout[fileKey] = null;
+    state.layout[countKey] = 0;
+    $(metaId).hidden = true;
+    $(previewId).hidden = true;
+    updateLayoutReadyStatus();
 
     if (!file) return;
 
     try {
-      setStatus('layout-status', '正在读取 PDF…');
+      setStatus('layout-status', `正在读取${isA ? '正面' : '反面'} PDF…`);
       const pageCount = await getPageCount(file);
-      state.layout.file = file;
-      state.layout.pageCount = pageCount;
-      state.layout.previewUrl = createPreviewUrl(file, state.layout.previewUrl);
+      state.layout[fileKey] = file;
+      state.layout[countKey] = pageCount;
+      state.layout[urlKey] = createPreviewUrl(file, state.layout[urlKey]);
 
-      $('layout-meta').hidden = false;
-      $('layout-meta').textContent = `${file.name} · ${pageCount} 页 · ${formatBytes(file.size)}`;
-      $('layout-preview').hidden = false;
-      $('layout-preview').href = state.layout.previewUrl;
-      $('layout-page-a').max = pageCount;
-      $('layout-page-b').max = pageCount;
-      $('layout-page-a').value = '1';
-      $('layout-page-b').value = String(Math.min(2, pageCount));
-      $('layout-run').disabled = false;
-      setStatus('layout-status', '已就绪。', 'ok');
+      $(metaId).hidden = false;
+      $(metaId).textContent = `${file.name} · ${pageCount} 页 · ${formatBytes(file.size)}`;
+      $(previewId).hidden = false;
+      $(previewId).href = state.layout[urlKey];
+      updateLayoutReadyStatus();
     } catch (error) {
-      $('layout-meta').hidden = true;
-      $('layout-preview').hidden = true;
       setStatus('layout-status', friendlyError(error), 'error');
     }
+  }
+
+  $('layout-file-a').addEventListener('change', (event) => {
+    handleLayoutFile('A', event.target.files?.[0]);
   });
 
-  function validateSourcePage(value, maxPage, label) {
-    const page = Number(value);
-    if (!Number.isInteger(page) || page < 1 || page > maxPage) {
-      throw new Error(`${label}页码必须在 1–${maxPage} 之间。`);
-    }
-    return page - 1;
-  }
+  $('layout-file-b').addEventListener('change', (event) => {
+    handleLayoutFile('B', event.target.files?.[0]);
+  });
 
-  function getCropBox(page, crop) {
-    const { width, height } = page.getSize();
-    switch (crop) {
-      case 'top':
-        return { left: 0, right: width, bottom: height / 2, top: height };
-      case 'bottom':
-        return { left: 0, right: width, bottom: 0, top: height / 2 };
-      case 'left':
-        return { left: 0, right: width / 2, bottom: 0, top: height };
-      case 'right':
-        return { left: width / 2, right: width, bottom: 0, top: height };
-      default:
-        return { left: 0, right: width, bottom: 0, top: height };
-    }
-  }
-
-  function fitIntoSlot(contentWidth, contentHeight, slot) {
-    const scale = Math.min(slot.width / contentWidth, slot.height / contentHeight);
-    const width = contentWidth * scale;
-    const height = contentHeight * scale;
+  function fitBox(sourceWidth, sourceHeight, target) {
+    const scale = Math.min(target.width / sourceWidth, target.height / sourceHeight);
+    const width = sourceWidth * scale;
+    const height = sourceHeight * scale;
     return {
-      x: slot.x + (slot.width - width) / 2,
-      y: slot.y + (slot.height - height) / 2,
+      x: target.x + (target.width - width) / 2,
+      y: target.y + (target.height - height) / 2,
       width,
       height,
     };
   }
 
-  function createSlots(pageWidth, pageHeight, margin, mode) {
-    const gap = Math.max(12, margin / 2);
-    const innerWidth = pageWidth - margin * 2;
-    const innerHeight = pageHeight - margin * 2;
-
-    if (mode === 'horizontal') {
-      const width = (innerWidth - gap) / 2;
-      return [
-        { x: margin, y: margin, width, height: innerHeight },
-        { x: margin + width + gap, y: margin, width, height: innerHeight },
-      ];
-    }
-
-    const height = (innerHeight - gap) / 2;
-    return [
-      { x: margin, y: margin + height + gap, width: innerWidth, height },
-      { x: margin, y: margin, width: innerWidth, height },
-    ];
-  }
-
   $('layout-run').addEventListener('click', async () => {
     const button = $('layout-run');
-    if (!state.layout.file || button.dataset.busy === 'true') return;
+    if (!state.layout.fileA || !state.layout.fileB || button.dataset.busy === 'true') return;
 
     try {
-      const pageAIndex = validateSourcePage($('layout-page-a').value, state.layout.pageCount, '区域 A ');
-      const pageBIndex = validateSourcePage($('layout-page-b').value, state.layout.pageCount, '区域 B ');
-      const cropA = $('layout-crop-a').value;
-      const cropB = $('layout-crop-b').value;
-      const mode = $('layout-mode').value;
-      const orientation = $('layout-orientation').value;
-      const margin = Number($('layout-margin').value);
+      setButtonBusy(button, true, '正在合成…', '合成一页 PDF');
+      setStatus('layout-status', '正在取正面上半页和反面下半页…');
 
-      setButtonBusy(button, true, '正在拼版…', '生成单页 PDF');
-      setStatus('layout-status', '正在裁切并生成新的 A4 页面…');
+      const [bytesA, bytesB] = await Promise.all([
+        state.layout.fileA.arrayBuffer(),
+        state.layout.fileB.arrayBuffer(),
+      ]);
+      const [docA, docB] = await Promise.all([
+        PDFDocument.load(bytesA, { updateMetadata: false }),
+        PDFDocument.load(bytesB, { updateMetadata: false }),
+      ]);
 
-      const sourceBytes = await state.layout.file.arrayBuffer();
-      const sourceDoc = await PDFDocument.load(sourceBytes, { updateMetadata: false });
-      const sourcePages = sourceDoc.getPages();
-      const sourceA = sourcePages[pageAIndex];
-      const sourceB = sourcePages[pageBIndex];
-      const boxA = getCropBox(sourceA, cropA);
-      const boxB = getCropBox(sourceB, cropB);
+      const pageA = docA.getPages()[0];
+      const pageB = docB.getPages()[0];
+      const sizeA = pageA.getSize();
+      const sizeB = pageB.getSize();
+
+      const topBox = {
+        left: 0,
+        right: sizeA.width,
+        bottom: sizeA.height / 2,
+        top: sizeA.height,
+      };
+      const bottomBox = {
+        left: 0,
+        right: sizeB.width,
+        bottom: 0,
+        top: sizeB.height / 2,
+      };
 
       const outputDoc = await PDFDocument.create();
-      const pageWidth = orientation === 'landscape' ? A4.height : A4.width;
-      const pageHeight = orientation === 'landscape' ? A4.width : A4.height;
-      const outputPage = outputDoc.addPage([pageWidth, pageHeight]);
-      const slots = createSlots(pageWidth, pageHeight, margin, mode);
+      const outputPage = outputDoc.addPage([sizeA.width, sizeA.height]);
+      const embeddedTop = await outputDoc.embedPage(pageA, topBox);
+      const embeddedBottom = await outputDoc.embedPage(pageB, bottomBox);
 
-      const embeddedA = await outputDoc.embedPage(sourceA, boxA);
-      const embeddedB = await outputDoc.embedPage(sourceB, boxB);
-      const fittedA = fitIntoSlot(boxA.right - boxA.left, boxA.top - boxA.bottom, slots[0]);
-      const fittedB = fitIntoSlot(boxB.right - boxB.left, boxB.top - boxB.bottom, slots[1]);
+      const topTarget = {
+        x: 0,
+        y: sizeA.height / 2,
+        width: sizeA.width,
+        height: sizeA.height / 2,
+      };
+      const bottomTarget = {
+        x: 0,
+        y: 0,
+        width: sizeA.width,
+        height: sizeA.height / 2,
+      };
 
-      outputPage.drawPage(embeddedA, fittedA);
-      outputPage.drawPage(embeddedB, fittedB);
+      const topDraw = fitBox(sizeA.width, sizeA.height / 2, topTarget);
+      const bottomDraw = fitBox(sizeB.width, sizeB.height / 2, bottomTarget);
+      outputPage.drawPage(embeddedTop, topDraw);
+      outputPage.drawPage(embeddedBottom, bottomDraw);
 
       const outputBytes = await outputDoc.save({ useObjectStreams: true });
-      downloadPdf(outputBytes, `${baseName(state.layout.file.name)}_layout.pdf`);
-      setStatus('layout-status', '完成：两个裁切区域已拼成 1 页 A4 PDF。', 'ok');
+      const name = `${baseName(state.layout.fileA.name)}_combined.pdf`;
+      downloadPdf(outputBytes, name);
+      setStatus('layout-status', '完成：正面上半页 + 反面下半页已合成为 1 页 PDF。', 'ok');
     } catch (error) {
       setStatus('layout-status', friendlyError(error), 'error');
     } finally {
-      setButtonBusy(button, false, '正在拼版…', '生成单页 PDF');
-      button.disabled = !state.layout.file;
+      setButtonBusy(button, false, '正在合成…', '合成一页 PDF');
+      button.disabled = !(state.layout.fileA && state.layout.fileB);
     }
   });
 
   window.addEventListener('beforeunload', () => {
     if (state.extract.previewUrl) URL.revokeObjectURL(state.extract.previewUrl);
-    if (state.layout.previewUrl) URL.revokeObjectURL(state.layout.previewUrl);
+    if (state.layout.previewUrlA) URL.revokeObjectURL(state.layout.previewUrlA);
+    if (state.layout.previewUrlB) URL.revokeObjectURL(state.layout.previewUrlB);
   });
 })();
