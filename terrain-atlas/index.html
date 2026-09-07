@@ -35,8 +35,8 @@
       <section class="control-section">
         <h2 data-i18n="terrainColours">Terrain colours</h2>
         <div class="palette-grid" role="group" data-i18n-aria-label="paletteGroup" aria-label="Terrain colour schemes">
-          <button class="palette active" data-palette="atlas" aria-pressed="true"><span class="swatch atlas"></span><span data-i18n="palette.atlas">Atlas</span></button>
-          <button class="palette" data-palette="topo15" aria-pressed="false"><span class="swatch topo15"></span><span data-i18n="palette.topo15">Topo15</span></button>
+          <button class="palette" data-palette="atlas" aria-pressed="false"><span class="swatch atlas"></span><span data-i18n="palette.atlas">Atlas</span></button>
+          <button class="palette active" data-palette="topo15" aria-pressed="true"><span class="swatch topo15"></span><span data-i18n="palette.topo15">Global Relief</span></button>
           <button class="palette" data-palette="vivid" aria-pressed="false"><span class="swatch vivid"></span><span data-i18n="palette.vivid">Strong relief</span></button>
           <button class="palette" data-palette="school" aria-pressed="false"><span class="swatch school"></span><span data-i18n="palette.school">School atlas</span></button>
           <button class="palette" data-palette="ocean" aria-pressed="false"><span class="swatch ocean"></span><span data-i18n="palette.ocean">Seafloor</span></button>
@@ -83,7 +83,7 @@
   </nav>
   <section id="selection" class="selection" hidden data-i18n-aria-label="selectionAria" aria-label="Selected place"><button id="selection-close" class="icon-button" data-i18n-aria-label="closeSelection" aria-label="Close place details">×</button><p class="eyebrow" id="selection-type" data-i18n="place">Place</p><h2 id="selection-name"></h2><p id="selection-region"></p><dl><div><dt data-i18n="coordinatesLabel">Coordinates</dt><dd id="selection-coords"></dd></div><div><dt data-i18n="elevationLabel">Surface elevation</dt><dd id="selection-height" data-i18n="reading">Reading…</dd></div></dl><button id="selection-fly" class="outline-button" data-i18n="relocate">Recenter here</button></section>
   <button id="legend-toggle" class="legend-toggle" data-i18n-aria-label="legendButtonAria" aria-label="Show elevation legend" aria-controls="legend" aria-expanded="false"><span aria-hidden="true"></span><span data-i18n="legendButton">Legend</span></button>
-  <aside id="legend" class="legend" data-i18n-aria-label="legendAria" aria-label="Elevation legend"><div><strong id="legend-name">Atlas</strong><span data-i18n="trueElevation">m · true elevation</span></div><div class="legend-ramp" id="legend-ramp"></div><div class="legend-values"><span>−11,000</span><span>0</span><span>9,000</span></div></aside>
+  <aside id="legend" class="legend" data-i18n-aria-label="legendAria" aria-label="Elevation legend"><div><strong id="legend-name">Global Relief</strong><span data-i18n="trueElevation">m · true elevation</span></div><div class="legend-ramp" id="legend-ramp"></div><div class="legend-values"><span>−11,000</span><span>0</span><span>9,000</span></div></aside>
   <div class="map-status"><span id="load-dot" class="status-dot busy"></span><span id="load-status" role="status" data-i18n="preparingMap">Preparing map…</span><span class="status-divider"></span><span id="coordinates" data-i18n="coordinateHint">Drag to rotate · wheel / pinch to zoom · Ctrl + drag to tilt</span></div>
   <div id="credits" class="credits"></div>
   <div id="toast" class="toast" role="status" hidden></div>
