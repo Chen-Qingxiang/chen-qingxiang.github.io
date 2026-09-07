@@ -24,26 +24,21 @@ Ranges can also be entered in reverse order if a reversed sequence is useful.
 
 Add multiple PDFs, reorder them with the up/down controls, and export one merged document.
 
-### 3. Crop and place two regions on one A4 page
+### 3. Combine two ID scans into one page
 
-Designed for scans of IDs, passports, receipts, and similar material.
+This is deliberately optimized for a recurring scanner workflow rather than a general-purpose crop editor.
 
-For each of two source regions you can choose:
+Typical workflow:
 
-- source page number;
-- top half;
-- bottom half;
-- left half;
-- right half;
-- full page.
+1. Scan the front of an ID near the **top** of an A4 page and save it as one PDF.
+2. Turn the ID over, place it near the **bottom** of an A4 page, and save that scan as a second PDF.
+3. Select the two PDFs in PDF Local.
+4. The tool takes the **top half of page 1 from the front PDF** and the **bottom half of page 1 from the back PDF**.
+5. Those halves are combined into one output page.
 
-The two cropped regions can then be placed vertically or horizontally on a portrait or landscape A4 page.
+The output page keeps the page size of the first scan. When both files come from the same scanner with the same page settings, the scanned ID size and position are preserved closely.
 
-The default preset matches a common ID-scan workflow:
-
-- page 1 → top half;
-- page 2 → bottom half;
-- place the two results vertically on one portrait A4 page.
+If either input PDF contains multiple pages, only its first page is used and the interface reports this explicitly.
 
 ## Privacy model
 
@@ -91,7 +86,7 @@ http://localhost:8000/pdf-tool/
 
 - Password-protected/encrypted PDFs are not supported.
 - Very large PDFs can use substantial browser memory because all processing is local.
-- Crop presets currently use exact halves of the source page rather than free-form crop rectangles.
+- The ID-scan workflow intentionally uses fixed top/bottom half-page crops rather than free-form crop rectangles.
 - Complex PDF forms, unusual annotations, or uncommon PDF structures may not behave exactly like Adobe Acrobat.
 
 ## Design principle
