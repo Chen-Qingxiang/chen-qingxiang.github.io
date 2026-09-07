@@ -8,6 +8,7 @@
   <meta id="meta-description" name="description" content="A browser-only local PDF toolkit for extracting pages, merging PDFs, and combining two-sided ID scans." />
   <title>PDF Local · Browser-only PDF toolkit</title>
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./language.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script defer src="./app.js"></script>
 </head>
@@ -19,12 +20,20 @@
         <h1>PDF Local</h1>
         <p class="lede" data-i18n="hero.lede">Extract pages, merge PDFs, and combine two-sided ID scans. Your PDF files are processed only in this browser and are never uploaded.</p>
       </div>
-      <div class="privacy-badge" data-i18n-aria="privacy.aria" aria-label="Privacy information">
-        <span class="privacy-dot"></span>
-        <div>
-          <strong>Local only</strong>
-          <small data-i18n="privacy.short">Files never leave your device</small>
-          <button id="language-toggle" class="secondary" type="button" data-i18n="language.switch" aria-label="Switch to Simplified Chinese">简体中文</button>
+
+      <div class="hero-actions">
+        <button id="language-toggle" class="language-switch" type="button" aria-label="Switch to Simplified Chinese">
+          <span class="language-option language-en">EN</span>
+          <span class="language-divider" aria-hidden="true"></span>
+          <span class="language-option language-zh" lang="zh-CN">中</span>
+        </button>
+
+        <div class="privacy-badge" data-i18n-aria="privacy.aria" aria-label="Privacy information">
+          <span class="privacy-dot"></span>
+          <div>
+            <strong>Local only</strong>
+            <small data-i18n="privacy.short">Files never leave your device</small>
+          </div>
         </div>
       </div>
     </header>
