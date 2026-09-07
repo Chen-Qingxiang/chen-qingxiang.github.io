@@ -1,0 +1,16 @@
+/* Mobile legend chip: keep the colour ramp and label as separate flex items. */
+.mobile-ui .legend-toggle > .legend-chip-ramp {
+  width: 21px;
+  height: 8px;
+  flex: 0 0 21px;
+  border-radius: 4px;
+  background: linear-gradient(90deg,#0a0079,#1277f4 28%,#64dfff 45%,#30b24c 51%,#fcd7ad 60%,#cfa424 72%,#9b6311 86%,#d7d7d7);
+}
+.mobile-ui .legend-toggle > .legend-chip-label {
+  width: auto;
+  height: auto;
+  flex: 0 0 auto;
+  border-radius: 0;
+  background: none;
+  white-space: nowrap;
+}
