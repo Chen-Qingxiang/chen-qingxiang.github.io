@@ -11,9 +11,10 @@ import {isTouchDevice} from '../src/ui.js';
 import {touchResolutionScale} from '../src/display.js';
 import {localizedName,t} from '../src/i18n.js';
 
-test('V1 links migrate; English is default and bilingual preferences round-trip',()=>{
+test('V1 links migrate; English and Global Relief are defaults and bilingual preferences round-trip',()=>{
  assert.equal(cleanSettings({scale:999}).scale,200);assert.equal(cleanSettings({}).scale,30);
  assert.equal(cleanSettings({}).language,'en');assert.equal(cleanSettings({language:'zh'}).language,'zh');
+ assert.equal(cleanSettings({}).palette,'topo15');
  assert.equal(cleanSettings(null).scale,30);assert.equal(cleanSettings({palette:'vivid'}).palette,'vivid');
  assert.equal(cleanSettings({palette:'topo15'}).palette,'topo15');
  assert.equal(cleanSettings({},true).northLock,true);assert.equal(cleanSettings({northLock:false},true).northLock,false);
@@ -25,6 +26,7 @@ test('V1 links migrate; English is default and bilingual preferences round-trip'
  const place={name:'Madrid',zh:'马德里',name_en:'Madrid',name_zh:'马德里'};
  assert.equal(localizedName(place,'en'),'Madrid');assert.equal(localizedName(place,'zh'),'马德里');
  assert.equal(t('en','terrainColours'),'Terrain colours');assert.equal(t('zh','terrainColours'),'地形配色');
+ assert.equal(t('en','palette.topo15'),'Global Relief');assert.equal(t('zh','palette.topo15'),'全球地形');
 });
 test('Large desktop SSE changes conservatively; all touch viewport detail remains V1',()=>{
  assert.equal(terrainScreenSpaceError(960,720),2.5);
