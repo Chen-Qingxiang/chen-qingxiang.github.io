@@ -6,6 +6,7 @@
 <h2>这幅地图表示什么</h2>
 <p>这是现代地形、海底深度和现代地理参照的探索工具。垂直高度可以夸张，城市和边界的水平位置保持不变。色标和探针使用未夸张的米值。它不提供历史疆域时间轴，也不把现代地貌解释为某一历史时期的地貌。</p>
 <p>应用的代码和界面独立编写，交互灵感来自 <a href="https://portal.gplates.org/cesium/?view=topo15">GPlates Topography</a>，不是 GPlates 官方产品，也不使用其服务器、品牌素材或应用源码。</p>
+<p>默认的 <strong>全球地形（Global Relief）</strong> 配色参考 NOAA/NCEI 的 ETOPO1 global relief 色阶，只作为高程的视觉映射使用。Terrain Atlas 的高程仍来自 Terrain Tiles / Mapzen / AWS，因此这个配色名称不表示本项目只使用 ETOPO1，也不表示使用 SRTM15_PLUS 地形数据；本项目自行编码了对应的颜色节点。</p>
 <h2 id="terrain">地形与海底</h2>
 <p><a href="https://registry.opendata.aws/terrain-tiles/">Terrain Tiles · AWS Open Data</a>，由 Mapzen / Tilezen 汇集的开放高程瓦片，包含 ETOPO1、GMTED2010、SRTM 与多个地区的高程资料。Terrain Tiles was accessed on 2026-09-06 from the Registry of Open Data on AWS.</p>
 <p>本应用按视角读取 Terrarium PNG，在浏览器中解码、重采样、合成坡度明暗与配色，并在 Cesium 中生成 65×65 网格。最高读取层级为 z12；赤道附近该级别的几何采样间隔约 153 m，这不是全球源数据精度。采用一致的像素起点采样约定，共享瓦片边缘，可能相对源像元中心有半像元偏移。</p>
