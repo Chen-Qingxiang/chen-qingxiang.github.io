@@ -9,17 +9,22 @@ import {ElevationStore as V1Store} from './fixtures/v1-terrain.js';
 import {applyNorthLock} from '../src/navigation.js';
 import {isTouchDevice} from '../src/ui.js';
 import {touchResolutionScale} from '../src/display.js';
+import {localizedName,t} from '../src/i18n.js';
 
-test('V1 links migrate; 200×, seven palettes, detail levels and explicit north preferences round-trip',()=>{
+test('V1 links migrate; English is default and bilingual preferences round-trip',()=>{
  assert.equal(cleanSettings({scale:999}).scale,200);assert.equal(cleanSettings({}).scale,30);
+ assert.equal(cleanSettings({}).language,'en');assert.equal(cleanSettings({language:'zh'}).language,'zh');
  assert.equal(cleanSettings(null).scale,30);assert.equal(cleanSettings({palette:'vivid'}).palette,'vivid');
  assert.equal(cleanSettings({palette:'topo15'}).palette,'topo15');
  assert.equal(cleanSettings({},true).northLock,true);assert.equal(cleanSettings({northLock:false},true).northLock,false);
  assert.equal(cleanSettings({northLock:true},false).northLock,true);
- const s=cleanSettings({scale:200,riverDetail:2,landformDetail:0,northLock:true,palette:'ocean',rivers:true});
+ const s=cleanSettings({scale:200,riverDetail:2,landformDetail:0,northLock:true,palette:'ocean',language:'zh',rivers:true});
  assert.deepEqual(cleanSettings(JSON.parse(JSON.stringify(s))),s);
  assert.equal(cleanSettings({riverDetail:99,landformDetail:'2'}).riverDetail,1);
  assert.equal(Object.keys(PALETTES).length,7);
+ const place={name:'Madrid',zh:'马德里',name_en:'Madrid',name_zh:'马德里'};
+ assert.equal(localizedName(place,'en'),'Madrid');assert.equal(localizedName(place,'zh'),'马德里');
+ assert.equal(t('en','terrainColours'),'Terrain colours');assert.equal(t('zh','terrainColours'),'地形配色');
 });
 test('Large desktop SSE changes conservatively; all touch viewport detail remains V1',()=>{
  assert.equal(terrainScreenSpaceError(960,720),2.5);

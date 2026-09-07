@@ -6,6 +6,7 @@ export function installMapUI(onResize=()=>{}, win=window) {
   const narrow=win.matchMedia('(max-width:760px)');
   const coarse=win.matchMedia('(any-pointer: coarse)');
   const mobile=()=>narrow.matches || isTouchDevice(win);
+  const chinese=()=>doc.documentElement.lang.toLowerCase().startsWith('zh');
   const setLegend=open=>{
     $('legend').classList.toggle('legend-open',open);
     $('legend-toggle').setAttribute('aria-expanded',String(open));
@@ -15,8 +16,9 @@ export function installMapUI(onResize=()=>{}, win=window) {
     doc.body.classList.toggle('panel-is-collapsed',!open);
     $('panel-toggle').textContent=open?'−':'+';
     $('panel-toggle').setAttribute('aria-expanded',String(open));
-    $('panel-toggle').setAttribute('aria-label',open?'收起控制面板':'展开控制面板');
-    $('panel-toggle').title=open?'收起控制面板':'展开控制面板';
+    const label=chinese()?(open?'收起控制面板':'展开控制面板'):(open?'Collapse controls':'Expand controls');
+    $('panel-toggle').setAttribute('aria-label',label);
+    $('panel-toggle').title=label;
     onResize();
   }
   function updateDevice() {

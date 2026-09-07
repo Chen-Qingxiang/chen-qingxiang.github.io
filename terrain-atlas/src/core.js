@@ -64,7 +64,7 @@ export function heightGrid(tiles, size = 65) {
   return result;
 }
 
-export const DEFAULTS = Object.freeze({scale: 30, palette: 'atlas', relief: true, countries: true,
+export const DEFAULTS = Object.freeze({scale: 30, palette: 'atlas', language: 'en', relief: true, countries: true,
   provinces: false, rivers: false, riverDetail: 1, landforms: true, landformDetail: 1, northLock: false, grid: false, cities: true, opacity: 85, colorOpacity: 100, mode: '3d'});
 export function cleanSettings(raw = {}, touch = false) {
   if (!raw || typeof raw !== 'object') raw = {};
@@ -75,6 +75,7 @@ export function cleanSettings(raw = {}, touch = false) {
   }
   for (const key of ['riverDetail','landformDetail']) if ([0,1,2].includes(raw[key])) s[key] = raw[key];
   if (Object.hasOwn(PALETTES, raw.palette)) s.palette = raw.palette;
+  if (['en','zh'].includes(raw.language)) s.language = raw.language;
   if (['3d', '2d', '2.5d'].includes(raw.mode)) s.mode = raw.mode;
   return s;
 }
