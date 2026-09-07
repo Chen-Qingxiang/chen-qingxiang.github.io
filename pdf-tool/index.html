@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f7f7f5" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; object-src 'self' blob:; frame-src 'self' blob:; base-uri 'self'; form-action 'none'" />
-  <meta name="description" content="完全在浏览器本地处理的 PDF 小工具：抽取页面、合并 PDF、证件扫描拼页。" />
-  <title>PDF Local · 本地 PDF 工具</title>
+  <meta id="meta-description" name="description" content="A browser-only local PDF toolkit for extracting pages, merging PDFs, and combining two-sided ID scans." />
+  <title>PDF Local · Browser-only PDF toolkit</title>
   <link rel="stylesheet" href="./styles.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script defer src="./app.js"></script>
@@ -17,51 +17,52 @@
       <div>
         <p class="eyebrow">LOCAL PDF TOOLKIT</p>
         <h1>PDF Local</h1>
-        <p class="lede">抽页、合并、证件扫描拼页。PDF 文件只在当前浏览器中读取和处理，不上传到服务器。</p>
+        <p class="lede" data-i18n="hero.lede">Extract pages, merge PDFs, and combine two-sided ID scans. Your PDF files are processed only in this browser and are never uploaded.</p>
       </div>
-      <div class="privacy-badge" aria-label="隐私说明">
+      <div class="privacy-badge" data-i18n-aria="privacy.aria" aria-label="Privacy information">
         <span class="privacy-dot"></span>
         <div>
           <strong>Local only</strong>
-          <small>文件不离开你的设备</small>
+          <small data-i18n="privacy.short">Files never leave your device</small>
+          <button id="language-toggle" class="secondary" type="button" data-i18n="language.switch" aria-label="Switch to Simplified Chinese">简体中文</button>
         </div>
       </div>
     </header>
 
-    <nav class="tabs" aria-label="工具切换">
-      <button class="tab is-active" data-tab="extract" type="button">抽取页面</button>
-      <button class="tab" data-tab="merge" type="button">合并 PDF</button>
-      <button class="tab" data-tab="layout" type="button">证件拼页</button>
+    <nav class="tabs" data-i18n-aria="tabs.aria" aria-label="PDF tools">
+      <button class="tab is-active" data-tab="extract" type="button" data-i18n="tabs.extract">Extract pages</button>
+      <button class="tab" data-tab="merge" type="button" data-i18n="tabs.merge">Merge PDFs</button>
+      <button class="tab" data-tab="layout" type="button" data-i18n="tabs.layout">Combine ID scans</button>
     </nav>
 
     <section class="panel is-active" id="panel-extract">
       <div class="panel-heading">
         <div>
           <span class="step">01</span>
-          <h2>抽取指定页面</h2>
+          <h2 data-i18n="extract.title">Extract selected pages</h2>
         </div>
-        <p>从长 PDF 中只取你需要的几页，保持原始 PDF 内容，不转图片。</p>
+        <p data-i18n="extract.description">Take only the pages you need from a long PDF while preserving the original PDF content.</p>
       </div>
 
       <label class="dropzone" for="extract-file">
         <input id="extract-file" type="file" accept="application/pdf,.pdf" />
-        <span class="drop-title">选择一个 PDF</span>
-        <span class="drop-note">例如：100 页文档中抽出第 3、17–18、52 页</span>
+        <span class="drop-title" data-i18n="extract.choose">Choose a PDF</span>
+        <span class="drop-note" data-i18n="extract.example">For example: extract pages 3, 17–18 and 52 from a 100-page document</span>
       </label>
 
       <div id="extract-meta" class="file-meta" hidden></div>
-      <a id="extract-preview" class="text-link" href="#" target="_blank" rel="noopener" hidden>在新标签页本地预览源 PDF ↗</a>
+      <a id="extract-preview" class="text-link" href="#" target="_blank" rel="noopener" hidden data-i18n="extract.preview">Preview source PDF locally in a new tab ↗</a>
 
       <div class="form-grid single-top">
         <label class="field">
-          <span>要抽取的页面</span>
+          <span data-i18n="extract.pagesLabel">Pages to extract</span>
           <input id="extract-pages" type="text" inputmode="text" placeholder="3, 17-18, 52" autocomplete="off" />
-          <small>支持逗号和范围，例如 <code>1, 4-7, 12</code>。顺序按输入保留。</small>
+          <small data-i18n-html="extract.pagesHelp">Use commas and ranges, for example <code>1, 4-7, 12</code>. Output order follows your input.</small>
         </label>
       </div>
 
       <div class="actions">
-        <button id="extract-run" class="primary" type="button" disabled>导出选中页面</button>
+        <button id="extract-run" class="primary" type="button" disabled data-i18n="extract.run">Export selected pages</button>
         <div id="extract-status" class="status" role="status" aria-live="polite"></div>
       </div>
     </section>
@@ -70,22 +71,22 @@
       <div class="panel-heading">
         <div>
           <span class="step">02</span>
-          <h2>合并多个 PDF</h2>
+          <h2 data-i18n="merge.title">Merge multiple PDFs</h2>
         </div>
-        <p>添加多个文件，调整顺序后合并为一个 PDF。</p>
+        <p data-i18n="merge.description">Add several files, adjust their order, and export them as one PDF.</p>
       </div>
 
       <label class="dropzone" for="merge-files">
         <input id="merge-files" type="file" accept="application/pdf,.pdf" multiple />
-        <span class="drop-title">选择多个 PDF</span>
-        <span class="drop-note">可以分几次继续添加；文件只保存在当前页面内存中</span>
+        <span class="drop-title" data-i18n="merge.choose">Choose multiple PDFs</span>
+        <span class="drop-note" data-i18n="merge.note">You can add more files in several batches; files remain only in this page's memory</span>
       </label>
 
       <div id="merge-list" class="file-list" aria-live="polite"></div>
 
       <div class="actions">
-        <button id="merge-run" class="primary" type="button" disabled>合并并导出</button>
-        <button id="merge-clear" class="secondary" type="button" disabled>清空</button>
+        <button id="merge-run" class="primary" type="button" disabled data-i18n="merge.run">Merge and export</button>
+        <button id="merge-clear" class="secondary" type="button" disabled data-i18n="merge.clear">Clear</button>
         <div id="merge-status" class="status" role="status" aria-live="polite"></div>
       </div>
     </section>
@@ -94,49 +95,50 @@
       <div class="panel-heading">
         <div>
           <span class="step">03</span>
-          <h2>证件扫描拼成一页</h2>
+          <h2 data-i18n="layout.title">Combine two-sided ID scans</h2>
         </div>
-        <p>专门对应双面证件的两次扫描：第一份取上半张 A4，第二份取下半张 A4，再原位合成一页。</p>
+        <p data-i18n="layout.description">For the common two-scan workflow: take the upper half of the front scan and the lower half of the back scan, then combine them into one page.</p>
       </div>
 
       <div class="crop-grid">
         <fieldset class="crop-card">
-          <legend>正面扫描</legend>
+          <legend data-i18n="layout.frontLegend">Front scan</legend>
           <label class="dropzone" for="layout-file-a">
             <input id="layout-file-a" type="file" accept="application/pdf,.pdf" />
-            <span class="drop-title">选择正面 PDF</span>
-            <span class="drop-note">证件正面位于扫描页上半部分；只取第 1 页的上半区</span>
+            <span class="drop-title" data-i18n="layout.frontChoose">Choose front-side PDF</span>
+            <span class="drop-note" data-i18n="layout.frontNote">The ID front is in the upper half of the scan; only the upper half of page 1 is used</span>
           </label>
           <div id="layout-meta-a" class="file-meta" hidden></div>
-          <a id="layout-preview-a" class="text-link" href="#" target="_blank" rel="noopener" hidden>本地预览正面 PDF ↗</a>
+          <a id="layout-preview-a" class="text-link" href="#" target="_blank" rel="noopener" hidden data-i18n="layout.frontPreview">Preview front scan locally ↗</a>
         </fieldset>
 
         <fieldset class="crop-card">
-          <legend>反面扫描</legend>
+          <legend data-i18n="layout.backLegend">Back scan</legend>
           <label class="dropzone" for="layout-file-b">
             <input id="layout-file-b" type="file" accept="application/pdf,.pdf" />
-            <span class="drop-title">选择反面 PDF</span>
-            <span class="drop-note">证件反面位于扫描页下半部分；只取第 1 页的下半区</span>
+            <span class="drop-title" data-i18n="layout.backChoose">Choose back-side PDF</span>
+            <span class="drop-note" data-i18n="layout.backNote">The ID back is in the lower half of the scan; only the lower half of page 1 is used</span>
           </label>
           <div id="layout-meta-b" class="file-meta" hidden></div>
-          <a id="layout-preview-b" class="text-link" href="#" target="_blank" rel="noopener" hidden>本地预览反面 PDF ↗</a>
+          <a id="layout-preview-b" class="text-link" href="#" target="_blank" rel="noopener" hidden data-i18n="layout.backPreview">Preview back scan locally ↗</a>
         </fieldset>
       </div>
 
       <div class="layout-hint">
-        <strong>合成规则：</strong>输出页保持第一份扫描 PDF 的页面尺寸。上半页来自正面 PDF，下半页来自反面 PDF；如果两份扫描都来自同一台扫描仪，证件的大小和位置会基本原样保留。
+        <strong data-i18n="layout.ruleLabel">Combine rule:</strong>
+        <span data-i18n="layout.rule"> The output keeps the page size of the front scan. Its upper half comes from the front PDF and its lower half from the back PDF. With scans from the same scanner, the ID size and position are largely preserved.</span>
       </div>
 
       <div class="actions">
-        <button id="layout-run" class="primary" type="button" disabled>合成一页 PDF</button>
+        <button id="layout-run" class="primary" type="button" disabled data-i18n="layout.run">Combine into one PDF page</button>
         <div id="layout-status" class="status" role="status" aria-live="polite"></div>
       </div>
     </section>
 
     <section class="privacy-note">
-      <h2>隐私与实现</h2>
-      <p>本工具没有文件上传接口、后台服务、账户系统或分析统计。PDF 内容由浏览器读取，使用固定版本的 <code>pdf-lib</code> 在本机内存中处理，生成结果后由浏览器直接下载。</p>
-      <p class="fineprint">注意：页面首次打开会从 jsDelivr 加载 <code>pdf-lib 1.17.1</code> 程序文件，因此需要网络连接；你的 PDF 文件不会发送给 jsDelivr 或本工具的服务器。</p>
+      <h2 data-i18n="privacy.title">Privacy and implementation</h2>
+      <p data-i18n-html="privacy.body">This tool has no file-upload endpoint, backend service, account system, or analytics. PDFs are read by your browser and processed in memory with a pinned version of <code>pdf-lib</code>. Generated files are downloaded directly by the browser.</p>
+      <p class="fineprint" data-i18n-html="privacy.dependency">Note: the page loads <code>pdf-lib 1.17.1</code> from jsDelivr when opened, so an internet connection is needed for the library. Your selected PDF files are not sent to jsDelivr or this site's server.</p>
     </section>
   </main>
 
