@@ -1,8 +1,9 @@
 .hero-actions {
   flex: 0 0 auto;
   display: flex;
+  align-self: flex-start;
   align-items: center;
-  gap: 12px;
+  padding-top: 10px;
 }
 
 .language-switch {
@@ -62,17 +63,21 @@ html[lang="zh-CN"] .language-en {
   color: #8a8f8c;
 }
 
-.hero-actions .privacy-badge {
-  min-width: 190px;
+.lede-zh {
+  display: none;
+}
+
+html[lang="zh-CN"] .lede-en {
+  display: none;
+}
+
+html[lang="zh-CN"] .lede-zh {
+  display: block;
 }
 
 @media (max-width: 760px) {
   .hero-actions {
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-
-  .hero-actions .privacy-badge {
-    margin-top: 0;
+    margin-top: 16px;
+    padding-top: 0;
   }
 }
