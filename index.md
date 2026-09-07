@@ -35,6 +35,8 @@ I build simple tools that make learning and research smoother. This site hosts m
 
 - [Terrain Atlas · 山海图]({{ "/terrain-atlas/" | relative_url }}): Explore exaggerated 3D terrain and bathymetry with city search, modern boundaries, rivers, and your own GeoJSON layers.
 
+- [PDF Local]({{ "/pdf-tool/" | relative_url }}): Extract pages, merge PDFs, and crop/lay out scanned document regions entirely in the browser without uploading the PDF files.
+
 - [showtime, a zoomable timeline tool](https://chen-qingxiang.github.io/showtime/): A CSV-driven timeline viewer for comparing events across layers, periods, and historical contexts.
 
 ## Latest Posts
