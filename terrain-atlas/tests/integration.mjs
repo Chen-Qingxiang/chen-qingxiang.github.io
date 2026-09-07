@@ -35,26 +35,26 @@ document.getElementById('run').onclick=async()=>{
   localStorage.setItem('terrain-atlas-v1',JSON.stringify({settings:{scale:30,palette:'atlas',rivers:true,landforms:true}}));
   await start({...C,Viewer:FixtureViewer,SceneTransforms:transforms});await tick();checks.push('Application boot and all pinned datasets loaded');
   const $=id=>document.getElementById(id),click=selector=>document.querySelector(selector).click();
-  assert($('search-hint').textContent.includes('7,342'),'City index did not load');assert(viewer.entities.values.length>0,'No labels');
+  assert(document.documentElement.lang==='en','English is not the default');assert($('search-hint').textContent.includes('7,342'),'City index did not load');assert(viewer.entities.values.length>0,'No labels');
+  $('language-toggle').click();assert(document.documentElement.lang==='zh-CN','Chinese switch');assert(JSON.parse(localStorage.getItem('terrain-atlas-v1')).settings.language==='zh','Chinese preference');assert($('search-hint').textContent.includes('座城市'),'Chinese dynamic text');
+  $('language-toggle').click();assert(document.documentElement.lang==='en','English switch back');checks.push('English default and live English / Chinese switch');
   click('[data-scale="200"]');assert(viewer.scene.verticalExaggeration===200&&$('scale-percent').textContent==='20000%','200× UI');checks.push('200× slider/output/Cesium setting');
   for(const key of ['riverDetail','landformDetail'])for(let i=0;i<3;i++){click(`[data-detail="${key}"][data-level="${i}"]`);assert(JSON.parse(localStorage.getItem('terrain-atlas-v1')).settings[key]===i,key);}
   checks.push('All six detail buttons update persisted settings');
-  for(const palette of ['atlas','vivid','school','ocean','earth','gray']){click(`[data-palette="${palette}"]`);assert(viewer.imageryLayers.length<=2,'Leaked imagery layers');assert($('legend-name').textContent===document.querySelector(`[data-palette="${palette}"]`).textContent,'Legend name mismatch');}
-  $('relief').click();$('relief').click();assert(viewer.imageryLayers.length<=2,'Hillshade layer retention');checks.push('Six palettes, legend names and hillshade replacement');
+  for(const palette of ['atlas','topo15','vivid','school','ocean','earth','gray']){click(`[data-palette="${palette}"]`);assert(viewer.imageryLayers.length<=2,'Leaked imagery layers');assert($('legend-name').textContent===document.querySelector(`[data-palette="${palette}"]`).textContent,'Legend name mismatch');}
+  $('relief').click();$('relief').click();assert(viewer.imageryLayers.length<=2,'Hillshade layer retention');checks.push('Seven palettes, legend names and hillshade replacement');
   if($('north-lock').getAttribute('aria-pressed')!=='true')$('north-lock').click();
   assert(!viewer.scene.screenSpaceCameraController.enableTilt,'North lock route');$('tilt').click();assert(viewer.camera.pitch<0,'Tilt unavailable');
   const heading=viewer.camera.heading;assert(Math.min(Math.abs(heading),Math.abs(heading-2*Math.PI))<1e-5,'Heading after tilt');checks.push('North lock and north-facing ◩ tilt');
   for(const key of ['countries','rivers','landforms','cities'])if($(key).checked)$(key).click();await tick();assert(viewer.imageryLayers.length===1,'Empty overlay retained');assert(viewer.entities.values.length===0,'Hidden labels retained');checks.push('No empty overlay; disabled labels removed');
-  // Synthetic local file goes through the production input handler and limits.
-  const file=new File([JSON.stringify({type:'Feature',properties:{name:'测试点'},geometry:{type:'Point',coordinates:[116.4,39.9]}})],'integration.geojson',{type:'application/geo+json'});
+  const file=new File([JSON.stringify({type:'Feature',properties:{name:'Test point'},geometry:{type:'Point',coordinates:[116.4,39.9]}})],'integration.geojson',{type:'application/geo+json'});
   await $('import-file').onchange({target:{files:[file],value:''}});assert($('custom-layers').textContent.includes('integration.geojson'),'Import');
   $('custom-layers').querySelector('button').click();assert(!$('custom-layers').textContent.includes('integration.geojson'),'Remove import');checks.push('WGS84 GeoJSON import/remove');
-  // Avoid clipboard side effects; production fallback still serializes the full view.
   const originalPrompt=window.prompt;let shared='';window.prompt=(label,value)=>{shared=value;return null;};
   const descriptor=Object.getOwnPropertyDescriptor(navigator,'clipboard');Object.defineProperty(navigator,'clipboard',{value:{writeText:async()=>{throw new Error('Test fallback');}},configurable:true});
   try{await $('share').onclick();}finally{window.prompt=originalPrompt;if(descriptor)Object.defineProperty(navigator,'clipboard',descriptor);else delete navigator.clipboard;}
-  const view=JSON.parse(new URLSearchParams(new URL(shared).hash.slice(1)).get('view'));assert(view.settings.scale===200&&view.settings.northLock,'Share settings');checks.push('Share view includes 200× and north lock');
-  report.textContent='PASS — 无 GPU 应用集成检查\n'+checks.join('\n');
+  const view=JSON.parse(new URLSearchParams(new URL(shared).hash.slice(1)).get('view'));assert(view.settings.scale===200&&view.settings.northLock&&view.settings.language==='en','Share settings');checks.push('Share view includes 200×, language and north lock');
+  report.textContent='PASS — no-GPU application integration check\n'+checks.join('\n');
  }catch(error){if(report)report.textContent='FAIL\n'+checks.join('\n')+'\n'+error.stack;else console.error(error);}
  finally{if(old===null)localStorage.removeItem('terrain-atlas-v1');else localStorage.setItem('terrain-atlas-v1',old);}
 };
