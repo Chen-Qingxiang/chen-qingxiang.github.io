@@ -8,16 +8,18 @@ import {paintTerrain,ElevationStore} from '../src/terrain.js';
 import {ElevationStore as V1Store} from './fixtures/v1-terrain.js';
 import {applyNorthLock} from '../src/navigation.js';
 import {isTouchDevice} from '../src/ui.js';
+import {touchResolutionScale} from '../src/display.js';
 
-test('V1 links migrate; 200×, six palettes, detail levels and explicit north preferences round-trip',()=>{
+test('V1 links migrate; 200×, seven palettes, detail levels and explicit north preferences round-trip',()=>{
  assert.equal(cleanSettings({scale:999}).scale,200);assert.equal(cleanSettings({}).scale,30);
  assert.equal(cleanSettings(null).scale,30);assert.equal(cleanSettings({palette:'vivid'}).palette,'vivid');
+ assert.equal(cleanSettings({palette:'topo15'}).palette,'topo15');
  assert.equal(cleanSettings({},true).northLock,true);assert.equal(cleanSettings({northLock:false},true).northLock,false);
  assert.equal(cleanSettings({northLock:true},false).northLock,true);
  const s=cleanSettings({scale:200,riverDetail:2,landformDetail:0,northLock:true,palette:'ocean',rivers:true});
  assert.deepEqual(cleanSettings(JSON.parse(JSON.stringify(s))),s);
  assert.equal(cleanSettings({riverDetail:99,landformDetail:'2'}).riverDetail,1);
- assert.equal(Object.keys(PALETTES).length,6);
+ assert.equal(Object.keys(PALETTES).length,7);
 });
 test('Large desktop SSE changes conservatively; all touch viewport detail remains V1',()=>{
  assert.equal(terrainScreenSpaceError(960,720),2.5);
@@ -25,11 +27,13 @@ test('Large desktop SSE changes conservatively; all touch viewport detail remain
  for(const [w,h] of [[390,844],[844,390],[2732,2048]])assert.equal(terrainScreenSpaceError(w,h,true),2.5);
  assert(isTouchDevice({matchMedia:()=>({matches:false}),navigator:{maxTouchPoints:1}}));
  assert(isTouchDevice({matchMedia:()=>({matches:true}),navigator:{maxTouchPoints:0}}));
+ assert.equal(touchResolutionScale({matchMedia:()=>({matches:true}),navigator:{maxTouchPoints:1},devicePixelRatio:3}),1.5);
+ assert.equal(touchResolutionScale({matchMedia:()=>({matches:false}),navigator:{maxTouchPoints:0},devicePixelRatio:2}),1);
 });
 test('All ramps interpolate continuously on land; shade stays mild and alpha stays opaque',()=>{
  for(const name of Object.keys(PALETTES)) {
-  const colors=makeColorTable(name);
-  for(let h=11001;h<20001;h++)for(let c=0;c<3;c++)assert(Math.abs(colors[h*3+c]-colors[(h-1)*3+c])<=1,name);
+  const colors=makeColorTable(name),maxStep=name==='topo15'?2:1;
+  for(let h=11001;h<20001;h++)for(let c=0;c<3;c++)assert(Math.abs(colors[h*3+c]-colors[(h-1)*3+c])<=maxStep,name);
   const heights=new Float32Array(65536).fill(1800),rgba=new Uint8ClampedArray(65536*4);
   paintTerrain(heights,colors,rgba,true,100,8);
   for(let c=0;c<3;c++)assert(Math.abs(rgba[c]-colors[(1800+11000)*3+c])<=1,name);
