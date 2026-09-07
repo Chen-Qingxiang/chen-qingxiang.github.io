@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f7f5" />
+  <meta name="description" content="完全在浏览器本地处理的 PDF 小工具：抽取页面、合并 PDF、裁切并拼版。" />
+  <title>PDF Local · 本地 PDF 工具</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">LOCAL PDF TOOLKIT</p>
+        <h1>PDF Local</h1>
+        <p class="lede">抽页、合并、裁切拼版。PDF 文件只在当前浏览器中读取和处理，不上传到服务器。</p>
+      </div>
+      <div class="privacy-badge" aria-label="隐私说明">
+        <span class="privacy-dot"></span>
+        <div>
+          <strong>Local only</strong>
+          <small>文件不离开你的设备</small>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="工具切换">
+      <button class="tab is-active" data-tab="extract" type="button">抽取页面</button>
+      <button class="tab" data-tab="merge" type="button">合并 PDF</button>
+      <button class="tab" data-tab="layout" type="button">裁切拼版</button>
+    </nav>
+
+    <section class="panel is-active" id="panel-extract">
+      <div class="panel-heading">
+        <div>
+          <span class="step">01</span>
+          <h2>抽取指定页面</h2>
+        </div>
+        <p>从长 PDF 中只取你需要的几页，保持原始 PDF 内容，不转图片。</p>
+      </div>
+
+      <label class="dropzone" for="extract-file">
+        <input id="extract-file" type="file" accept="application/pdf,.pdf" />
+        <span class="drop-title">选择一个 PDF</span>
+        <span class="drop-note">例如：100 页文档中抽出第 3、17–18、52 页</span>
+      </label>
+
+      <div id="extract-meta" class="file-meta" hidden></div>
+      <a id="extract-preview" class="text-link" href="#" target="_blank" rel="noopener" hidden>在新标签页本地预览源 PDF ↗</a>
+
+      <div class="form-grid single-top">
+        <label class="field">
+          <span>要抽取的页面</span>
+          <input id="extract-pages" type="text" inputmode="text" placeholder="3, 17-18, 52" autocomplete="off" />
+          <small>支持逗号和范围，例如 <code>1, 4-7, 12</code>。顺序按输入保留。</small>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="extract-run" class="primary" type="button" disabled>导出选中页面</button>
+        <div id="extract-status" class="status" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-merge">
+      <div class="panel-heading">
+        <div>
+          <span class="step">02</span>
+          <h2>合并多个 PDF</h2>
+        </div>
+        <p>添加多个文件，调整顺序后合并为一个 PDF。</p>
+      </div>
+
+      <label class="dropzone" for="merge-files">
+        <input id="merge-files" type="file" accept="application/pdf,.pdf" multiple />
+        <span class="drop-title">选择多个 PDF</span>
+        <span class="drop-note">可以分几次继续添加；文件只保存在当前页面内存中</span>
+      </label>
+
+      <div id="merge-list" class="file-list" aria-live="polite"></div>
+
+      <div class="actions">
+        <button id="merge-run" class="primary" type="button" disabled>合并并导出</button>
+        <button id="merge-clear" class="secondary" type="button" disabled>清空</button>
+        <div id="merge-status" class="status" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-layout">
+      <div class="panel-heading">
+        <div>
+          <span class="step">03</span>
+          <h2>裁切并拼成一页</h2>
+        </div>
+        <p>适合身份证、护照页、票据等扫描件：从两页中各取一块，再排到同一张 A4。</p>
+      </div>
+
+      <label class="dropzone" for="layout-file">
+        <input id="layout-file" type="file" accept="application/pdf,.pdf" />
+        <span class="drop-title">选择包含扫描页的 PDF</span>
+        <span class="drop-note">默认：第 1 页取上半页，第 2 页取下半页，然后上下拼版</span>
+      </label>
+
+      <div id="layout-meta" class="file-meta" hidden></div>
+      <a id="layout-preview" class="text-link" href="#" target="_blank" rel="noopener" hidden>在新标签页本地预览源 PDF ↗</a>
+
+      <div class="crop-grid">
+        <fieldset class="crop-card">
+          <legend>区域 A</legend>
+          <label class="field compact">
+            <span>源页码</span>
+            <input id="layout-page-a" type="number" min="1" step="1" value="1" />
+          </label>
+          <label class="field compact">
+            <span>裁切区域</span>
+            <select id="layout-crop-a">
+              <option value="top" selected>上半页</option>
+              <option value="bottom">下半页</option>
+              <option value="left">左半页</option>
+              <option value="right">右半页</option>
+              <option value="full">整页</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="crop-card">
+          <legend>区域 B</legend>
+          <label class="field compact">
+            <span>源页码</span>
+            <input id="layout-page-b" type="number" min="1" step="1" value="2" />
+          </label>
+          <label class="field compact">
+            <span>裁切区域</span>
+            <select id="layout-crop-b">
+              <option value="top">上半页</option>
+              <option value="bottom" selected>下半页</option>
+              <option value="left">左半页</option>
+              <option value="right">右半页</option>
+              <option value="full">整页</option>
+            </select>
+          </label>
+        </fieldset>
+      </div>
+
+      <div class="form-grid">
+        <label class="field">
+          <span>拼版方式</span>
+          <select id="layout-mode">
+            <option value="vertical" selected>上下排列</option>
+            <option value="horizontal">左右排列</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>A4 方向</span>
+          <select id="layout-orientation">
+            <option value="portrait" selected>竖向</option>
+            <option value="landscape">横向</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>页边距</span>
+          <select id="layout-margin">
+            <option value="24">较窄</option>
+            <option value="36" selected>标准</option>
+            <option value="54">较宽</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="layout-hint">
+        <strong>常用证件扫描：</strong>如果正面在第 1 页上方、反面在第 2 页下方，保留默认设置即可。
+      </div>
+
+      <div class="actions">
+        <button id="layout-run" class="primary" type="button" disabled>生成单页 PDF</button>
+        <div id="layout-status" class="status" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="privacy-note">
+      <h2>隐私与实现</h2>
+      <p>本工具没有文件上传接口、后台服务、账户系统或分析统计。PDF 内容由浏览器读取，使用固定版本的 <code>pdf-lib</code> 在本机内存中处理，生成结果后由浏览器直接下载。</p>
+      <p class="fineprint">注意：页面首次打开会从 jsDelivr 加载 <code>pdf-lib 1.17.1</code> 程序文件，因此需要网络连接；你的 PDF 文件不会发送给 jsDelivr 或本工具的服务器。</p>
+    </section>
+  </main>
+
+  <footer class="footer">PDF Local · Personal browser-only toolkit</footer>
+</body>
+</html>
