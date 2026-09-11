@@ -33,6 +33,8 @@ I build simple tools that make learning and research smoother. This site hosts m
 
 ### Other tools
 
+- [X-ray Shell & Edge Atlas]({{ "/xray-shells/" | relative_url }}): Explore K/L/M shell binding energies, absorption edges, and characteristic X-ray emission lines across the periodic table.
+
 - [X-ray Interaction Explorer]({{ "/xray-interactions/" | relative_url }}): Explore photoelectric absorption, coherent (Rayleigh) scattering, and incoherent (Compton) scattering from 20–200 keV, with material presets and attenuation curves.
 
 - [元素周期表 · Chinese / English / IPA]({{ "/periodic-table/" | relative_url }}): Interactive bilingual periodic table with simplified Chinese names, English names, IPA, and Mandarin/English pronunciation.
