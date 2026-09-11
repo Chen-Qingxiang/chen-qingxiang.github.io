@@ -19,7 +19,8 @@
     focusEnglish: document.getElementById('focusEnglish'),
     focusIpa: document.getElementById('focusIpa'),
     ipaButton: document.getElementById('ipaButton'),
-    speakButton: document.getElementById('speakButton'),
+    speakChineseButton: document.getElementById('speakChineseButton'),
+    speakEnglishButton: document.getElementById('speakEnglishButton'),
     voiceStatus: document.getElementById('voiceStatus'),
     search: document.getElementById('searchInput'),
     random: document.getElementById('randomButton'),
@@ -30,8 +31,30 @@
 
   const cellsByNumber = new Map();
   let current = elements[0];
-  let preferredVoice = null;
+  let preferredEnglishVoice = null;
+  let preferredChineseVoice = null;
   let ipaVisible = true;
+
+  // Some system TTS engines cannot read the Unicode characters used for the
+  // newest Chinese element names. These common characters have the same
+  // Mandarin pronunciation and are used only as hidden speech prompts.
+  const chineseSpeechFallback = new Map([
+    [104, '炉'],  // 𬬻 lú
+    [105, '杜'],  // 𬭊 dù
+    [106, '喜'],  // 𬭳 xǐ
+    [107, '波'],  // 𬭛 bō
+    [108, '黑'],  // 𬭶 hēi
+    [109, '麦'],  // 鿏 mài
+    [110, '达'],  // 𫟼 dá
+    [111, '伦'],  // 𬬭 lún
+    [112, '哥'],  // 鿔 gē
+    [113, '你'],  // 鿭 nǐ
+    [114, '夫'],  // 𫓧 fū
+    [115, '莫'],  // 镆 mò
+    [116, '立'],  // 𫟷 lì
+    [117, '田'],  // 鿬 tián
+    [118, '奥']   // 鿫 ào
+  ]);
 
   const categoryOrder = ['alkali','alkaline','transition','post','metalloid','nonmetal','halogen','noble','lanthanide','actinide'];
 
@@ -76,8 +99,8 @@
     cell.innerHTML = `
       <span class="cell-number">${element.n}</span>
       <div class="cell-symbol">${element.s}</div>
-      <div class="cell-zh">${element.zh}</div>
-      <div class="cell-en">${element.en}</div>
+      <div class="cell-zh" lang="zh-CN">${element.zh}</div>
+      <div class="cell-en" lang="en">${element.en}</div>
       <div class="cell-ipa">${element.ipa}</div>
     `;
 
@@ -174,21 +197,19 @@
     });
   }
 
-  function pickVoice() {
+  function pickVoices() {
     if (!('speechSynthesis' in window)) {
       els.voiceStatus.textContent = '当前浏览器不支持语音合成';
-      els.speakButton.disabled = true;
+      els.speakEnglishButton.disabled = true;
+      els.speakChineseButton.disabled = true;
       return;
     }
 
-    const voices = window.speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
-    if (!voices.length) {
-      preferredVoice = null;
-      els.voiceStatus.textContent = '等待浏览器加载英语语音…';
-      return;
-    }
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoices = voices.filter(v => /^en(?:[-_]|$)/i.test(v.lang));
+    const chineseVoices = voices.filter(v => /^(?:zh|cmn)(?:[-_]|$)/i.test(v.lang));
 
-    const priorities = [
+    const englishPriorities = [
       v => /^en-AU$/i.test(v.lang),
       v => /en-AU/i.test(v.lang),
       v => /^en-GB$/i.test(v.lang),
@@ -197,24 +218,58 @@
       v => /en-US/i.test(v.lang)
     ];
 
-    preferredVoice = null;
-    for (const test of priorities) {
-      preferredVoice = voices.find(test);
-      if (preferredVoice) break;
+    const chinesePriorities = [
+      v => /^zh-CN$/i.test(v.lang),
+      v => /zh[-_]Hans[-_]?CN/i.test(v.lang),
+      v => /zh[-_]CN/i.test(v.lang),
+      v => /^cmn-CN$/i.test(v.lang),
+      v => /^zh(?:[-_]|$)/i.test(v.lang),
+      v => /^cmn(?:[-_]|$)/i.test(v.lang)
+    ];
+
+    preferredEnglishVoice = null;
+    for (const test of englishPriorities) {
+      preferredEnglishVoice = englishVoices.find(test);
+      if (preferredEnglishVoice) break;
     }
-    if (!preferredVoice) preferredVoice = voices[0];
-    els.voiceStatus.textContent = `语音：${preferredVoice.name} · ${preferredVoice.lang}`;
+    if (!preferredEnglishVoice && englishVoices.length) preferredEnglishVoice = englishVoices[0];
+
+    preferredChineseVoice = null;
+    for (const test of chinesePriorities) {
+      preferredChineseVoice = chineseVoices.find(test);
+      if (preferredChineseVoice) break;
+    }
+    if (!preferredChineseVoice && chineseVoices.length) preferredChineseVoice = chineseVoices[0];
+
+    const zhStatus = preferredChineseVoice
+      ? `${preferredChineseVoice.name} · ${preferredChineseVoice.lang}`
+      : '系统默认 zh-CN';
+    const enStatus = preferredEnglishVoice
+      ? `${preferredEnglishVoice.name} · ${preferredEnglishVoice.lang}`
+      : '系统默认 en-AU';
+    els.voiceStatus.textContent = `中文：${zhStatus} ｜ 英文：${enStatus}`;
   }
 
-  function speakCurrent() {
-    if (!('speechSynthesis' in window) || !current) return;
+  function speak(text, voice, lang, rate) {
+    if (!('speechSynthesis' in window) || !text) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(current.en);
-    utterance.lang = preferredVoice?.lang || 'en-AU';
-    if (preferredVoice) utterance.voice = preferredVoice;
-    utterance.rate = 0.82;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = voice?.lang || lang;
+    if (voice) utterance.voice = voice;
+    utterance.rate = rate;
     utterance.pitch = 1;
     window.speechSynthesis.speak(utterance);
+  }
+
+  function speakEnglish() {
+    if (!current) return;
+    speak(current.en, preferredEnglishVoice, 'en-AU', 0.82);
+  }
+
+  function speakChinese() {
+    if (!current) return;
+    const speechText = chineseSpeechFallback.get(current.n) || current.zh;
+    speak(speechText, preferredChineseVoice, 'zh-CN', 0.74);
   }
 
   function renderMode() {
@@ -227,14 +282,15 @@
   renderTable();
   applyCellDisplay();
   selectElement(elements[0], cellsByNumber.get(1)?.[0]);
-  pickVoice();
+  pickVoices();
 
   if ('speechSynthesis' in window) {
-    window.speechSynthesis.addEventListener?.('voiceschanged', pickVoice);
-    window.speechSynthesis.onvoiceschanged = pickVoice;
+    window.speechSynthesis.addEventListener?.('voiceschanged', pickVoices);
+    window.speechSynthesis.onvoiceschanged = pickVoices;
   }
 
-  els.speakButton.addEventListener('click', speakCurrent);
+  els.speakEnglishButton.addEventListener('click', speakEnglish);
+  els.speakChineseButton.addEventListener('click', speakChinese);
 
   els.ipaButton.addEventListener('click', () => {
     ipaVisible = !ipaVisible;
@@ -268,7 +324,10 @@
       els.search.focus();
     }
     if ((event.key === 'p' || event.key === 'P') && document.activeElement !== els.search) {
-      speakCurrent();
+      speakEnglish();
+    }
+    if ((event.key === 'c' || event.key === 'C') && document.activeElement !== els.search) {
+      speakChinese();
     }
   });
 })();
