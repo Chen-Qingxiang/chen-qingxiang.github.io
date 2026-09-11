@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f6f8fb" />
+  <title>X-ray Shell & Edge Atlas</title>
+  <meta name="description" content="Interactive X-ray shell, absorption-edge and characteristic-line explorer for K, L and M shells." />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">ATOMIC SHELLS · X-RAY EDGES · EMISSION LINES</p>
+        <h1>X-ray Shell & Edge Atlas</h1>
+        <p class="lede">把 K / L / M 壳层、吸收边和特征 X-ray 线放在同一个交互视图里。点击元素后，直接看该元素各亚壳层的结合能与主要发射线。</p>
+      </div>
+      <a class="home-link" href="../">← Home</a>
+    </header>
+
+    <section class="panel selector-panel">
+      <div class="quick-picks" id="quickPicks" aria-label="常用元素"></div>
+      <div class="search-row">
+        <label>Element <input id="elementInput" value="Fe" spellcheck="false" placeholder="Fe / 26 / iron" /></label>
+        <button id="applyElement" type="button">查看</button>
+        <span id="status" class="status">加载 X-ray database…</span>
+      </div>
+    </section>
+
+    <section class="overview-grid">
+      <article class="panel element-card">
+        <div class="element-topline"><span id="zReadout">26</span><span id="nameReadout">Iron</span></div>
+        <div id="symbolReadout" class="big-symbol">Fe</div>
+        <div class="edge-summary" id="edgeSummary">—</div>
+      </article>
+
+      <article class="panel concept-card">
+        <h2>怎么看这张图</h2>
+        <p><b>Absorption edge</b> 的能量就是对应亚壳层电子的结合能。入射光子能量刚越过该阈值时，光电吸收会出现突跳。</p>
+        <p><b>Characteristic line</b> 则来自内层空穴被外层电子填补时释放出的能量，因此线能量本质上是两个壳层结合能之差。</p>
+      </article>
+    </section>
+
+    <section class="panel map-panel">
+      <div class="panel-head">
+        <div><span class="kicker">Across the periodic table</span><h2>K / L / M absorption edges vs atomic number</h2></div>
+        <div class="map-controls">
+          <label><input id="showM" type="checkbox" checked /> M edges</label>
+          <label><input id="logY" type="checkbox" checked /> log energy</label>
+        </div>
+      </div>
+      <svg id="edgeMap" class="edge-map" role="img" aria-label="Absorption edge energies versus atomic number"></svg>
+      <div class="legend" id="edgeLegend"></div>
+    </section>
+
+    <section class="detail-grid">
+      <article class="panel shell-panel">
+        <div class="panel-head">
+          <div><span class="kicker">Selected element</span><h2>Shell binding-energy ladder</h2></div>
+          <span class="muted">energy below vacuum level</span>
+        </div>
+        <svg id="shellDiagram" class="shell-diagram" role="img" aria-label="Selected element shell binding energies"></svg>
+      </article>
+
+      <article class="panel table-panel">
+        <div class="panel-head"><div><span class="kicker">Thresholds</span><h2>Absorption edges</h2></div></div>
+        <div id="edgeTable" class="table-wrap"></div>
+      </article>
+    </section>
+
+    <section class="panel line-panel">
+      <div class="panel-head">
+        <div><span class="kicker">Fluorescence</span><h2>Characteristic X-ray lines</h2></div>
+        <label class="energy-limit">显示到 <input id="lineMax" type="number" min="1" max="1000" value="200" /> keV</label>
+      </div>
+      <svg id="linePlot" class="line-plot" role="img" aria-label="Characteristic X-ray emission line spectrum"></svg>
+      <div id="lineList" class="line-list"></div>
+    </section>
+
+    <footer class="footer-note">
+      <p>数据来自 XrayDB，通过浏览器中的 <code>xraydb-wasm</code> 读取 Elam/Ravel/Sieber 吸收边与发射线数据。这里的“壳层能量”按吸收边能量理解。</p>
+      <p><a href="https://github.com/Ameyanagi/xraydb-rs" target="_blank" rel="noreferrer">xraydb-rs / XrayDB</a></p>
+    </footer>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
