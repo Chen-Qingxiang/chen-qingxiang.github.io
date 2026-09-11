@@ -25,13 +25,15 @@ I build simple tools that make learning and research smoother. This site hosts m
 
 - [Network Science Lab]({{ "/complexity/network-science-lab/" | relative_url }}): Generate and compare random, small-world, and preferential-attachment networks.
 
-- [Scaling Laws Explorer]({{ "/complexity/scaling-laws/" | relative_url }}): Explore power laws, log-log plots, biological allometry, and scaling exponents.
+- [Scaling Laws Explorer]({{ "/complexity/scaling-laws-explorer/" | relative_url }}): Explore power laws, log-log plots, biological allometry, and scaling exponents.
 
 - [Information Entropy Explorer]({{ "/complexity/information-entropy/" | relative_url }}): Play with Shannon information, entropy, probability distributions, randomness, and compressibility.
 
 - [The Shape of High Dimensions]({{ "/complexity/shape-of-high-dimensions/" | relative_url }}): Build intuition for concentration, volume, distance, and high-dimensional geometry.
 
 ### Other tools
+
+- [元素周期表 · Chinese / English / IPA]({{ "/periodic-table/" | relative_url }}): Interactive periodic table with simplified Chinese names, English names, IPA, browser pronunciation, search, and quiz modes.
 
 - [Terrain Atlas · 山海图]({{ "/terrain-atlas/" | relative_url }}): Explore exaggerated 3D terrain and bathymetry with city search, modern boundaries, rivers, and your own GeoJSON layers.
 
