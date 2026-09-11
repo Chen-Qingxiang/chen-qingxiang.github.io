@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f6f8fb" />
+  <title>元素周期表 · 中文 / English / IPA</title>
+  <meta name="description" content="可交互的中英双语元素周期表：中文名、英文名、IPA 音标与英文发音。" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">PERIODIC TABLE · 118 ELEMENTS</p>
+        <h1>元素周期表 <span>中文 / English / IPA</span></h1>
+        <p class="lede">点击任意元素，在左上角大卡片中查看英文名、IPA，并直接播放英文发音。</p>
+      </div>
+      <a class="home-link" href="../" aria-label="返回主页">← Home</a>
+    </header>
+
+    <section class="workspace" aria-label="元素周期表学习工具">
+      <aside class="focus-card" id="focusCard" aria-live="polite">
+        <div class="focus-topline">
+          <span id="focusNumber" class="focus-number">1</span>
+          <span id="focusCategory" class="focus-category">非金属</span>
+        </div>
+        <div id="focusSymbol" class="focus-symbol">H</div>
+        <div id="focusZh" class="focus-zh">氢</div>
+        <div id="focusEnglish" class="focus-english">Hydrogen</div>
+        <button class="ipa-button" id="ipaButton" type="button" title="显示 / 隐藏 IPA">
+          <span id="focusIpa">/ˈhaɪdrədʒən/</span>
+        </button>
+        <button class="speak-button" id="speakButton" type="button">
+          <span class="speaker" aria-hidden="true">▶</span>
+          <span>英文发音</span>
+        </button>
+        <p id="voiceStatus" class="voice-status">优先使用 en-AU 浏览器语音</p>
+      </aside>
+
+      <section class="controls-panel">
+        <div class="search-row">
+          <label class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input id="searchInput" type="search" autocomplete="off" placeholder="搜索：Fe / 铁 / Iron / 26" />
+          </label>
+          <button id="randomButton" class="secondary-button" type="button">随机一个</button>
+        </div>
+
+        <div class="control-block">
+          <span class="control-label">小格显示</span>
+          <div class="segmented" role="group" aria-label="元素格显示内容">
+            <label><input id="toggleZh" type="checkbox" checked /><span>中文</span></label>
+            <label><input id="toggleEn" type="checkbox" /><span>English</span></label>
+            <label><input id="toggleIpa" type="checkbox" /><span>IPA</span></label>
+          </div>
+        </div>
+
+        <div class="control-block mode-row">
+          <span class="control-label">学习模式</span>
+          <div class="segmented" role="radiogroup" aria-label="学习模式">
+            <label><input name="mode" value="study" type="radio" checked /><span>浏览</span></label>
+            <label><input name="mode" value="quiz-zh" type="radio" /><span>猜中文</span></label>
+            <label><input name="mode" value="quiz-en" type="radio" /><span>猜英文</span></label>
+          </div>
+        </div>
+
+        <p class="hint">测验模式下，先看元素符号；点击元素后，大卡片会揭晓答案。</p>
+      </section>
+    </section>
+
+    <section class="table-section" aria-label="完整元素周期表">
+      <div class="table-toolbar">
+        <div class="legend" id="legend"></div>
+        <div class="table-note">可横向滚动 · 点击格子查看详情</div>
+      </div>
+
+      <div class="periodic-scroll">
+        <div class="periodic-board" id="periodicBoard">
+          <div class="group-labels" id="groupLabels" aria-hidden="true"></div>
+          <div class="period-labels" id="periodLabels" aria-hidden="true"></div>
+          <div class="elements-grid" id="elementsGrid"></div>
+        </div>
+      </div>
+
+      <div class="f-block-wrap">
+        <div class="f-row-label">镧系<br /><span>Lanthanides</span></div>
+        <div class="f-row" id="lanthanides"></div>
+        <div class="f-row-label">锕系<br /><span>Actinides</span></div>
+        <div class="f-row" id="actinides"></div>
+      </div>
+    </section>
+
+    <footer class="footer-note">
+      <p>中文名称采用中国大陆简体名称；114 号与 116 号使用简体规范字 <strong>𫓧</strong>、<strong>𫟷</strong>。英文名称采用 IUPAC 常用拼写（如 aluminium、caesium、sulfur）。</p>
+      <p>IPA 用于学习英文读音；浏览器发音通过 Web Speech API，优先选择澳大利亚英语，其次英式与美式英语。</p>
+      <p class="sources">参考：<a href="https://www.chemsoc.org.cn/library/a2611.html" target="_blank" rel="noreferrer">中国化学会 IUPAC 中文元素周期表</a> · <a href="https://www.leskoff.com/s01707-0" target="_blank" rel="noreferrer">Chemical elements pronunciation guide</a></p>
+    </footer>
+  </main>
+
+  <script src="./elements.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
