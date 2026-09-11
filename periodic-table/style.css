@@ -240,7 +240,7 @@ h1 span {
 .placeholder-cell .cell-en { font-size: 7px; }
 
 .focus-card {
-  grid-column: 3 / span 10;
+  grid-column: 5 / span 7;
   grid-row: 1 / span 3;
   z-index: 3;
   display: grid;
