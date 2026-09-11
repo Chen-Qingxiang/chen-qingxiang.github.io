@@ -33,7 +33,9 @@ I build simple tools that make learning and research smoother. This site hosts m
 
 ### Other tools
 
-- [元素周期表 · Chinese / English / IPA]({{ "/periodic-table/" | relative_url }}): Interactive periodic table with simplified Chinese names, English names, IPA, browser pronunciation, search, and quiz modes.
+- [X-ray Interaction Explorer]({{ "/xray-interactions/" | relative_url }}): Explore photoelectric absorption, coherent (Rayleigh) scattering, and incoherent (Compton) scattering from 20–200 keV, with material presets and attenuation curves.
+
+- [元素周期表 · Chinese / English / IPA]({{ "/periodic-table/" | relative_url }}): Interactive bilingual periodic table with simplified Chinese names, English names, IPA, and Mandarin/English pronunciation.
 
 - [Terrain Atlas · 山海图]({{ "/terrain-atlas/" | relative_url }}): Explore exaggerated 3D terrain and bathymetry with city search, modern boundaries, rivers, and your own GeoJSON layers.
 
