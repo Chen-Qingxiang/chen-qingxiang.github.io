@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
   <meta name="theme-color" content="#f6f8fb" />
-  <title>元素周期表 · 中文 / English / IPA</title>
-  <meta name="description" content="可交互的中英双语元素周期表：中文名、英文名、IPA，以及中文和英文发音。" />
+  <title>元素周期表 · 中文 / English / IPA / X-ray Physics</title>
+  <meta name="description" content="可交互的中英双语元素周期表：中文名、英文名、IPA、发音，以及 X-ray binding energies、characteristic lines 与 attenuation。" />
   <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./xray.css" />
 </head>
 <body>
   <main class="app-shell">
@@ -15,7 +16,7 @@
       <div>
         <p class="eyebrow">PERIODIC TABLE · 118 ELEMENTS</p>
         <h1>元素周期表 <span>中文 / English / IPA</span></h1>
-        <p class="lede">点击任意元素，在周期表中央的大卡片中查看中文名、英文名和 IPA，并播放中文或英文发音。</p>
+        <p class="lede">点击任意元素查看名称与发音；下方 X-ray physics 面板同步显示吸收边、特征线和 1–150 keV 衰减。</p>
       </div>
       <a class="home-link" href="../" aria-label="返回主页">← Home</a>
     </header>
@@ -23,7 +24,7 @@
     <section class="table-section" aria-label="完整元素周期表">
       <div class="table-toolbar">
         <div class="legend" id="legend"></div>
-        <div class="table-note">点击任意元素查看详情与发音</div>
+        <div class="table-note">点击元素 · 详情与 X-ray physics 同步更新</div>
       </div>
 
       <div class="periodic-scroll">
@@ -58,15 +59,83 @@
         <div class="f-row-label">锕系<br /><span>Actinides</span></div>
         <div class="f-row" id="actinides"></div>
       </div>
+
+      <section class="xray-panel" id="xrayPanel" aria-label="X-ray atomic physics explorer">
+        <header class="xray-head">
+          <div>
+            <p class="xray-kicker">X-RAY / ATOMIC PHYSICS</p>
+            <h2><span id="xraySymbol">H</span> · <span id="xrayName">Hydrogen</span> <small id="xrayZh">氢</small></h2>
+            <p class="xray-meta" id="xrayMeta">Z = 1</p>
+          </div>
+          <div class="xray-links">
+            <a id="xrayDbLink" href="https://xraydb.xrayabsorption.org/element/H" target="_blank" rel="noreferrer">XrayDB ↗</a>
+            <a href="https://physics.nist.gov/PhysRefData/Xcom/html/xcom1.html" target="_blank" rel="noreferrer">NIST XCOM ↗</a>
+          </div>
+        </header>
+
+        <div class="xray-controls">
+          <label for="xrayEnergy">Photon energy <strong id="xrayEnergyText">60.0 keV</strong></label>
+          <input id="xrayEnergy" type="range" min="1" max="150" step="0.5" value="60" aria-label="Photon energy in keV" />
+          <label class="energy-number-wrap" for="xrayEnergyNumber">
+            <input id="xrayEnergyNumber" type="number" min="1" max="150" step="0.1" value="60.0" />
+            <span>keV</span>
+          </label>
+        </div>
+
+        <div class="xray-workspace">
+          <div class="xray-readouts">
+            <article class="physics-card interaction-card">
+              <div class="metric-row">
+                <div class="metric"><span>Total µ/ρ</span><strong id="xrayTotal">—</strong><small>cm²/g</small></div>
+                <div class="metric"><span>Linear µ</span><strong id="xrayLinear">—</strong><small>cm⁻¹</small></div>
+                <div class="metric"><span>HVL</span><strong id="xrayHvl">—</strong><small id="xrayHvlUnit">mm</small></div>
+              </div>
+              <div class="dominant-row"><span>Dominant</span><strong id="xrayDominant">—</strong></div>
+              <div class="process-list" id="xrayProcesses"></div>
+            </article>
+
+            <article class="physics-card signatures-card">
+              <div class="signature-section">
+                <h3>Binding energies / absorption edges</h3>
+                <div class="signature-list" id="xrayEdges"><span class="empty-data">Loading…</span></div>
+              </div>
+              <div class="signature-section">
+                <h3>Characteristic X-rays</h3>
+                <div class="signature-list" id="xrayLines"><span class="empty-data">Loading…</span></div>
+              </div>
+            </article>
+          </div>
+
+          <article class="physics-card attenuation-card">
+            <div class="chart-head">
+              <div>
+                <h3>Mass attenuation · µ/ρ</h3>
+                <p>Elemental cross sections · 1–150 keV · logarithmic y-axis</p>
+              </div>
+              <div class="chart-legend" aria-label="plot legend">
+                <span><i class="legend-line total"></i>Total</span>
+                <span><i class="legend-line photo"></i>Photoelectric</span>
+                <span><i class="legend-line compt"></i>Compton</span>
+                <span><i class="legend-line rayl"></i>Rayleigh</span>
+              </div>
+            </div>
+            <svg id="xrayPlot" class="xray-plot" viewBox="0 0 920 350" role="img" aria-label="Mass attenuation coefficients from 1 to 150 keV"></svg>
+            <div class="chart-note" id="xrayChartNote">Move the energy slider to inspect the selected element.</div>
+          </article>
+        </div>
+
+        <div class="xray-status" id="xrayStatus" aria-live="polite">X-ray data will load when this panel approaches the viewport.</div>
+      </section>
     </section>
 
     <footer class="footer-note">
       <span>中文名称采用中国大陆简体规范名；英文名称采用 IUPAC 常用拼写。</span>
-      <span class="sources"><a href="https://www.chemsoc.org.cn/library/a2611.html" target="_blank" rel="noreferrer">中文名称参考</a> · <a href="https://www.leskoff.com/s01707-0" target="_blank" rel="noreferrer">英文发音参考</a></span>
+      <span class="sources"><a href="https://www.chemsoc.org.cn/library/a2611.html" target="_blank" rel="noreferrer">中文名称参考</a> · <a href="https://www.leskoff.com/s01707-0" target="_blank" rel="noreferrer">英文发音参考</a> · <a href="https://github.com/tschoonj/xraylib" target="_blank" rel="noreferrer">X-ray data: xraylib</a></span>
     </footer>
   </main>
 
   <script src="./elements.js"></script>
+  <script src="./xray.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
