@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f6f8fb" />
+  <title>X-ray Interaction Explorer</title>
+  <meta name="description" content="Interactive explorer for photoelectric absorption, coherent (Rayleigh) scattering and incoherent (Compton) scattering in the 20–200 keV range." />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">X-RAY PHYSICS · 20–200 keV</p>
+        <h1>X-ray Interaction Explorer</h1>
+        <p class="lede">聚焦诊断与实验室 X-ray 常见能区：光电吸收、相干（Rayleigh）散射、非相干（Compton）散射。低于 1.022 MeV，因此不考虑电子对产生。</p>
+      </div>
+      <a class="home-link" href="../">← Home</a>
+    </header>
+
+    <section class="panel controls-panel">
+      <div class="preset-wrap" id="presetWrap" aria-label="材料预设"></div>
+      <div class="custom-row">
+        <label>Formula <input id="formulaInput" value="Fe" spellcheck="false" /></label>
+        <label>ρ (g/cm³) <input id="densityInput" type="number" step="0.001" value="7.874" /></label>
+        <button id="applyMaterial" type="button">应用</button>
+        <span id="materialStatus" class="status">加载 X-ray database…</span>
+      </div>
+    </section>
+
+    <section class="overview-grid">
+      <article class="panel energy-panel">
+        <div class="energy-head">
+          <div>
+            <span class="kicker">Photon energy</span>
+            <strong><span id="energyReadout">80</span> keV</strong>
+          </div>
+          <div id="dominantReadout" class="dominant">—</div>
+        </div>
+        <input id="energySlider" class="energy-slider" type="range" min="20" max="200" step="1" value="80" />
+        <div class="slider-scale"><span>20 keV</span><span>80</span><span>140</span><span>200 keV</span></div>
+
+        <div class="fraction-cards">
+          <div class="fraction-card photo"><span>光电吸收</span><b id="photoPct">—</b><small id="photoMu">— cm²/g</small></div>
+          <div class="fraction-card coherent"><span>Rayleigh</span><b id="coherentPct">—</b><small id="coherentMu">— cm²/g</small></div>
+          <div class="fraction-card compton"><span>Compton</span><b id="comptonPct">—</b><small id="comptonMu">— cm²/g</small></div>
+        </div>
+        <p id="edgeSummary" class="edge-summary">—</p>
+      </article>
+
+      <article class="panel concept-panel">
+        <h2>三种过程到底差在哪</h2>
+        <div class="concept-row"><i class="dot photo"></i><div><b>Photoelectric absorption</b><span>光子消失，能量主要给出光电子；对 Z 和能量依赖最强，并出现吸收边。</span></div></div>
+        <div class="concept-row"><i class="dot coherent"></i><div><b>Coherent / Rayleigh</b><span>光子改变方向但近似不损失能量；低能、高 Z 时更明显。</span></div></div>
+        <div class="concept-row"><i class="dot compton"></i><div><b>Incoherent / Compton</b><span>光子与电子交换能量；在较高能量、低到中 Z 材料中常逐渐占主导。</span></div></div>
+      </article>
+    </section>
+
+    <section class="panel plot-panel">
+      <div class="plot-head">
+        <div><span class="kicker">Relative contribution</span><h2>衰减中三种相互作用的占比</h2></div>
+        <span class="plot-note">三项归一化为 100%</span>
+      </div>
+      <svg id="fractionPlot" class="plot" role="img" aria-label="Relative interaction contributions versus X-ray energy"></svg>
+      <div class="legend"><span><i class="line photo"></i>Photoelectric</span><span><i class="line coherent"></i>Rayleigh</span><span><i class="line compton"></i>Compton</span><span><i class="cursor-key"></i>当前能量</span></div>
+    </section>
+
+    <section class="panel plot-panel">
+      <div class="plot-head">
+        <div><span class="kicker">Mass attenuation coefficient</span><h2>部分质量衰减系数 μ/ρ</h2></div>
+        <span class="plot-note">log scale · cm²/g</span>
+      </div>
+      <svg id="muPlot" class="plot" role="img" aria-label="Mass attenuation coefficients versus X-ray energy"></svg>
+      <div class="legend"><span><i class="line total"></i>Total</span><span><i class="line photo"></i>Photoelectric</span><span><i class="line coherent"></i>Rayleigh</span><span><i class="line compton"></i>Compton</span></div>
+    </section>
+
+    <footer class="footer-note">
+      <p>数值来自 XrayDB 的 Elam/Ravel/Sieber 光电吸收与散射数据，通过浏览器中的 <code>xraydb-wasm</code> 本地计算。化合物按质量分数加和。</p>
+      <p>20–200 keV 只是默认工作区；本工具强调相互作用直觉，不代替实验系统中的谱、几何、探测器响应和多次散射建模。</p>
+      <p><a href="https://github.com/Ameyanagi/xraydb-rs" target="_blank" rel="noreferrer">xraydb-rs / XrayDB data</a> · <a href="https://physics.nist.gov/PhysRefData/Xcom/html/xcom1.html" target="_blank" rel="noreferrer">NIST XCOM</a></p>
+    </footer>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
