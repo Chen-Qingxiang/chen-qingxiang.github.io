@@ -1,0 +1,414 @@
+/* Dedicated phone layout for single-object mode. Desktop/tablet styles remain in style.css and single-workbench.css. */
+@media (max-width: 720px) {
+  :root {
+    --single-phone-map-h: clamp(330px, 48dvh, 520px);
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .app-shell {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 1. header */
+  .topbar {
+    order: 1;
+    min-height: 0;
+    margin: 0;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 9px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+
+  .brand-block {
+    min-width: 0;
+  }
+
+  .brand-block .eyebrow {
+    display: none;
+  }
+
+  .title-row {
+    gap: 7px;
+    align-items: baseline;
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+
+  .title-row h1 {
+    min-width: 0;
+    max-width: 100%;
+    font-size: 20px;
+    line-height: 1.08;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .period {
+    display: none;
+  }
+
+  .brand-block p {
+    display: none;
+  }
+
+  .mode-nav {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mode-nav .ghost-button {
+    min-height: 32px;
+    padding: 0 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* 2. object selector + essential actions */
+  .single-toolbar {
+    order: 2;
+    min-height: 0;
+    padding: 7px 9px 8px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 6px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--paper);
+  }
+
+  .person-switcher {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    min-height: 38px;
+    padding: 0 10px;
+    border-radius: 9px;
+  }
+
+  .person-switcher select {
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .single-toolbar .ghost-button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  /* Loading local JSON is a desktop/advanced action; keep phone UI focused. */
+  .single-toolbar .file-button {
+    display: none !important;
+  }
+
+  /* Break the desktop grid so map, timeline and story can be reordered. */
+  .workspace {
+    display: contents;
+  }
+
+  /* 3. map */
+  .map-panel {
+    order: 3;
+    width: 100%;
+    height: var(--single-phone-map-h);
+    min-height: var(--single-phone-map-h);
+    border-bottom: 1px solid var(--line);
+  }
+
+  #map {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .map-stats {
+    top: 8px;
+    left: 8px;
+    max-width: calc(100% - 116px);
+    gap: 9px;
+    padding: 7px 8px;
+    border-radius: 9px;
+  }
+
+  .map-stats > div {
+    min-width: 0;
+  }
+
+  .map-stats strong {
+    display: block;
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+  }
+
+  .stat-label {
+    font-size: 9px;
+  }
+
+  .terrain-control {
+    top: 8px;
+    right: 8px;
+    min-width: 0;
+    padding: 6px 8px;
+    border-radius: 9px;
+  }
+
+  .terrain-toggle {
+    gap: 5px;
+    font-size: 10px;
+  }
+
+  .terrain-toggle input {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* On phones opacity is low-value chrome; keep only terrain on/off. */
+  .terrain-strength {
+    display: none;
+  }
+
+  .legend {
+    left: 8px;
+    right: auto;
+    bottom: 8px;
+    max-width: calc(100% - 16px);
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .legend-line {
+    width: 17px;
+  }
+
+  /* 4. playback / timeline immediately below map */
+  .timeline-panel {
+    order: 4;
+    width: 100%;
+    padding: 10px 11px 9px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--paper);
+  }
+
+  .playback-row {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .play-button {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .clock {
+    min-width: 0;
+  }
+
+  .clock strong {
+    font-size: 14px;
+  }
+
+  .clock span {
+    max-width: 100%;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .speed-group {
+    display: none !important;
+  }
+
+  .mobile-speed-picker {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 5px;
+    height: 34px;
+    padding: 0 7px 0 9px;
+    border: 1px solid #d1cdc1;
+    border-radius: 9px;
+    background: #f7f4ec;
+    color: #656a64;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .mobile-speed-picker select {
+    max-width: 82px;
+    height: 30px;
+    padding: 0 3px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 850;
+  }
+
+  .timeline-wrap {
+    margin-top: 9px;
+  }
+
+  .timeline-track {
+    height: 42px;
+    margin: 0 3px;
+  }
+
+  .timeline-track::before,
+  .timeline-progress {
+    top: 19px;
+  }
+
+  #timeRange {
+    height: 42px;
+  }
+
+  .timeline-event {
+    top: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .timeline-event.active {
+    top: 12px;
+  }
+
+  .timeline-labels {
+    margin: -1px 3px 0;
+    font-size: 10px;
+  }
+
+  .timeline-hint {
+    margin: 5px 0 0;
+    font-size: 9px;
+    line-height: 1.35;
+  }
+
+  /* 5. narrative detail last */
+  .story-panel {
+    order: 5;
+    width: 100%;
+    min-height: 0;
+    padding: 19px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+    border: 0;
+    background:
+      linear-gradient(180deg, rgba(182,40,38,.035), transparent 130px),
+      var(--paper);
+  }
+
+  .event-index {
+    font-size: 10px;
+  }
+
+  .event-year {
+    margin-top: 13px;
+    font-size: 13px;
+  }
+
+  .story-panel h2 {
+    margin: 5px 0 9px;
+    font-size: 25px;
+  }
+
+  .place-line {
+    font-size: 12px;
+  }
+
+  .event-summary {
+    margin: 17px 0 14px;
+    font-size: 16px;
+    line-height: 1.78;
+  }
+
+  .event-tags {
+    gap: 5px;
+  }
+
+  .event-tag {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .source-block {
+    margin-top: 18px;
+    padding-top: 14px;
+  }
+
+  .source-block p {
+    font-size: 11px;
+  }
+
+  .event-nav {
+    margin-top: 17px;
+  }
+
+  .event-nav button {
+    min-height: 42px;
+  }
+
+  /* Swallow special case uses the same phone hierarchy. */
+  .swallow-view .story-panel {
+    overflow: visible;
+  }
+
+  .swallow-view .route-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .swallow-view .route-key {
+    flex: 0 0 auto;
+  }
+
+  .swallow-view .mode-tabs {
+    flex-wrap: nowrap;
+  }
+
+  .swallow-view .mode-tab {
+    flex: 1 1 0;
+    min-height: 36px;
+  }
+}
+
+/* Fallback for browsers without dynamic viewport units. */
+@media (max-width: 720px) and (not (height: 1dvh)) {
+  :root { --single-phone-map-h: clamp(330px, 48vh, 520px); }
+}
