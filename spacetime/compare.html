@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="多人时空行迹比较：任意有绝对年代的轨迹共享同一历史时间轴同步移动。" />
-  <title>多人时空对比 · Spacetime Trails</title>
+  <title>多人对比 · Spacetime Trails</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="./compare.css" />
@@ -20,11 +20,9 @@
           <span>绝对年代行迹共享同一历史时钟</span>
         </div>
       </div>
-      <nav class="header-links" aria-label="页面导航">
+      <nav class="header-links" aria-label="模式切换">
         <a href="./index.html">单人模式</a>
-        <a href="./sudongpo.html">苏东坡</a>
-        <a href="./wanganshi.html">王安石</a>
-        <a href="./simaguang.html">司马光</a>
+        <a href="./compare.html" aria-current="page" style="font-weight:900">多人对比</a>
       </nav>
     </header>
 
@@ -38,7 +36,7 @@
         <div class="people-popover" id="peoplePopover" hidden>
           <div class="people-tools">
             <input id="peopleSearch" type="search" placeholder="搜索人物 / 年代" aria-label="搜索人物" />
-            <button class="soft-button compact" id="selectAllBtn" type="button">全选</button>
+            <button class="soft-button compact" id="selectAllBtn" type="button">取消全选</button>
           </div>
           <div class="people-picks" id="peoplePicks"></div>
         </div>
@@ -128,8 +126,10 @@
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="./compare-layer-capture.js"></script>
   <script src="./compare-registry.js"></script>
+  <script src="./compare-default-all.js"></script>
   <script src="./compare.js"></script>
   <script src="./compare-ui.js"></script>
+  <script src="./compare-selection-controls.js"></script>
   <script src="./compare-playback-follow.js"></script>
 </body>
 </html>
