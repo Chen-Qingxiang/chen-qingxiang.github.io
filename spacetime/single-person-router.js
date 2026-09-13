@@ -20,6 +20,13 @@
     './expanded-people-6.js'
   ];
 
+  // Keep the single-person marker identity in sync with the shared registry.
+  // The legacy player used “吕” as its CSS fallback, which made every selected
+  // person look like Lü Bu even though the underlying data had changed.
+  const markerChar = current?.char || current?.label?.slice(0, 1) || '人';
+  document.documentElement.style.setProperty('--marker-char', `"${markerChar}"`);
+  document.documentElement.style.setProperty('--person-accent', current?.color || '#b62826');
+
   // The original single-person player was China-only and used minZoom 4.
   // Some shared-registry people have Central Asian, European or US routes, so
   // allow the same world-scale overview as compare mode without rewriting app.js.
