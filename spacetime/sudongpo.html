@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="苏东坡一生行迹与历史事件的交互式时空播放器" />
+  <title>时空行迹 · Spacetime Trails</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="eyebrow">SPACETIME TRAILS · V1.2</div>
+        <div class="title-row">
+          <h1 id="personName">苏东坡一生行迹</h1>
+          <span class="period" id="personPeriod">1037–1101</span>
+        </div>
+        <p id="personSubtitle">从眉山到汴京、杭州、黄州、惠州、儋州，再北归常州。</p>
+      </div>
+      <div class="top-actions">
+        <a class="ghost-button" href="./index.html" style="text-decoration:none">吕布</a>
+        <a class="ghost-button" href="./swallow.html" style="text-decoration:none">燕子迁徙</a>
+        <button class="ghost-button" id="fitRouteBtn" type="button">总览</button>
+        <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
+        <label class="file-button">
+          <span>载入 JSON</span>
+          <input id="fileInput" type="file" accept="application/json,.json" />
+        </label>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <div class="map-panel">
+        <div id="map" aria-label="人物行迹地图"></div>
+        <div class="map-overlay terrain-control" aria-label="地形图层控制">
+          <label class="terrain-toggle">
+            <input id="terrainToggle" type="checkbox" checked />
+            <span>地形</span>
+          </label>
+          <label class="terrain-strength" for="terrainOpacity">
+            <span>强度</span>
+            <input id="terrainOpacity" type="range" min="0" max="70" value="34" step="1" />
+            <output id="terrainOpacityValue" for="terrainOpacity">34%</output>
+          </label>
+        </div>
+        <div class="map-overlay map-stats" aria-live="polite">
+          <div>
+            <span class="stat-label">当前</span>
+            <strong id="currentPlace">眉山</strong>
+          </div>
+          <div>
+            <span class="stat-label">累计行迹</span>
+            <strong id="distanceText">0 km</strong>
+          </div>
+        </div>
+        <div class="map-overlay legend">
+          <span id="legendPast"><i class="legend-line past"></i> 已走</span>
+          <span id="legendFuture"><i class="legend-line future"></i> 未走</span>
+          <span id="legendPoint"><i class="legend-dot"></i> 事件</span>
+        </div>
+      </div>
+
+      <aside class="story-panel" aria-label="当前历史事件">
+        <div class="event-index" id="eventIndex">01 / 30</div>
+        <div class="event-year" id="eventYear">1037 年 1 月 8 日</div>
+        <h2 id="eventTitle">生于眉山</h2>
+        <div class="place-line">
+          <span class="place-dot"></span>
+          <span id="eventPlace">四川眉山（北宋：眉州眉山）</span>
+        </div>
+        <p class="event-summary" id="eventSummary">苏轼出生于眉州眉山。这里作为整条行迹的起点。</p>
+        <div class="event-tags" id="eventTags"></div>
+        <div class="source-block">
+          <span id="sourceLabel">史料提示</span>
+          <p id="eventSource">地点与年份采用便于地图演示的近似值；V1 不把不确定信息伪装成精确 GPS。</p>
+        </div>
+        <div class="event-nav">
+          <button id="prevEventBtn" type="button" aria-label="上一个事件">← 上一站</button>
+          <button id="nextEventBtn" type="button" aria-label="下一个事件">下一站 →</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="timeline-panel" aria-label="时间轴与播放控制">
+      <div class="playback-row">
+        <button class="play-button" id="playBtn" type="button" aria-label="播放">▶</button>
+        <div class="clock">
+          <strong id="clockYear">1037 年</strong>
+          <span id="clockPhase">生于眉山</span>
+        </div>
+        <div class="speed-group" aria-label="播放速度">
+          <button type="button" data-speed="0.5">0.5×</button>
+          <button type="button" data-speed="1" class="active">1×</button>
+          <button type="button" data-speed="2">2×</button>
+          <button type="button" data-speed="4">4×</button>
+        </div>
+      </div>
+
+      <div class="timeline-wrap">
+        <div class="timeline-track" id="timelineTrack">
+          <div class="timeline-progress" id="timelineProgress"></div>
+          <div class="timeline-events" id="timelineEvents"></div>
+          <input id="timeRange" type="range" min="0" max="1000" value="0" step="1" aria-label="人物生平时间轴" />
+        </div>
+        <div class="timeline-labels">
+          <span id="startYear">1037</span>
+          <span id="endYear">1101</span>
+        </div>
+      </div>
+      <p class="timeline-hint"><span id="timelineHintText">底图采用现代地理；括号内为北宋地名。路线优先采用年谱与行踪考中的中间站；争议路段只表示可能通道。</span></p>
+    </section>
+  </main>
+
+  <noscript>此工具需要启用 JavaScript。</noscript>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./sudongpo-data1.js"></script>
+  <script src="./sudongpo-data2.js"></script>
+  <script src="./sudongpo-core.js"></script>
+</body>
+</html>
