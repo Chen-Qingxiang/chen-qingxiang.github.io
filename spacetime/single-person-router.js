@@ -6,11 +6,22 @@
   const select = document.getElementById('personSelect');
   const realFetch = window.fetch.bind(window);
   const params = new URLSearchParams(location.search);
-  const isSwallow = params.get('case') === 'swallow';
+  const activeCase = params.get('case');
+  const isSwallow = activeCase === 'swallow';
+  const isElCid = activeCase === 'elcid';
+  const isSpecialCase = isSwallow || isElCid;
   const requested = params.get('person');
   const fallback = registry[0]?.id || 'lubu';
   const currentId = registry.some(entry => entry.id === requested) ? requested : fallback;
-  const current = registry.find(entry => entry.id === currentId) || registry[0];
+  const elCidEntry = {
+    id: 'elcid',
+    label: '熙德',
+    char: '熙',
+    color: '#815a35',
+    period: '约 1043–1099',
+    loader: { type: 'json', url: './data/elcid.json' }
+  };
+  const current = isElCid ? elCidEntry : (registry.find(entry => entry.id === currentId) || registry[0]);
   const loadedScripts = new Set();
   const expandedBundles = [
     './expanded-people-1.js',
@@ -135,22 +146,31 @@
       const option = document.createElement('option');
       option.value = entry.id;
       option.textContent = `${entry.label} · ${entry.period || ''}`;
-      option.selected = !isSwallow && entry.id === currentId;
+      option.selected = !isSpecialCase && entry.id === currentId;
       peopleGroup.appendChild(option);
     });
     select.appendChild(peopleGroup);
 
     const specialGroup = document.createElement('optgroup');
     specialGroup.label = '特别案例';
+
     const swallow = document.createElement('option');
     swallow.value = '__swallow__';
     swallow.textContent = '燕子迁徙 · 多物种 / 多种群';
     swallow.selected = isSwallow;
     specialGroup.appendChild(swallow);
+
+    const elcid = document.createElement('option');
+    elcid.value = '__elcid__';
+    elcid.textContent = '熙德 · Rodrigo Díaz de Vivar · 约 1043–1099';
+    elcid.selected = isElCid;
+    specialGroup.appendChild(elcid);
+
     select.appendChild(specialGroup);
 
     select.addEventListener('change', () => {
       if (select.value === '__swallow__') setSingleUrl('case', 'swallow');
+      else if (select.value === '__elcid__') setSingleUrl('case', 'elcid');
       else setSingleUrl('person', select.value);
     });
   }
@@ -226,7 +246,7 @@
     return realFetch(input, init);
   };
 
-  if (!requested && currentId) {
+  if (!requested && !isElCid && currentId) {
     const url = new URL(location.href);
     url.search = '';
     url.searchParams.set('person', currentId);
