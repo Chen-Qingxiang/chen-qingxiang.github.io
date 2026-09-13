@@ -1,0 +1,420 @@
+/* Dedicated phone layout for multi-person compare mode. Desktop/tablet remain in compare*.css. */
+@media (max-width: 720px) {
+  :root {
+    --compare-phone-map-h: clamp(340px, 46dvh, 520px);
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .compare-shell {
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 1. Compact but persistent mode header. */
+  .compare-header {
+    order: 1;
+    min-height: 0;
+    margin: 0;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 9px;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    gap: 8px 10px;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+
+  .header-title { min-width: 0; }
+  .compare-header .eyebrow { display: none; }
+  .title-line { display: block; min-width: 0; }
+  .title-line h1 {
+    max-width: 100%;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.08;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .title-line > span { display: none; }
+
+  .header-links {
+    display: flex !important;
+    flex-wrap: nowrap;
+    gap: 4px;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .header-links a {
+    display: inline-flex !important;
+    min-height: 32px;
+    padding: 0 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* 2. Selection controls. */
+  .toolbar {
+    order: 2;
+    position: relative;
+    z-index: 1600;
+    min-height: 0;
+    padding: 7px 9px 8px;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    gap: 6px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--paper);
+  }
+
+  .people-dropdown {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+  .people-toggle {
+    min-height: 39px;
+    border-radius: 9px;
+  }
+  .selected-people-summary { font-size: 12px; }
+
+  .people-popover {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    top: max(116px, calc(env(safe-area-inset-top, 0px) + 108px));
+    width: auto;
+    max-height: min(66dvh, 560px);
+    padding: 9px;
+    border-radius: 12px;
+  }
+  .people-tools { gap: 6px; }
+  .people-tools input[type=search] {
+    min-width: 0;
+    width: 100%;
+    min-height: 38px;
+  }
+  .people-picks {
+    max-height: min(54dvh, 470px);
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .person-pick {
+    min-height: 39px;
+    padding: 0 9px;
+  }
+  .person-pick span:nth-of-type(2) { font-size: 12px; }
+  .person-pick small { font-size: 9px; }
+
+  .mode-picks {
+    grid-column: 1;
+    margin: 0;
+    justify-self: start;
+  }
+  .mode-picks button {
+    min-height: 31px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+  .layout-picks { display: none !important; }
+  #fitBtn {
+    grid-column: 2;
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* Break desktop grid so map/status can become independent mobile panels. */
+  .main-grid { display: contents; }
+
+  /* 3. Map is always visible. */
+  .map-wrap {
+    order: 3;
+    position: relative;
+    width: 100%;
+    height: var(--compare-phone-map-h);
+    min-height: var(--compare-phone-map-h);
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  #compareMap {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .map-time-card {
+    left: 8px;
+    top: 8px;
+    padding: 7px 8px;
+    border-radius: 9px;
+  }
+  .map-time-card span { font-size: 8px; }
+  .map-time-card strong { font-size: 12px; }
+
+  .terrain-card {
+    right: 8px;
+    top: 8px;
+    grid-template-columns: auto;
+    padding: 6px 8px;
+    border-radius: 9px;
+    font-size: 10px;
+  }
+  .terrain-card input[type=range],
+  .terrain-card output { display: none; }
+
+  /* The full legend is opt-in on phones. */
+  .map-legend {
+    display: none;
+    left: 8px;
+    right: 8px;
+    bottom: 45px;
+    max-width: none;
+    max-height: min(34dvh, 250px);
+    padding: 8px;
+    overflow-y: auto;
+    gap: 7px;
+  }
+  .compare-phone-legend-open .map-legend { display: flex; }
+  .legend-person { font-size: 10px; }
+  .legend-person i { width: 16px; height: 3px; }
+
+  .mobile-legend-toggle {
+    position: absolute;
+    z-index: 650;
+    left: 8px;
+    bottom: 8px;
+    min-height: 31px;
+    padding: 0 10px;
+    border: 1px solid rgba(61,62,52,.18);
+    border-radius: 999px;
+    background: rgba(255,253,248,.94);
+    color: #4f554f;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 850;
+  }
+
+  /* 4. Mobile switch between timeline and status. */
+  .compare-mobile-tabs {
+    order: 4;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 7px 9px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .compare-mobile-tabs button {
+    min-height: 36px;
+    border: 0;
+    border-radius: 9px;
+    background: #edeae1;
+    color: #666b64;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 850;
+  }
+  .compare-mobile-tabs button.active {
+    background: #2b302b;
+    color: #fff;
+  }
+
+  .workspace-splitter { display: none !important; }
+
+  /* 5a. Timeline panel. No horizontal desktop canvas. */
+  .timeline-section {
+    order: 5;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 9px 9px calc(10px + env(safe-area-inset-bottom, 0px));
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    overflow: hidden;
+    background: var(--paper);
+  }
+  .compare-phone-status .timeline-section { display: none; }
+
+  .playback-bar {
+    min-width: 0 !important;
+    margin: 0 0 8px;
+    display: grid;
+    grid-template-columns: 40px minmax(0,1fr) auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .play-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 11px;
+  }
+  .clock-block {
+    min-width: 0;
+  }
+  .clock-block strong { font-size: 14px; }
+  .clock-block span {
+    display: block;
+    max-width: 100%;
+    font-size: 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .speed-picks { display: none !important; }
+
+  .compare-mobile-speed {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 5px;
+    min-height: 34px;
+    padding: 0 7px;
+    border: 1px solid #d2cec3;
+    border-radius: 9px;
+    background: #faf8f2;
+    color: #686d67;
+    font-size: 9px;
+    font-weight: 850;
+  }
+  .compare-mobile-speed select {
+    max-width: 102px;
+    height: 30px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #303530;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 850;
+  }
+
+  .ruler-wrap,
+  .track-row,
+  .slider-row {
+    min-width: 0 !important;
+    width: 100%;
+    grid-template-columns: 82px minmax(0,1fr);
+    gap: 7px;
+  }
+  .ruler-status,
+  .track-status,
+  .slider-row > :last-child { display: none; }
+  .ruler-spacer { font-size: 9px; }
+  .ruler { height: 24px; }
+  .ruler-tick span { font-size: 8px; }
+
+  .tracks-wrap {
+    min-height: 0;
+    max-height: min(43dvh, 390px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-gutter: auto;
+  }
+  .track-row { min-height: 38px; }
+  .track-label { gap: 5px; min-width: 0; }
+  .track-letter {
+    width: 22px;
+    height: 22px;
+    font-size: 9px;
+  }
+  .track-label-text { min-width: 0; }
+  .track-label-text strong {
+    max-width: 52px;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .track-label-text span {
+    max-width: 52px;
+    font-size: 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .track { height: 31px; }
+  .slider-row { margin-top: 5px; }
+  .slider-row > :first-child { min-height: 1px; }
+  .slider-box { height: 27px; }
+  #masterRange { margin-top: 3px; }
+  .timeline-note {
+    min-width: 0 !important;
+    margin: 5px 0 0 89px;
+    font-size: 8px;
+    line-height: 1.3;
+  }
+
+  /* 5b. Status panel shares the same slot as timeline. */
+  .status-panel {
+    order: 5;
+    display: none;
+    width: 100%;
+    max-height: none;
+    min-height: 0;
+    padding: 10px 11px calc(12px + env(safe-area-inset-bottom, 0px));
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .compare-phone-status .status-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0,1fr) auto;
+  }
+  .status-head {
+    padding: 0 2px 8px;
+  }
+  .status-head span { font-size: 9px; }
+  .status-head strong { font-size: 15px; }
+  .status-list {
+    max-height: min(48dvh, 430px);
+    overflow-y: auto;
+    gap: 6px;
+    margin: 0;
+    padding: 5px 1px 7px 0;
+  }
+  .status-card {
+    grid-template-columns: minmax(78px,auto) minmax(0,1fr);
+    padding: 7px 8px;
+  }
+  .status-card-head strong { font-size: 11px; }
+  .status-card-head span { font-size: 8px; }
+  .status-place { font-size: 11px; }
+  .status-phase { font-size: 9px; }
+  .overlap-box {
+    max-height: 140px;
+    margin: 0;
+    padding: 8px 2px 0;
+    overflow-y: auto;
+  }
+
+  .compare-marker-core {
+    width: 27px;
+    height: 27px;
+    font-size: 10px;
+  }
+}
