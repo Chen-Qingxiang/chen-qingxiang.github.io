@@ -20,16 +20,10 @@
     './expanded-people-6.js'
   ];
 
-  // Keep the single-person marker identity in sync with the shared registry.
-  // The legacy player used “吕” as its CSS fallback, which made every selected
-  // person look like Lü Bu even though the underlying data had changed.
   const markerChar = current?.char || current?.label?.slice(0, 1) || '人';
   document.documentElement.style.setProperty('--marker-char', `"${markerChar}"`);
   document.documentElement.style.setProperty('--person-accent', current?.color || '#b62826');
 
-  // The original single-person player was China-only and used minZoom 4.
-  // Some shared-registry people have Central Asian, European or US routes, so
-  // allow the same world-scale overview as compare mode without rewriting app.js.
   if (window.L?.map) {
     const originalMap = L.map;
     L.map = function(target, options = {}) {
@@ -80,14 +74,31 @@
 
   if (select) {
     select.innerHTML = '';
+
+    const peopleGroup = document.createElement('optgroup');
+    peopleGroup.label = '人物';
     registry.forEach(entry => {
       const option = document.createElement('option');
       option.value = entry.id;
       option.textContent = `${entry.label} · ${entry.period || ''}`;
       option.selected = entry.id === currentId;
-      select.appendChild(option);
+      peopleGroup.appendChild(option);
     });
+    select.appendChild(peopleGroup);
+
+    const specialGroup = document.createElement('optgroup');
+    specialGroup.label = '特别案例';
+    const swallow = document.createElement('option');
+    swallow.value = '__swallow__';
+    swallow.textContent = '燕子迁徙 · 多物种 / 多种群';
+    specialGroup.appendChild(swallow);
+    select.appendChild(specialGroup);
+
     select.addEventListener('change', () => {
+      if (select.value === '__swallow__') {
+        location.href = './swallow.html';
+        return;
+      }
       const url = new URL(location.href);
       url.searchParams.set('person', select.value);
       location.href = url.toString();
