@@ -3,29 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="人物一生足迹与历史事件的交互式时空播放器" />
-  <title>时空行迹 · Spacetime Trails</title>
+  <meta name="description" content="单人物一生足迹与历史事件的交互式时空播放器" />
+  <title>单人模式 · Spacetime Trails</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="./style.css" />
+  <style>
+    .mode-nav{display:flex;gap:6px;align-items:center}
+    .mode-nav .ghost-button.active{background:#2f3a33;color:#fff;border-color:#2f3a33}
+    .person-switcher{display:flex;align-items:center;gap:7px;min-height:36px;padding:0 9px;border:1px solid rgba(80,75,65,.24);border-radius:9px;background:rgba(255,253,248,.9);font-size:11px;font-weight:800;color:#5e625d}
+    .person-switcher select{max-width:220px;min-width:150px;height:28px;border:0;background:transparent;color:#262b27;font:inherit;outline:none;cursor:pointer}
+    @media(max-width:900px){.top-actions{flex-wrap:wrap}.person-switcher{order:3;flex:1 1 220px}.person-switcher select{max-width:none;width:100%}}
+  </style>
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">SPACETIME TRAILS · V1.2</div>
+        <div class="eyebrow">SPACETIME TRAILS · SINGLE</div>
         <div class="title-row">
-          <h1 id="personName">吕布一生足迹</h1>
-          <span class="period" id="personPeriod">约 160–199</span>
+          <h1 id="personName">人物行迹</h1>
+          <span class="period" id="personPeriod">载入中…</span>
         </div>
-        <p id="personSubtitle">在现代地图上追踪吕布：现代地理作底，古代地名作为历史注释。</p>
+        <p id="personSubtitle">选择一个人物，精确查看其一生的地点、事件与移动。</p>
       </div>
       <div class="top-actions">
-        <a class="ghost-button" href="./compare.html" style="text-decoration:none">多人对比</a>
-        <a class="ghost-button" href="./sudongpo.html" style="text-decoration:none">苏东坡</a>
-        <a class="ghost-button" href="./wanganshi.html" style="text-decoration:none">王安石</a>
-        <a class="ghost-button" href="./simaguang.html" style="text-decoration:none">司马光</a>
-        <a class="ghost-button" href="./swallow.html" style="text-decoration:none">燕子迁徙</a>
+        <div class="mode-nav" aria-label="模式切换">
+          <a class="ghost-button active" href="./index.html" style="text-decoration:none">单人模式</a>
+          <a class="ghost-button" href="./compare.html" style="text-decoration:none">多人对比</a>
+        </div>
+        <label class="person-switcher" for="personSelect">
+          <span>人物</span>
+          <select id="personSelect" aria-label="选择人物"></select>
+        </label>
         <button class="ghost-button" id="fitRouteBtn" type="button">总览</button>
         <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
         <label class="file-button">
@@ -50,14 +60,8 @@
           </label>
         </div>
         <div class="map-overlay map-stats" aria-live="polite">
-          <div>
-            <span class="stat-label">当前</span>
-            <strong id="currentPlace">九原</strong>
-          </div>
-          <div>
-            <span class="stat-label">累计行迹</span>
-            <strong id="distanceText">0 km</strong>
-          </div>
+          <div><span class="stat-label">当前</span><strong id="currentPlace">—</strong></div>
+          <div><span class="stat-label">累计行迹</span><strong id="distanceText">0 km</strong></div>
         </div>
         <div class="map-overlay legend">
           <span id="legendPast"><i class="legend-line past"></i> 已走</span>
@@ -67,19 +71,13 @@
       </div>
 
       <aside class="story-panel" aria-label="当前历史事件">
-        <div class="event-index" id="eventIndex">01 / 11</div>
-        <div class="event-year" id="eventYear">约 180 年代</div>
-        <h2 id="eventTitle">并州九原</h2>
-        <div class="place-line">
-          <span class="place-dot"></span>
-          <span id="eventPlace">内蒙古包头一带（东汉：五原郡九原县）</span>
-        </div>
-        <p class="event-summary" id="eventSummary">吕布出身并州边地。现存史料对其出生年份没有确切记载，因此时间从其早年活动开始作示意。</p>
+        <div class="event-index" id="eventIndex">—</div>
+        <div class="event-year" id="eventYear">—</div>
+        <h2 id="eventTitle">载入中…</h2>
+        <div class="place-line"><span class="place-dot"></span><span id="eventPlace">—</span></div>
+        <p class="event-summary" id="eventSummary">正在载入人物数据。</p>
         <div class="event-tags" id="eventTags"></div>
-        <div class="source-block">
-          <span id="sourceLabel">史料提示</span>
-          <p id="eventSource">地点与年份采用便于地图演示的近似值；V1 不把不确定信息伪装成精确 GPS。</p>
-        </div>
+        <div class="source-block"><span id="sourceLabel">史料提示</span><p id="eventSource">—</p></div>
         <div class="event-nav">
           <button id="prevEventBtn" type="button" aria-label="上一个事件">← 上一站</button>
           <button id="nextEventBtn" type="button" aria-label="下一个事件">下一站 →</button>
@@ -90,10 +88,7 @@
     <section class="timeline-panel" aria-label="时间轴与播放控制">
       <div class="playback-row">
         <button class="play-button" id="playBtn" type="button" aria-label="播放">▶</button>
-        <div class="clock">
-          <strong id="clockYear">约 180 年代</strong>
-          <span id="clockPhase">并州九原</span>
-        </div>
+        <div class="clock"><strong id="clockYear">—</strong><span id="clockPhase">—</span></div>
         <div class="speed-group" aria-label="播放速度">
           <button type="button" data-speed="0.5">0.5×</button>
           <button type="button" data-speed="1" class="active">1×</button>
@@ -108,17 +103,16 @@
           <div class="timeline-events" id="timelineEvents"></div>
           <input id="timeRange" type="range" min="0" max="1000" value="0" step="1" aria-label="人物生平时间轴" />
         </div>
-        <div class="timeline-labels">
-          <span id="startYear">180</span>
-          <span id="endYear">199</span>
-        </div>
+        <div class="timeline-labels"><span id="startYear">—</span><span id="endYear">—</span></div>
       </div>
-      <p class="timeline-hint"><span id="timelineHintText">底图采用现代地理；括号内标注对应的汉末地名。可拖动时间轴或点地图节点；行迹连线不代表实际道路。</span></p>
+      <p class="timeline-hint"><span id="timelineHintText">底图采用现代地理；历史地名和路线精度以人物数据中的说明为准。可拖动时间轴或点击地图节点。</span></p>
     </section>
   </main>
 
   <noscript>此工具需要启用 JavaScript。</noscript>
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./compare-registry.js"></script>
+  <script src="./single-person-router.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
