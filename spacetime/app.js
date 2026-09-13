@@ -27,6 +27,9 @@
     fitRouteBtn: document.getElementById('fitRouteBtn'),
     followBtn: document.getElementById('followBtn'),
     fileInput: document.getElementById('fileInput'),
+    terrainToggle: document.getElementById('terrainToggle'),
+    terrainOpacity: document.getElementById('terrainOpacity'),
+    terrainOpacityValue: document.getElementById('terrainOpacityValue'),
     speedButtons: [...document.querySelectorAll('[data-speed]')]
   };
 
@@ -54,6 +57,22 @@
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
+
+  map.createPane('terrainPane');
+  map.getPane('terrainPane').style.zIndex = '240';
+  map.getPane('terrainPane').style.pointerEvents = 'none';
+
+  const terrainLayer = L.tileLayer(
+    'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}',
+    {
+      pane: 'terrainPane',
+      maxNativeZoom: 12,
+      maxZoom: 19,
+      opacity: 0.34,
+      className: 'terrain-tiles',
+      attribution: 'Terrain &copy; Esri, Airbus, USGS, NGA, NASA, CGIAR, et al.'
+    }
+  ).addTo(map);
 
   const futureLine = L.polyline([], {
     color: '#777268',
@@ -161,7 +180,7 @@
       });
       const marker = L.marker([event.lat, event.lng], { icon, zIndexOffset: 100 + index })
         .addTo(map)
-        .bindTooltip(event.title, { direction: 'top', offset: [0, -8], className: 'event-label' });
+        .bindTooltip(event.mapLabel || event.place || event.title, { direction: 'top', offset: [0, -8], className: 'event-label' });
       marker.on('click', () => jumpToEvent(index, true));
       state.leafletMarkers.push(marker);
     });
@@ -276,7 +295,7 @@
     const event = state.data.events[idx];
     els.clockYear.textContent = event.dateLabel || `${Math.round(seg.year)} 年`;
     els.clockPhase.textContent = event.title;
-    els.currentPlace.textContent = event.title;
+    els.currentPlace.textContent = event.mapLabel || event.place || event.title;
     els.distanceText.textContent = `${Math.round(cumulativeDistance(state.progress)).toLocaleString('zh-CN')} km`;
   }
 
@@ -375,6 +394,20 @@
     state.follow = !state.follow;
     els.followBtn.textContent = `跟随：${state.follow ? '开' : '关'}`;
     els.followBtn.setAttribute('aria-pressed', String(state.follow));
+  });
+  els.terrainToggle.addEventListener('change', () => {
+    if (els.terrainToggle.checked) {
+      terrainLayer.addTo(map);
+      els.terrainOpacity.disabled = false;
+    } else {
+      map.removeLayer(terrainLayer);
+      els.terrainOpacity.disabled = true;
+    }
+  });
+  els.terrainOpacity.addEventListener('input', () => {
+    const value = clamp(Number(els.terrainOpacity.value), 0, 70);
+    terrainLayer.setOpacity(value / 100);
+    els.terrainOpacityValue.textContent = `${value}%`;
   });
   els.speedButtons.forEach(button => button.addEventListener('click', () => {
     state.speed = Number(button.dataset.speed);
