@@ -82,27 +82,8 @@
     applyTimelineHeight(current + (event.key === 'ArrowUp' ? 24 : -24), null);
   });
 
-  // Map lifetime visibility guard.
-  // The core renderer already hides a person's marker before birth / after death,
-  // but its past/future route polylines used to remain on the map. That makes a
-  // long multi-era comparison accumulate old routes forever. Keep timeline rows
-  // visible for comparison, while map geometry exists only during that person's life.
   const registry = Array.isArray(window.SPACETIME_COMPARE_REGISTRY) ? window.SPACETIME_COMPARE_REGISTRY : [];
-  const colorCache = new Map();
-
-  function computedColor(value) {
-    if (!value) return '';
-    if (colorCache.has(value)) return colorCache.get(value);
-    const probe = document.createElement('span');
-    probe.style.color = value;
-    probe.style.position = 'absolute';
-    probe.style.visibility = 'hidden';
-    document.body.appendChild(probe);
-    const normalized = getComputedStyle(probe).color;
-    probe.remove();
-    colorCache.set(value, normalized);
-    return normalized;
-  }
+  const capture = window.SPACETIME_LAYER_CAPTURE;
 
   function currentHistoricalTime() {
     const people = window.SPACETIME_COMPARE_PEOPLE;
@@ -121,15 +102,18 @@
   }
 
   function setPersonRoutesVisible(entry, visible) {
-    if (!entry?.color) return;
-    const raw = String(entry.color).toLowerCase();
-    const normalized = computedColor(entry.color);
-    document.querySelectorAll('#compareMap .leaflet-overlay-pane path').forEach(path => {
-      const attr = String(path.getAttribute('stroke') || '').toLowerCase();
-      const cssStroke = getComputedStyle(path).stroke;
-      const sameColor = attr === raw || (normalized && cssStroke === normalized);
-      if (sameColor) path.style.display = visible ? '' : 'none';
-    });
+    const map = capture?.map;
+    if (!map || !entry?.color) return;
+    const color = String(entry.color).toLowerCase();
+    capture.polylines
+      .filter(layer => String(layer?.options?.color || '').toLowerCase() === color)
+      .forEach(layer => {
+        if (visible) {
+          if (!map.hasLayer(layer)) layer.addTo(map);
+        } else if (map.hasLayer(layer)) {
+          map.removeLayer(layer);
+        }
+      });
   }
 
   function syncLifetimeMapVisibility() {
@@ -157,10 +141,8 @@
   picks?.addEventListener('change', () => setTimeout(scheduleLifetimeVisibilitySync, 0));
   const statusTime = $('statusTime');
   if (statusTime) new MutationObserver(scheduleLifetimeVisibilitySync).observe(statusTime, { childList: true, subtree: true, characterData: true });
-  const mapNode = $('compareMap');
-  if (mapNode) new MutationObserver(scheduleLifetimeVisibilitySync).observe(mapNode, { childList: true, subtree: true });
   window.addEventListener('resize', scheduleLifetimeVisibilitySync);
-  setTimeout(scheduleLifetimeVisibilitySync, 120);
+  setTimeout(scheduleLifetimeVisibilitySync, 160);
 
   applyTimelineHeight(presetHeights.balanced, 'balanced');
 })();
