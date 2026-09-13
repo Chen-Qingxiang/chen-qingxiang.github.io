@@ -20,6 +20,17 @@
     './expanded-people-6.js'
   ];
 
+  // The original single-person player was China-only and used minZoom 4.
+  // Some shared-registry people have Central Asian, European or US routes, so
+  // allow the same world-scale overview as compare mode without rewriting app.js.
+  if (window.L?.map) {
+    const originalMap = L.map;
+    L.map = function(target, options = {}) {
+      const next = target === 'map' ? { ...options, minZoom: 2 } : options;
+      return originalMap.call(this, target, next);
+    };
+  }
+
   function loadScript(url) {
     if (loadedScripts.has(url)) return Promise.resolve();
     return new Promise((resolve, reject) => {
