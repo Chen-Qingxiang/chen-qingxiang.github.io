@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="北宋人物多人时空行迹比较：苏轼、王安石、司马光共享历史时间轴同步移动。" />
+  <meta name="description" content="多人时空行迹比较：任意有绝对年代的轨迹共享同一历史时间轴同步移动。" />
   <title>多人时空对比 · Spacetime Trails</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
@@ -13,9 +13,9 @@
   <main class="compare-shell">
     <header class="compare-header">
       <div>
-        <div class="eyebrow">SPACETIME TRAILS · OVERLAP PROTOTYPE</div>
-        <h1>北宋人物 · 多人时空对比</h1>
-        <p>勾选人物，共享同一个历史时钟；驻留时停在当地，旅行时按对应时间窗口沿路线移动。</p>
+        <div class="eyebrow">SPACETIME TRAILS · MULTI-TRACK</div>
+        <h1>多人时空对比</h1>
+        <p>所有具有绝对年代的行迹都可进入同一历史时钟；人物不要求同时代，公元前与跨千年比较同样适用。</p>
       </div>
       <nav class="header-links" aria-label="页面导航">
         <a href="./sudongpo.html">苏东坡</a>
@@ -26,7 +26,13 @@
     </header>
 
     <section class="toolbar" aria-label="人物与时间范围">
-      <div class="people-picks" id="peoplePicks"></div>
+      <div class="people-control">
+        <div class="people-tools">
+          <input id="peopleSearch" type="search" placeholder="搜索人物" aria-label="搜索人物" />
+          <button class="soft-button compact" id="selectAllBtn" type="button">全选</button>
+        </div>
+        <div class="people-picks" id="peoplePicks"></div>
+      </div>
       <div class="mode-picks" role="group" aria-label="时间范围">
         <button type="button" data-range-mode="union" class="active">完整年代</button>
         <button type="button" data-range-mode="common">共同年代</button>
@@ -91,30 +97,12 @@
         </div>
         <div></div>
       </div>
-      <p class="timeline-note">粗色段表示驻留；细色段表示旅行窗口。时间轴的每一年宽度相同；1× 播放约为 1 秒 = 1 个历史年。</p>
+      <p class="timeline-note">粗色段表示驻留；细色段表示旅行窗口。时间轴始终线性；跨度很大时只自动改变播放倍率，不改变不同年代的相对时间比例。</p>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <script src="./sudongpo-data1.js"></script>
-  <script src="./sudongpo-data2.js"></script>
-  <script src="./sudongpo-timing.js"></script>
-  <script>
-    window.COMPARE_PEOPLE = { sudongpo: JSON.parse(JSON.stringify(window.SUDONGPO)) };
-  </script>
-
-  <script src="./wanganshi-data.js"></script>
-  <script>
-    window.COMPARE_PEOPLE.wanganshi = JSON.parse(JSON.stringify(window.SPACETIME_PERSON));
-  </script>
-
-  <script src="./simaguang-data.js"></script>
-  <script>
-    window.COMPARE_PEOPLE.simaguang = JSON.parse(JSON.stringify(window.SPACETIME_PERSON));
-    delete window.SPACETIME_PERSON;
-  </script>
-
+  <script src="./compare-registry.js"></script>
   <script src="./compare.js"></script>
 </body>
 </html>
