@@ -1,6 +1,19 @@
 window.SPACETIME_COMPARE_REGISTRY = [
+  { id:'kongzi', label:'孔子', char:'孔', color:'#8b5e3c', period:'前551–前479', defaultSelected:false, loader:{type:'scripts',urls:['./expanded-people-1.js'],global:'SPACETIME_EXPANDED_kongzi'} },
+  { id:'zengzi', label:'曾子', char:'曾', color:'#7a6a45', period:'前505–前435', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_zengzi'} },
+  { id:'mozi', label:'墨子', char:'墨', color:'#526b60', period:'约前468–约前376', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_mozi'} },
+  { id:'shangyang', label:'商鞅', char:'鞅', color:'#9b4d3a', period:'约前390–前338', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_shangyang'} },
+  { id:'mengzi', label:'孟子', char:'孟', color:'#5b7694', period:'约前372–前289', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_mengzi'} },
+  { id:'quyuan', label:'屈原', char:'屈', color:'#6a538c', period:'约前340–前278', defaultSelected:false, loader:{type:'scripts',urls:['./expanded-people-2.js'],global:'SPACETIME_EXPANDED_quyuan'} },
+  { id:'xunzi', label:'荀子', char:'荀', color:'#437d6d', period:'约前313–约前238', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_xunzi'} },
+  { id:'hanfei', label:'韩非', char:'非', color:'#8e5a44', period:'约前280–前233', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_hanfei'} },
+  { id:'qinshihuang', label:'秦始皇', char:'秦', color:'#343a40', period:'前259–前210', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_qinshihuang'} },
+  { id:'liubang', label:'刘邦', char:'邦', color:'#4a7043', period:'前256–前195', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_liubang'} },
+  { id:'jiayi', label:'贾谊', char:'贾', color:'#826c3a', period:'前200–前168', defaultSelected:false, loader:{type:'scripts',urls:['./expanded-people-3.js'],global:'SPACETIME_EXPANDED_jiayi'} },
+  { id:'dongzhongshu', label:'董仲舒', char:'董', color:'#6d6478', period:'约前179–约前104', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_dongzhongshu'} },
   { id:'zhangqian', label:'张骞', char:'骞', color:'#a86f32', period:'约前164–前114', defaultSelected:false, lifeStart:-164, lifeEnd:-114.32, loader:{type:'json',url:'./data/zhangqian.json'} },
   { id:'hanwudi', label:'汉武帝', char:'武', color:'#9d4035', period:'前157–前87', defaultSelected:false, loader:{type:'json',url:'./data/hanwudi.json'} },
+  { id:'simaqian', label:'司马迁', char:'迁', color:'#3e7082', period:'约前145–约前86', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_simaqian'} },
   { id:'hanxuandi', label:'汉宣帝', char:'宣', color:'#b5893f', period:'前91–前48', defaultSelected:false, loader:{type:'json',url:'./data/hanxuandi.json'} },
   { id:'liuxiang', label:'刘向', char:'向', color:'#577590', period:'前77–前6', defaultSelected:false, loader:{type:'json',url:'./data/liuxiang.json'} },
   { id:'wangmang', label:'王莽', char:'莽', color:'#7a5068', period:'前45–23', defaultSelected:false, loader:{type:'json',url:'./data/wangmang.json'} },
@@ -35,5 +48,31 @@ window.SPACETIME_COMPARE_REGISTRY = [
   { id:'kublai', label:'忽必烈', char:'忽', color:'#4e6e81', period:'1215–1294', defaultSelected:false, loader:{type:'json',url:'./data/kublai.json'} },
   { id:'guoshoujing', label:'郭守敬', char:'郭', color:'#a37c2c', period:'1231–1316', defaultSelected:false, loader:{type:'json',url:'./data/guoshoujing.json'} },
   { id:'zhuyuanzhang', label:'朱元璋', char:'明', color:'#9a3d3d', period:'1328–1398', defaultSelected:false, loader:{type:'json',url:'./data/zhuyuanzhang.json'} },
-  { id:'zhenghe', label:'郑和', char:'和', color:'#2e6da4', period:'1371–1433', defaultSelected:false, lifeStart:1371, lifeEnd:1433.5, loader:{type:'json',url:'./data/zhenghe.json'} }
+  { id:'zhenghe', label:'郑和', char:'和', color:'#2e6da4', period:'1371–1433', defaultSelected:false, lifeStart:1371, lifeEnd:1433.5, loader:{type:'json',url:'./data/zhenghe.json'} },
+  { id:'yuqian', label:'于谦', char:'谦', color:'#52796f', period:'1398–1457', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_yuqian'} },
+  { id:'wangyangming', label:'王阳明', char:'阳', color:'#a05c42', period:'1472–1529', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_wangyangming'} },
+  { id:'lishizhen', label:'李时珍', char:'珍', color:'#637a3f', period:'1518–1593', defaultSelected:false, loader:{type:'scripts',urls:['./expanded-people-4.js'],global:'SPACETIME_EXPANDED_lishizhen'} },
+  { id:'xuguangqi', label:'徐光启', char:'徐', color:'#496e91', period:'1562–1633', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_xuguangqi'} },
+  { id:'guyanwu', label:'顾炎武', char:'顾', color:'#805d45', period:'1613–1682', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_guyanwu'} },
+  { id:'kangxi', label:'康熙', char:'康', color:'#7c5c91', period:'1654–1722', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_kangxi'} },
+  { id:'caoxueqin', label:'曹雪芹', char:'曹', color:'#9a5261', period:'约1715–约1763', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_caoxueqin'} },
+  { id:'daizhen', label:'戴震', char:'戴', color:'#537a7e', period:'1724–1777', defaultSelected:false, loader:{type:'scripts',urls:['./expanded-people-5.js'],global:'SPACETIME_EXPANDED_daizhen'} },
+  { id:'linzexu', label:'林则徐', char:'林', color:'#436b52', period:'1785–1850', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_linzexu'} },
+  { id:'zengguofan', label:'曾国藩', char:'曾', color:'#6b5d4d', period:'1811–1872', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_zengguofan'} },
+  { id:'yanfu', label:'严复', char:'严', color:'#5c7094', period:'1854–1921', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_yanfu'} },
+  { id:'sunzhongshan', label:'孙中山', char:'孙', color:'#9a6a32', period:'1866–1925', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_sunzhongshan'} },
+  { id:'luxun', label:'鲁迅', char:'鲁', color:'#665a72', period:'1881–1936', defaultSelected:false, loader:{type:'scripts',urls:['./expanded-people-6.js'],global:'SPACETIME_EXPANDED_luxun'} },
+  { id:'maozedong', label:'毛泽东', char:'毛', color:'#9b4638', period:'1893–1976', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_maozedong'} },
+  { id:'dengxiaoping', label:'邓小平', char:'邓', color:'#3f6a78', period:'1904–1997', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_dengxiaoping'} },
+  { id:'qianxuesen', label:'钱学森', char:'钱', color:'#526d4d', period:'1911–2009', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_qianxuesen'} },
+  { id:'yangzhenning', label:'杨振宁', char:'杨', color:'#735c8e', period:'1922–2025', defaultSelected:false, loader:{type:'global',global:'SPACETIME_EXPANDED_yangzhenning'} }
 ];
+
+(() => {
+  if (document.querySelector('script[data-spacetime-chronology-order]')) return;
+  const s = document.createElement('script');
+  s.src = './compare-chronology-order.js';
+  s.async = false;
+  s.dataset.spacetimeChronologyOrder = '1';
+  document.head.appendChild(s);
+})();
