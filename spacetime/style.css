@@ -50,6 +50,50 @@ h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: 1.05; letter-spa
 .brand-block p { margin: 9px 0 0; color: var(--muted); max-width: 760px; }
 
 .top-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+
+.case-picker {
+  border: 1px solid #c7c4b9;
+  background: rgba(255,255,255,.55);
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+.case-picker select {
+  appearance: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 800;
+  cursor: pointer;
+  padding-right: 3px;
+}
+.migration-marker { background: transparent; border: 0; }
+.migration-marker .bird-core {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #1f2521; color: #fffdf7;
+  border: 2px solid #fffdf7; box-shadow: 0 2px 9px rgba(0,0,0,.28);
+  font-size: 13px; font-weight: 900;
+}
+.migration-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #b62826; border: 1px solid rgba(255,253,247,.9);
+  box-shadow: 0 0 0 1px rgba(80,50,45,.12);
+}
+.migration-route-label.leaflet-tooltip {
+  background: rgba(255,253,247,.94); border: 1px solid rgba(45,45,38,.18);
+  box-shadow: 0 2px 9px rgba(0,0,0,.11); color: #30342f;
+  font-weight: 800; padding: 4px 7px;
+}
+.migration-route-label.leaflet-tooltip::before { display:none; }
+
 .ghost-button, .file-button {
   border: 1px solid #c7c4b9;
   background: rgba(255,255,255,.55);
@@ -228,7 +272,7 @@ h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: 1.05; letter-spa
   width: 28px; height: 28px; border-radius: 50% 50% 50% 5px; transform: rotate(-45deg);
   background: #1f2521; border: 3px solid #fffdf7; box-shadow: 0 3px 12px rgba(0,0,0,.28);
 }
-.person-marker .person-core::after { content: "吕"; display: grid; place-items: center; width: 100%; height: 100%; transform: rotate(45deg); color: #fff; font-size: 11px; font-weight: 900; }
+.person-marker .person-core::after { content: var(--marker-char, "吕"); display: grid; place-items: center; width: 100%; height: 100%; transform: rotate(45deg); color: #fff; font-size: 11px; font-weight: 900; }
 .event-label.leaflet-tooltip {
   background: rgba(255,253,247,.94); border: 1px solid rgba(45,45,38,.18); box-shadow: 0 2px 9px rgba(0,0,0,.11);
   color: #30342f; font-weight: 800; padding: 4px 7px;
@@ -250,7 +294,7 @@ h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: 1.05; letter-spa
   .topbar { padding: 18px 16px 12px; margin: 0; }
   .brand-block p { font-size: 13px; }
   .top-actions { width: 100%; }
-  .ghost-button, .file-button { flex: 1; min-width: 100px; }
+  .ghost-button, .file-button, .case-picker { flex: 1; min-width: 100px; }
   .workspace, .timeline-panel { border-left: 0; border-right: 0; }
   #map { min-height: 390px; }
   .map-stats { top: 10px; left: 10px; gap: 12px; padding: 8px 10px; }
