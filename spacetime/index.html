@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="单人物一生足迹与历史事件的交互式时空播放器" />
+  <meta name="description" content="单对象时空行迹与历史事件的交互式播放器" />
   <title>单人模式 · Spacetime Trails</title>
   <script>
     if (location.pathname.endsWith('/index.html')) {
@@ -21,10 +21,10 @@
       <div class="brand-block">
         <div class="eyebrow">SPACETIME TRAILS · SINGLE</div>
         <div class="title-row">
-          <h1 id="personName">人物行迹</h1>
+          <h1 id="personName">时空行迹</h1>
           <span class="period" id="personPeriod">载入中…</span>
         </div>
-        <p id="personSubtitle">选择一个人物，精确查看其一生的地点、事件与移动。</p>
+        <p id="personSubtitle">选择一个人物或单轨迹案例，查看其地点、事件与移动。</p>
       </div>
       <nav class="mode-nav" aria-label="模式切换">
         <a class="ghost-button active" href="./" aria-current="page">单人模式</a>
@@ -34,8 +34,8 @@
 
     <section class="single-toolbar" aria-label="单人模式工具栏">
       <label class="person-switcher" for="personSelect">
-        <span>人物</span>
-        <select id="personSelect" aria-label="选择人物"></select>
+        <span>对象</span>
+        <select id="personSelect" aria-label="选择人物或特别案例"></select>
       </label>
       <button class="ghost-button" id="fitRouteBtn" type="button">总览路线</button>
       <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
@@ -47,7 +47,7 @@
 
     <section class="workspace">
       <div class="map-panel">
-        <div id="map" aria-label="人物行迹地图"></div>
+        <div id="map" aria-label="对象行迹地图"></div>
         <div class="map-overlay terrain-control" aria-label="地形图层控制">
           <label class="terrain-toggle">
             <input id="terrainToggle" type="checkbox" checked />
@@ -70,12 +70,12 @@
         </div>
       </div>
 
-      <aside class="story-panel" aria-label="当前历史事件">
+      <aside class="story-panel" aria-label="当前事件">
         <div class="event-index" id="eventIndex">—</div>
         <div class="event-year" id="eventYear">—</div>
         <h2 id="eventTitle">载入中…</h2>
         <div class="place-line"><span class="place-dot"></span><span id="eventPlace">—</span></div>
-        <p class="event-summary" id="eventSummary">正在载入人物数据。</p>
+        <p class="event-summary" id="eventSummary">正在载入数据。</p>
         <div class="event-tags" id="eventTags"></div>
         <div class="source-block"><span id="sourceLabel">史料提示</span><p id="eventSource">—</p></div>
         <div class="event-nav">
@@ -101,11 +101,11 @@
         <div class="timeline-track" id="timelineTrack">
           <div class="timeline-progress" id="timelineProgress"></div>
           <div class="timeline-events" id="timelineEvents"></div>
-          <input id="timeRange" type="range" min="0" max="1000" value="0" step="1" aria-label="人物生平时间轴" />
+          <input id="timeRange" type="range" min="0" max="1000" value="0" step="1" aria-label="单对象时间轴" />
         </div>
         <div class="timeline-labels"><span id="startYear">—</span><span id="endYear">—</span></div>
       </div>
-      <p class="timeline-hint"><span id="timelineHintText">底图采用现代地理；历史地名和路线精度以人物数据中的说明为准。可拖动时间轴或点击地图节点。</span></p>
+      <p class="timeline-hint"><span id="timelineHintText">底图采用现代地理；历史地名和路线精度以数据说明为准。可拖动时间轴或点击地图节点。</span></p>
     </section>
   </main>
 
