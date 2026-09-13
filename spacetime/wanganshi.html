@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="王安石一生行迹的交互式时空行迹图" />
+  <title>王安石一生行迹 · Spacetime Trails</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="eyebrow">SPACETIME TRAILS · V1.3</div>
+        <div class="title-row"><h1 id="personName">王安石一生行迹</h1><span class="period" id="personPeriod">1021–1086</span></div>
+        <p id="personSubtitle">从临江、临川到鄞县、舒州、汴京与江宁：追踪王安石从地方官到变法宰相，再退居半山的一生。</p>
+      </div>
+      <div class="top-actions">
+        <a class="ghost-button" href="./index.html" style="text-decoration:none">吕布</a>
+        <a class="ghost-button" href="./sudongpo.html" style="text-decoration:none">苏东坡</a>
+        <a class="ghost-button" href="./simaguang.html" style="text-decoration:none">司马光</a>
+        <a class="ghost-button" href="./swallow.html" style="text-decoration:none">燕子迁徙</a>
+        <button class="ghost-button" id="fitRouteBtn" type="button">总览</button>
+        <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
+      </div>
+    </header>
+    <section class="workspace">
+      <div class="map-panel">
+        <div id="map" aria-label="人物行迹地图"></div>
+        <div class="map-overlay terrain-control" aria-label="地形图层控制">
+          <label class="terrain-toggle"><input id="terrainToggle" type="checkbox" checked /><span>地形</span></label>
+          <label class="terrain-strength" for="terrainOpacity"><span>强度</span><input id="terrainOpacity" type="range" min="0" max="70" value="34" step="1" /><output id="terrainOpacityValue">34%</output></label>
+        </div>
+        <div class="map-overlay map-stats" aria-live="polite">
+          <div><span class="stat-label">当前</span><strong id="currentPlace">临江军</strong></div>
+          <div><span class="stat-label">累计行迹</span><strong id="distanceText">0 km</strong></div>
+        </div>
+        <div class="map-overlay legend"><span><i class="legend-line past"></i> 已走</span><span><i class="legend-line future"></i> 未走</span><span><i class="legend-dot"></i> 事件</span></div>
+      </div>
+      <aside class="story-panel" aria-label="当前历史事件">
+        <div class="event-index" id="eventIndex">01</div>
+        <div class="event-year" id="eventYear">1021 年 11 月 12 日</div>
+        <h2 id="eventTitle">生于临江军</h2>
+        <div class="place-line"><span class="place-dot"></span><span id="eventPlace">江西樟树临江镇一带（北宋：临江军清江县）</span></div>
+        <p class="event-summary" id="eventSummary"></p>
+        <div class="event-tags" id="eventTags"></div>
+        <div class="source-block"><span>史料提示</span><p id="eventSource"></p></div>
+        <div class="event-nav"><button id="prevEventBtn" type="button">← 上一站</button><button id="nextEventBtn" type="button">下一站 →</button></div>
+      </aside>
+    </section>
+    <section class="timeline-panel" aria-label="时间轴与播放控制">
+      <div class="playback-row">
+        <button class="play-button" id="playBtn" type="button" aria-label="播放">▶</button>
+        <div class="clock"><strong id="clockYear">1021 年</strong><span id="clockPhase">生于临江军</span></div>
+        <div class="speed-group" aria-label="播放速度"><button type="button" data-speed="0.5">0.5×</button><button type="button" data-speed="1" class="active">1×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="4">4×</button></div>
+      </div>
+      <div class="timeline-wrap">
+        <div class="timeline-track"><div class="timeline-progress" id="timelineProgress"></div><div class="timeline-events" id="timelineEvents"></div><input id="timeRange" type="range" min="0" max="1000" value="0" step="1" aria-label="人物生平时间轴" /></div>
+        <div class="timeline-labels"><span id="startYear">1021</span><span id="endYear">1086</span></div>
+      </div>
+      <p class="timeline-hint"><span id="timelineHintText"></span></p>
+    </section>
+  </main>
+  <noscript>此工具需要启用 JavaScript。</noscript>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./wanganshi-data.js"></script>
+  <script src="./person-timeline-core.js"></script>
+</body>
+</html>
