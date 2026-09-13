@@ -12,36 +12,52 @@
 <body>
   <main class="compare-shell">
     <header class="compare-header">
-      <div>
+      <div class="header-title">
         <div class="eyebrow">SPACETIME TRAILS · MULTI-TRACK</div>
-        <h1>多人时空对比</h1>
-        <p>所有具有绝对年代的行迹都可进入同一历史时钟；人物不要求同时代，公元前与跨千年比较同样适用。</p>
+        <div class="title-line">
+          <h1>多人时空对比</h1>
+          <span>绝对年代行迹共享同一历史时钟</span>
+        </div>
       </div>
       <nav class="header-links" aria-label="页面导航">
+        <a href="./index.html">单人模式</a>
         <a href="./sudongpo.html">苏东坡</a>
         <a href="./wanganshi.html">王安石</a>
         <a href="./simaguang.html">司马光</a>
-        <a href="./index.html">吕布</a>
       </nav>
     </header>
 
     <section class="toolbar" aria-label="人物与时间范围">
-      <div class="people-control">
-        <div class="people-tools">
-          <input id="peopleSearch" type="search" placeholder="搜索人物" aria-label="搜索人物" />
-          <button class="soft-button compact" id="selectAllBtn" type="button">全选</button>
-          <button class="soft-button compact" id="relayBtn" type="button" title="李世民到苏东坡的时间接力链">唐宋接力</button>
+      <div class="people-dropdown" id="peopleDropdown">
+        <button class="people-toggle" id="peoplePickerToggle" type="button" aria-expanded="false" aria-controls="peoplePopover">
+          <span class="people-toggle-label">人物</span>
+          <span id="selectedPeopleSummary" class="selected-people-summary">载入中…</span>
+          <span class="people-caret" aria-hidden="true">⌄</span>
+        </button>
+        <div class="people-popover" id="peoplePopover" hidden>
+          <div class="people-tools">
+            <input id="peopleSearch" type="search" placeholder="搜索人物 / 年代" aria-label="搜索人物" />
+            <button class="soft-button compact" id="selectAllBtn" type="button">全选</button>
+          </div>
+          <div class="people-picks" id="peoplePicks"></div>
         </div>
-        <div class="people-picks" id="peoplePicks"></div>
       </div>
+
       <div class="mode-picks" role="group" aria-label="时间范围">
         <button type="button" data-range-mode="union" class="active">完整年代</button>
         <button type="button" data-range-mode="common">共同年代</button>
       </div>
+
+      <div class="layout-picks" role="group" aria-label="地图与时间轴大小">
+        <span>视图</span>
+        <button type="button" data-layout="map" title="给地图更多空间">地图</button>
+        <button type="button" data-layout="balanced" class="active" title="地图与时间轴均衡">均衡</button>
+        <button type="button" data-layout="timeline" title="给时间轴更多空间">时间轴</button>
+      </div>
       <button class="soft-button" id="fitBtn" type="button">总览路线</button>
     </section>
 
-    <section class="main-grid">
+    <section class="main-grid" id="mainWorkspace">
       <div class="map-wrap">
         <div id="compareMap" aria-label="多人时空行迹地图"></div>
         <div class="map-card map-time-card">
@@ -65,10 +81,14 @@
         <div class="overlap-box">
           <div class="overlap-title">时空接近</div>
           <div id="overlapList" class="overlap-list">当前没有检测到人物在同一地区。</div>
-          <p>这里只表示地图位置在同一时刻接近，不等于史料确认见面。</p>
+          <p>表示同一时刻地图位置接近，不等于史料确认见面。</p>
         </div>
       </aside>
     </section>
+
+    <div class="workspace-splitter" id="workspaceSplitter" role="separator" aria-label="调整地图与时间轴大小" aria-orientation="horizontal" tabindex="0">
+      <span></span>
+    </div>
 
     <section class="timeline-section">
       <div class="playback-bar">
@@ -98,13 +118,13 @@
         </div>
         <div></div>
       </div>
-      <p class="timeline-note">粗色段表示驻留；细色段表示旅行窗口。时间轴的每一年宽度相同；1× 播放约为 1 秒 = 1 个历史年。</p>
+      <p class="timeline-note">粗色段＝驻留；细色段＝旅行；虚线＝位置资料未覆盖。年份始终线性。</p>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="./compare-registry.js"></script>
   <script src="./compare.js"></script>
-  <script src="./compare-relay.js"></script>
+  <script src="./compare-ui.js"></script>
 </body>
 </html>
