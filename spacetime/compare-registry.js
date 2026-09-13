@@ -1,5 +1,10 @@
 window.SPACETIME_COMPARE_REGISTRY = [
   { id:'zhangqian', label:'张骞', char:'骞', color:'#a86f32', period:'约前164–前114', defaultSelected:false, lifeStart:-164, lifeEnd:-114.32, loader:{type:'json',url:'./data/zhangqian.json'} },
+  { id:'hanwudi', label:'汉武帝', char:'武', color:'#9d4035', period:'前157–前87', defaultSelected:false, loader:{type:'json',url:'./data/hanwudi.json'} },
+  { id:'hanxuandi', label:'汉宣帝', char:'宣', color:'#b5893f', period:'前91–前48', defaultSelected:false, loader:{type:'json',url:'./data/hanxuandi.json'} },
+  { id:'liuxiang', label:'刘向', char:'向', color:'#577590', period:'前77–前6', defaultSelected:false, loader:{type:'json',url:'./data/liuxiang.json'} },
+  { id:'wangmang', label:'王莽', char:'莽', color:'#7a5068', period:'前45–23', defaultSelected:false, loader:{type:'json',url:'./data/wangmang.json'} },
+  { id:'liuxiu', label:'刘秀', char:'秀', color:'#477a4d', period:'前5–57', defaultSelected:false, loader:{type:'json',url:'./data/liuxiu.json'} },
   { id:'banchao', label:'班超', char:'超', color:'#2f6f6a', period:'32–102', defaultSelected:false, lifeStart:32, lifeEnd:102.75, loader:{type:'json',url:'./data/banchao.json'} },
   { id:'zhangheng', label:'张衡', char:'衡', color:'#c17a3a', period:'78–139', defaultSelected:false, loader:{type:'json',url:'./data/zhangheng.json'} },
   { id:'caocao', label:'曹操', char:'操', color:'#5f4b8b', period:'155–220', defaultSelected:false, loader:{type:'json',url:'./data/caocao.json'} },
