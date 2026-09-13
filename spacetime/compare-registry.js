@@ -1,8 +1,16 @@
 window.SPACETIME_COMPARE_REGISTRY = [
   { id:'zhangqian', label:'张骞', char:'骞', color:'#a86f32', period:'约前164–前114', defaultSelected:false, lifeStart:-164, lifeEnd:-114.32, loader:{type:'json',url:'./data/zhangqian.json'} },
   { id:'banchao', label:'班超', char:'超', color:'#2f6f6a', period:'32–102', defaultSelected:false, lifeStart:32, lifeEnd:102.75, loader:{type:'json',url:'./data/banchao.json'} },
+  { id:'zhangheng', label:'张衡', char:'衡', color:'#c17a3a', period:'78–139', defaultSelected:false, loader:{type:'json',url:'./data/zhangheng.json'} },
+  { id:'caocao', label:'曹操', char:'操', color:'#5f4b8b', period:'155–220', defaultSelected:false, loader:{type:'json',url:'./data/caocao.json'} },
   { id:'lubu', label:'吕布', char:'吕', color:'#3f7a55', period:'约 160–199', defaultSelected:false, lifeStart:160, lifeEnd:199, loader:{type:'json',url:'./data/lubu.json'} },
+  { id:'simayan', label:'司马炎', char:'炎', color:'#8c6d31', period:'236–290', defaultSelected:false, loader:{type:'json',url:'./data/simayan.json'} },
+  { id:'wangxizhi', label:'王羲之', char:'羲', color:'#3a7d8c', period:'303–361', defaultSelected:false, loader:{type:'json',url:'./data/wangxizhi.json'} },
   { id:'faxian', label:'法显', char:'显', color:'#7f5c9a', period:'约337–约422', defaultSelected:false, lifeStart:337, lifeEnd:422, loader:{type:'json',url:'./data/faxian.json'} },
+  { id:'taoyuanming', label:'陶渊明', char:'陶', color:'#7b8f3a', period:'365–427', defaultSelected:false, loader:{type:'json',url:'./data/taoyuanming.json'} },
+  { id:'zuchongzhi', label:'祖冲之', char:'祖', color:'#b05c73', period:'429–500', defaultSelected:false, loader:{type:'json',url:'./data/zuchongzhi.json'} },
+  { id:'xiaoyan', label:'萧衍', char:'梁', color:'#6c7a89', period:'464–549', defaultSelected:false, loader:{type:'json',url:'./data/xiaoyan.json'} },
+  { id:'yangjian', label:'杨坚', char:'隋', color:'#a15c38', period:'541–604', defaultSelected:false, loader:{type:'json',url:'./data/yangjian.json'} },
   { id:'lishimin', label:'李世民', char:'李', color:'#8a4b2a', period:'599–649', defaultSelected:false, loader:{type:'json',url:'./data/lishimin.json'} },
   { id:'xuanzang', label:'玄奘', char:'奘', color:'#b04a5a', period:'602–664', defaultSelected:false, lifeStart:602, lifeEnd:664.15, loader:{type:'json',url:'./data/xuanzang.json'} },
   { id:'wuzetian', label:'武则天', char:'武', color:'#9a4f73', period:'624–705', defaultSelected:false, loader:{type:'json',url:'./data/wuzetian.json'} },
@@ -17,5 +25,10 @@ window.SPACETIME_COMPARE_REGISTRY = [
   { id:'simaguang', label:'司马光', char:'司', color:'#745188', period:'1019–1086', defaultSelected:true, loader:{type:'scripts',urls:['./simaguang-data.js'],global:'SPACETIME_PERSON'} },
   { id:'wanganshi', label:'王安石', char:'王', color:'#276a8f', period:'1021–1086', defaultSelected:true, loader:{type:'scripts',urls:['./wanganshi-data.js'],global:'SPACETIME_PERSON'} },
   { id:'sudongpo', label:'苏东坡', char:'苏', color:'#b64335', period:'1037–1101', defaultSelected:true, loader:{type:'scripts',urls:['./sudongpo-data1.js','./sudongpo-data2.js','./sudongpo-timing.js'],global:'SUDONGPO'} },
+  { id:'yuefei', label:'岳飞', char:'岳', color:'#3f6b4f', period:'1103–1142', defaultSelected:false, loader:{type:'json',url:'./data/yuefei.json'} },
+  { id:'zhuxi', label:'朱熹', char:'朱', color:'#8a5a9e', period:'1130–1200', defaultSelected:false, loader:{type:'json',url:'./data/zhuxi.json'} },
+  { id:'kublai', label:'忽必烈', char:'忽', color:'#4e6e81', period:'1215–1294', defaultSelected:false, loader:{type:'json',url:'./data/kublai.json'} },
+  { id:'guoshoujing', label:'郭守敬', char:'郭', color:'#a37c2c', period:'1231–1316', defaultSelected:false, loader:{type:'json',url:'./data/guoshoujing.json'} },
+  { id:'zhuyuanzhang', label:'朱元璋', char:'明', color:'#9a3d3d', period:'1328–1398', defaultSelected:false, loader:{type:'json',url:'./data/zhuyuanzhang.json'} },
   { id:'zhenghe', label:'郑和', char:'和', color:'#2e6da4', period:'1371–1433', defaultSelected:false, lifeStart:1371, lifeEnd:1433.5, loader:{type:'json',url:'./data/zhenghe.json'} }
 ];
