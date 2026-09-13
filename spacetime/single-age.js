@@ -70,6 +70,20 @@
     if (el && el.textContent !== text) el.textContent = text;
   }
 
+  function renderTimelineMarkerAges(events) {
+    const markers = [...document.querySelectorAll('#timelineEvents .timeline-event')];
+    markers.forEach((button, index) => {
+      const event = events[index];
+      if (!event) return;
+      const year = Number(event.year ?? event.time);
+      const base = event.dateLabel || formatHistoricalYear(year);
+      const age = formatAge(year);
+      const title = `${base}${age ? ` · ${age}` : ''} · ${event.title || ''}`;
+      if (button.title !== title) button.title = title;
+      button.setAttribute('aria-label', `跳到 ${event.title || base}${age ? `，${age}` : ''}`);
+    });
+  }
+
   function renderAges() {
     raf = 0;
     if (!data || !Number.isFinite(birthYear)) return;
@@ -98,6 +112,8 @@
     const endAge = formatAge(endY);
     setTextIfChanged($('startYear'), `${formatHistoricalYear(startY)}${startAge ? ` · ${startAge}` : ''}`);
     setTextIfChanged($('endYear'), `${formatHistoricalYear(endY)}${endAge ? ` · ${endAge}` : ''}`);
+
+    renderTimelineMarkerAges(events);
   }
 
   function schedule() {
@@ -130,6 +146,11 @@
     if (!el) return;
     new MutationObserver(schedule).observe(el, { childList: true, characterData: true, subtree: true });
   });
+
+  const timelineEvents = $('timelineEvents');
+  if (timelineEvents) {
+    new MutationObserver(schedule).observe(timelineEvents, { childList: true, subtree: false });
+  }
 
   loadCurrentData();
 })();
