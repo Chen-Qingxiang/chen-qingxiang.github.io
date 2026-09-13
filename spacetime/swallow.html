@@ -3,26 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="基于学术追踪研究的亚洲家燕迁徙路线可视化" />
-  <title>家燕迁徙 · Spacetime Trails</title>
+  <meta name="description" content="燕子迁徙：视频三线与论文追踪的交互式地图" />
+  <title>燕子迁徙 · Spacetime Trails</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="./style.css" />
   <style>
-    .route-chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:#5f655f}.route-chip i{width:18px;height:4px;border-radius:4px;background:var(--route-color)}
-    .bird-marker{background:transparent;border:0}.bird-marker div{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid #fffdf7;box-shadow:0 2px 10px #0005;font-weight:900;font-size:13px}
-    .migration-label.leaflet-tooltip{background:#fffdf7ee;border:1px solid #3333;box-shadow:0 2px 9px #0002;font-weight:800;color:#30342f}.migration-label.leaflet-tooltip:before{display:none}
-    .paper-note{font-size:11px;color:#7b807a;line-height:1.55;margin-top:8px}
+    .mode-tabs{display:flex;gap:7px;flex-wrap:wrap}.mode-tab{border:1px solid #cfc9bd;background:#f7f4ed;border-radius:999px;padding:7px 12px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}.mode-tab.active{background:#282b28;color:#fff;border-color:#282b28}
+    .bird-marker{background:transparent;border:0}.bird-marker div{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid #fffdf7;box-shadow:0 2px 10px #0005;font-weight:900;font-size:14px}
+    .migration-label.leaflet-tooltip{background:#fffdf7ef;border:1px solid #3333;box-shadow:0 2px 9px #0002;font-weight:800;color:#30342f}.migration-label.leaflet-tooltip:before{display:none}
     .route-list{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}.route-key{border:1px solid #d7d2c8;background:#f4f1e9;border-radius:999px;padding:5px 9px;font-size:11px;cursor:pointer}.route-key.active{border-color:#a52724;background:#f4ded8;color:#881b1b;font-weight:800}
-    @media(max-width:560px){.route-list{gap:5px}.route-key{padding:4px 7px}}
+    .evidence-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 4px}.evidence{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.evidence.high{background:#dcebdd;color:#205d2b}.evidence.medium{background:#f4e7c7;color:#77540d}.evidence.low{background:#eee6e1;color:#735545}.species-note{font-size:11px;color:#777c76}
+    .paper-note{font-size:11px;color:#7b807a;line-height:1.55;margin-top:8px}.source-link{display:inline-block;margin-top:8px;color:#8f2622;font-size:11px;font-weight:800;text-decoration:none}.source-link:hover{text-decoration:underline}
+    .timeline-milestones{position:absolute;left:0;right:0;top:50%;height:0;pointer-events:none}.milestone{position:absolute;width:8px;height:8px;border-radius:50%;background:#fffdf7;border:2px solid #9f302d;transform:translate(-50%,-50%);z-index:4}.milestone.active{background:#9f302d;box-shadow:0 0 0 4px #9f302d22}
+    .timeline-precision{font-size:11px;font-weight:800;color:#6f746e;margin-left:auto}.route-meta{font-size:12px;color:#686d67;margin-top:7px;line-height:1.55}.route-meta strong{color:#30342f}
+    .map-mode-note{max-width:330px;font-size:10px;line-height:1.45}
+    @media(max-width:700px){.timeline-precision{width:100%;margin-left:0}.route-list{gap:5px}.route-key{padding:4px 7px}}
   </style>
 </head>
 <body>
 <main class="app-shell">
   <header class="topbar">
     <div class="brand-block">
-      <div class="eyebrow">SPACETIME TRAILS · MIGRATION STUDY</div>
-      <div class="title-row"><h1>家燕迁徙 · 论文追踪</h1><span class="period">Hirundo rustica</span></div>
-      <p>同一种家燕，不同繁殖种群可以走向东非、南印度、缅甸和东南亚岛屿。路线按论文追踪结果做区域级复现。</p>
+      <div class="eyebrow">SPACETIME TRAILS · MIGRATION</div>
+      <div class="title-row"><h1>燕子迁徙 · 视频三线 × 论文校正</h1><span class="period">多物种 / 多种群</span></div>
+      <p>先复现“草莓看历史”连续三部燕子迁徙视频的宏观三线，再叠加可核查的 geolocator 研究。路线证据等级与日期精度分开标注。</p>
     </div>
     <div class="top-actions">
       <a class="ghost-button" href="./" style="text-decoration:none">← 吕布行迹</a>
@@ -32,24 +36,30 @@
 
   <section class="workspace">
     <div class="map-panel">
-      <div id="map" aria-label="家燕迁徙路线地图"></div>
+      <div id="map" aria-label="燕子迁徙路线地图"></div>
       <div class="map-overlay terrain-control">
         <label class="terrain-toggle"><input id="terrainToggle" type="checkbox" checked><span>地形</span></label>
-        <label class="terrain-strength"><span>强度</span><input id="terrainOpacity" type="range" min="0" max="70" value="30"><output id="terrainValue">30%</output></label>
+        <label class="terrain-strength"><span>强度</span><input id="terrainOpacity" type="range" min="0" max="70" value="27"><output id="terrainValue">27%</output></label>
       </div>
-      <div class="map-overlay map-stats"><div><span class="stat-label">模式</span><strong>秋迁演示</strong></div><div><span class="stat-label">论文路线</span><strong id="routeCount">5 条</strong></div></div>
-      <div class="map-overlay legend"><span><i class="legend-line past"></i> 追踪路线</span><span><i class="legend-dot"></i> 繁殖 / 越冬区</span></div>
+      <div class="map-overlay map-stats"><div><span class="stat-label">当前层</span><strong id="modeLabel">视频三线</strong></div><div><span class="stat-label">路线</span><strong id="routeCount">3 条</strong></div></div>
+      <div class="map-overlay legend map-mode-note" id="mapNote">粗线表示宏观迁飞通道，不等于单只鸟逐点 GPS。</div>
     </div>
 
     <aside class="story-panel">
-      <div class="event-index" id="routeIndex">路线 01 / 05</div>
-      <div class="event-year" id="routeSub">H. r. rustica · 西侧种群</div>
-      <h2 id="routeTitle">甘肃西部 → 东非</h2>
-      <div class="place-line"><span class="place-dot"></span><span id="routePlace">甘肃酒泉—张掖 → 东非越冬区</span></div>
+      <div class="mode-tabs" id="modeTabs">
+        <button class="mode-tab active" data-mode="video">视频三线</button>
+        <button class="mode-tab" data-mode="research">论文追踪</button>
+      </div>
+      <div class="event-index" id="routeIndex" style="margin-top:14px">路线 01 / 03</div>
+      <div class="event-year" id="routeSub">北京雨燕 · Apus apus pekinensis</div>
+      <h2 id="routeTitle">北京 → 西南非洲</h2>
+      <div class="place-line"><span class="place-dot"></span><span id="routePlace"></span></div>
+      <div class="evidence-row"><span class="evidence high" id="evidenceBadge">直接追踪 · 高</span><span class="species-note" id="speciesNote"></span></div>
       <p class="event-summary" id="routeSummary"></p>
+      <div class="route-meta" id="routeMeta"></div>
       <div class="event-tags" id="routeTags"></div>
       <div class="route-list" id="routeList"></div>
-      <div class="source-block"><span>论文依据</span><p id="routeSource"></p><div class="paper-note">图上的控制点用于复现论文支持的大尺度方向和地理屏障，不是原始逐时 GPS/geolocator 数据。</div></div>
+      <div class="source-block"><span id="sourceHeading">依据</span><p id="routeSource"></p><a class="source-link" id="sourceLink" target="_blank" rel="noopener">查看主要来源 ↗</a><div class="paper-note" id="precisionNote"></div></div>
       <div class="event-nav"><button id="prevBtn">← 上一条</button><button id="nextBtn">下一条 →</button></div>
     </aside>
   </section>
@@ -57,11 +67,15 @@
   <section class="timeline-panel">
     <div class="playback-row">
       <button class="play-button" id="playBtn">▶</button>
-      <div class="clock"><strong id="clockTime">9 月</strong><span id="clockPhase">离开繁殖地</span></div>
+      <div class="clock"><strong id="clockTime"></strong><span id="clockPhase"></span></div>
       <div class="speed-group"><button data-speed="0.5">0.5×</button><button data-speed="1" class="active">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button></div>
+      <span class="timeline-precision" id="timelinePrecision"></span>
     </div>
-    <div class="timeline-wrap"><div class="timeline-track"><div class="timeline-progress" id="timelineProgress"></div><input id="timeRange" type="range" min="0" max="1000" value="0"></div><div class="timeline-labels"><span>9 月 · 秋迁</span><span>11 月 · 越冬地</span></div></div>
-    <p class="timeline-hint">多个标记同时移动只是为了比较路线；不同种群实际出发与抵达时间并不完全同步。</p>
+    <div class="timeline-wrap">
+      <div class="timeline-track"><div class="timeline-progress" id="timelineProgress"></div><div class="timeline-milestones" id="timelineMilestones"></div><input id="timeRange" type="range" min="0" max="1000" value="0"></div>
+      <div class="timeline-labels"><span id="timelineStart"></span><span id="timelineEnd"></span></div>
+    </div>
+    <p class="timeline-hint" id="timelineHint"></p>
   </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
