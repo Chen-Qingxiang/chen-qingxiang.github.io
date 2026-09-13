@@ -2,12 +2,6 @@
   'use strict';
 
   const $ = id => document.getElementById(id);
-  const FIXED_SPEEDS = new Map([
-    ['0.5×', 0.5],
-    ['1×', 1],
-    ['2×', 2],
-    ['4×', 4]
-  ]);
   const registry = Array.isArray(window.SPACETIME_COMPARE_REGISTRY)
     ? window.SPACETIME_COMPARE_REGISTRY
     : [];
@@ -67,6 +61,8 @@
     return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * base;
   }
 
+  // compare.js still contains its original span-dependent multiplier. We cancel it
+  // here so the visible controls always mean literal historical years per second.
   function coreAutoRate() {
     const d = domain();
     if (!d) return 1;
@@ -74,10 +70,41 @@
     return span <= 150 ? 1 : niceStep(span / 60);
   }
 
+  function fullRunSpeed() {
+    const d = domain();
+    if (!d) return 1;
+    return Math.max(1 / 120, (d.end - d.start) / 60);
+  }
+
   function desiredSpeedForButton(button) {
-    if (button.dataset.fixedSpeed) return Number(button.dataset.fixedSpeed);
-    const text = button.textContent.trim();
-    return FIXED_SPEEDS.get(text) ?? Number(button.dataset.speed) ?? 1;
+    if (button.dataset.speedMode === 'full60') return fullRunSpeed();
+    const fixed = Number(button.dataset.fixedSpeed);
+    return Number.isFinite(fixed) && fixed > 0 ? fixed : 1;
+  }
+
+  function formatHistoricalRate(rate) {
+    if (!(rate > 0)) return '—';
+    if (rate < 1) {
+      const months = rate * 12;
+      return `${Number.isInteger(months) ? months : months.toFixed(1)} 个月/秒`;
+    }
+    if (rate >= 100) return `${Math.round(rate)} 年/秒`;
+    if (rate >= 10) return `${rate.toFixed(rate >= 20 ? 0 : 1).replace(/\.0$/, '')} 年/秒`;
+    return `${rate.toFixed(1).replace(/\.0$/, '')} 年/秒`;
+  }
+
+  function updateClockNote() {
+    const note = $('clockNote');
+    if (!note) return;
+    const active = document.querySelector('[data-speed].active');
+    if (!active) {
+      note.textContent = '共享历史时钟';
+      return;
+    }
+    const desired = desiredSpeedForButton(active);
+    note.textContent = active.dataset.speedMode === 'full60'
+      ? `全程约 60 秒 · ${formatHistoricalRate(desired)}`
+      : `共享历史时钟 · ${formatHistoricalRate(desired)}`;
   }
 
   function normalizeSpeedButtons(reapply = true) {
@@ -87,18 +114,19 @@
 
     buttons.forEach(button => {
       const desired = desiredSpeedForButton(button);
-      button.dataset.fixedSpeed = String(desired);
       button.dataset.speed = String(desired / rate);
-      button.title = `${desired}× = ${desired === 0.5 ? '6 个月' : desired + ' 年'}/秒`;
+      if (button.dataset.speedMode === 'full60') {
+        button.title = `按当前所选时间范围约 60 秒播完 · 当前约 ${formatHistoricalRate(desired)}`;
+      } else {
+        button.title = `${formatHistoricalRate(desired)}${desired >= 16 ? ' · 高速播放可能略过短期旅行细节' : ''}`;
+      }
     });
-
-    const note = $('clockNote');
-    if (note) note.textContent = '共享历史时钟 · 1× = 1 年/秒';
 
     if (reapply) {
       const active = buttons.find(button => button.classList.contains('active'));
       if (active) active.click();
     }
+    updateClockNote();
   }
 
   function scheduleNormalizeSpeed() {
@@ -215,9 +243,9 @@
     const note = $('clockNote');
     if (note) {
       new MutationObserver(() => {
-        if (note.textContent !== '共享历史时钟 · 1× = 1 年/秒') {
-          note.textContent = '共享历史时钟 · 1× = 1 年/秒';
-        }
+        // compare.js rewrites this text when the domain changes; restore the
+        // explicit speed display after its synchronous render has finished.
+        queueMicrotask(updateClockNote);
       }).observe(note, { childList: true, characterData: true, subtree: true });
     }
 
@@ -248,6 +276,9 @@
   });
 
   document.addEventListener('click', event => {
+    const speedButton = event.target?.closest?.('[data-speed]');
+    if (speedButton) setTimeout(updateClockNote, 0);
+
     if (event.target?.closest?.('[data-range-mode]') || event.target?.closest?.('#selectAllBtn')) {
       setTimeout(() => {
         scheduleNormalizeSpeed();
