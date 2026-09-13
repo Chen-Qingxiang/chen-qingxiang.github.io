@@ -82,5 +82,85 @@
     applyTimelineHeight(current + (event.key === 'ArrowUp' ? 24 : -24), null);
   });
 
+  // Map lifetime visibility guard.
+  // The core renderer already hides a person's marker before birth / after death,
+  // but its past/future route polylines used to remain on the map. That makes a
+  // long multi-era comparison accumulate old routes forever. Keep timeline rows
+  // visible for comparison, while map geometry exists only during that person's life.
+  const registry = Array.isArray(window.SPACETIME_COMPARE_REGISTRY) ? window.SPACETIME_COMPARE_REGISTRY : [];
+  const colorCache = new Map();
+
+  function computedColor(value) {
+    if (!value) return '';
+    if (colorCache.has(value)) return colorCache.get(value);
+    const probe = document.createElement('span');
+    probe.style.color = value;
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    document.body.appendChild(probe);
+    const normalized = getComputedStyle(probe).color;
+    probe.remove();
+    colorCache.set(value, normalized);
+    return normalized;
+  }
+
+  function currentHistoricalTime() {
+    const people = window.SPACETIME_COMPARE_PEOPLE;
+    const range = $('masterRange');
+    if (!people || !range || !picks) return null;
+    const selectedIds = [...picks.querySelectorAll('input[data-person]:checked')].map(x => x.dataset.person).filter(id => people[id]);
+    if (!selectedIds.length) return null;
+    const starts = selectedIds.map(id => Number(people[id].lifeStart ?? people[id].events?.[0]?.time ?? people[id].events?.[0]?.year));
+    const ends = selectedIds.map(id => Number(people[id].lifeEnd ?? people[id].events?.at(-1)?.time ?? people[id].events?.at(-1)?.year));
+    const common = document.querySelector('[data-range-mode="common"]')?.classList.contains('active');
+    const start = common ? Math.max(...starts) : Math.min(...starts);
+    const end = common ? Math.min(...ends) : Math.max(...ends);
+    if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return null;
+    const p = Math.max(0, Math.min(1, Number(range.value) / 10000));
+    return start + (end - start) * p;
+  }
+
+  function setPersonRoutesVisible(entry, visible) {
+    if (!entry?.color) return;
+    const raw = String(entry.color).toLowerCase();
+    const normalized = computedColor(entry.color);
+    document.querySelectorAll('#compareMap .leaflet-overlay-pane path').forEach(path => {
+      const attr = String(path.getAttribute('stroke') || '').toLowerCase();
+      const cssStroke = getComputedStyle(path).stroke;
+      const sameColor = attr === raw || (normalized && cssStroke === normalized);
+      if (sameColor) path.style.display = visible ? '' : 'none';
+    });
+  }
+
+  function syncLifetimeMapVisibility() {
+    const people = window.SPACETIME_COMPARE_PEOPLE;
+    const t = currentHistoricalTime();
+    if (!people || t == null || !picks) return;
+    const checked = new Set([...picks.querySelectorAll('input[data-person]:checked')].map(x => x.dataset.person));
+    registry.forEach(entry => {
+      const person = people[entry.id];
+      if (!person) return;
+      const start = Number(person.lifeStart ?? person.events?.[0]?.time ?? person.events?.[0]?.year);
+      const end = Number(person.lifeEnd ?? person.events?.at(-1)?.time ?? person.events?.at(-1)?.year);
+      const aliveNow = checked.has(entry.id) && Number.isFinite(start) && Number.isFinite(end) && t >= start && t <= end;
+      setPersonRoutesVisible(entry, aliveNow);
+    });
+  }
+
+  let visibilityRaf = 0;
+  function scheduleLifetimeVisibilitySync() {
+    cancelAnimationFrame(visibilityRaf);
+    visibilityRaf = requestAnimationFrame(syncLifetimeMapVisibility);
+  }
+
+  $('masterRange')?.addEventListener('input', scheduleLifetimeVisibilitySync);
+  picks?.addEventListener('change', () => setTimeout(scheduleLifetimeVisibilitySync, 0));
+  const statusTime = $('statusTime');
+  if (statusTime) new MutationObserver(scheduleLifetimeVisibilitySync).observe(statusTime, { childList: true, subtree: true, characterData: true });
+  const mapNode = $('compareMap');
+  if (mapNode) new MutationObserver(scheduleLifetimeVisibilitySync).observe(mapNode, { childList: true, subtree: true });
+  window.addEventListener('resize', scheduleLifetimeVisibilitySync);
+  setTimeout(scheduleLifetimeVisibilitySync, 120);
+
   applyTimelineHeight(presetHeights.balanced, 'balanced');
 })();
