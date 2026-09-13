@@ -21,6 +21,7 @@
         <p id="personSubtitle">在现代地图上追踪吕布：现代地理作底，古代地名作为历史注释。</p>
       </div>
       <div class="top-actions">
+        <a class="ghost-button" href="./sudongpo.html" style="text-decoration:none">苏东坡</a>
         <a class="ghost-button" href="./swallow.html" style="text-decoration:none">燕子迁徙</a>
         <button class="ghost-button" id="fitRouteBtn" type="button">总览</button>
         <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
@@ -56,9 +57,9 @@
           </div>
         </div>
         <div class="map-overlay legend">
-          <span><i class="legend-line past"></i> 已走</span>
-          <span><i class="legend-line future"></i> 未走</span>
-          <span><i class="legend-dot"></i> 事件</span>
+          <span id="legendPast"><i class="legend-line past"></i> 已走</span>
+          <span id="legendFuture"><i class="legend-line future"></i> 未走</span>
+          <span id="legendPoint"><i class="legend-dot"></i> 事件</span>
         </div>
       </div>
 
@@ -73,7 +74,7 @@
         <p class="event-summary" id="eventSummary">吕布出身并州边地。现存史料对其出生年份没有确切记载，因此时间从其早年活动开始作示意。</p>
         <div class="event-tags" id="eventTags"></div>
         <div class="source-block">
-          <span>史料提示</span>
+          <span id="sourceLabel">史料提示</span>
           <p id="eventSource">地点与年份采用便于地图演示的近似值；V1 不把不确定信息伪装成精确 GPS。</p>
         </div>
         <div class="event-nav">
@@ -109,7 +110,7 @@
           <span id="endYear">199</span>
         </div>
       </div>
-      <p class="timeline-hint">底图采用现代地理；括号内标注对应的汉末地名。可拖动时间轴或点地图节点；行迹连线不代表实际道路。</p>
+      <p class="timeline-hint"><span id="timelineHintText">底图采用现代地理；括号内标注对应的汉末地名。可拖动时间轴或点地图节点；行迹连线不代表实际道路。</span></p>
     </section>
   </main>
 
