@@ -43,7 +43,8 @@
     lastFrame: 0,
     activeIndex: 0,
     markerNodes: [],
-    leafletMarkers: []
+    leafletMarkers: [],
+    routeDotMarkers: []
   };
 
   const map = L.map('map', {
@@ -53,7 +54,7 @@
     maxZoom: 11
   }).setView([35.5, 112], 5);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  const modernBase = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
@@ -119,6 +120,79 @@
     return 2 * R * Math.asin(Math.sqrt(h));
   }
 
+  function segmentPath(index) {
+    const events = state.data.events;
+    const a = events[index];
+    const b = events[index + 1];
+    if (!a || !b) return a ? [{ lat: a.lat, lng: a.lng }] : [];
+    const controls = Array.isArray(b.routeFromPrevious) ? b.routeFromPrevious : [];
+    return [
+      { lat: a.lat, lng: a.lng },
+      ...controls.map(point => ({ lat: Number(point[0]), lng: Number(point[1]) })),
+      { lat: b.lat, lng: b.lng }
+    ];
+  }
+
+  function pathDistance(path) {
+    let total = 0;
+    for (let i = 0; i < path.length - 1; i++) total += haversine(path[i], path[i + 1]);
+    return total;
+  }
+
+  function pointAlongPath(path, fraction) {
+    if (!path.length) return null;
+    if (path.length === 1 || fraction <= 0) return { ...path[0], pathIndex: 0, edgeFraction: 0 };
+    if (fraction >= 1) {
+      const last = path[path.length - 1];
+      return { ...last, pathIndex: path.length - 2, edgeFraction: 1 };
+    }
+    const total = pathDistance(path);
+    if (total <= 0) return { ...path[path.length - 1], pathIndex: path.length - 2, edgeFraction: 1 };
+    const target = total * fraction;
+    let walked = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+      const edge = haversine(path[i], path[i + 1]);
+      if (walked + edge >= target) {
+        const local = edge === 0 ? 1 : (target - walked) / edge;
+        return {
+          lat: lerp(path[i].lat, path[i + 1].lat, local),
+          lng: lerp(path[i].lng, path[i + 1].lng, local),
+          pathIndex: i,
+          edgeFraction: local
+        };
+      }
+      walked += edge;
+    }
+    const last = path[path.length - 1];
+    return { ...last, pathIndex: path.length - 2, edgeFraction: 1 };
+  }
+
+  function splitPath(path, fraction) {
+    if (path.length < 2) return { before: [...path], after: [...path] };
+    const point = pointAlongPath(path, fraction);
+    const before = path.slice(0, point.pathIndex + 1);
+    const after = path.slice(point.pathIndex + 1);
+    const current = { lat: point.lat, lng: point.lng };
+    before.push(current);
+    after.unshift(current);
+    return { before, after };
+  }
+
+  function fullRoutePath() {
+    const events = state.data.events;
+    if (!events.length) return [];
+    const result = [{ lat: events[0].lat, lng: events[0].lng }];
+    for (let i = 0; i < events.length - 1; i++) {
+      const path = segmentPath(i);
+      result.push(...path.slice(1));
+    }
+    return result;
+  }
+
+  function normalizedEvents() {
+    return state.data.events.map((event, index) => ({ ...event, index }));
+  }
+
   function timelinePositionForEvent(index) {
     const events = state.data.events;
     const start = events[0].year;
@@ -139,6 +213,17 @@
     const b = events[i + 1].year;
     const local = b === a ? 1 : clamp((y - a) / (b - a), 0, 1);
     return { index: i, local, year: y };
+  }
+
+  function closestEventIndex(progress) {
+    const events = state.data.events;
+    let best = 0;
+    let bestDistance = Infinity;
+    events.forEach((_, i) => {
+      const d = Math.abs(progress - timelinePositionForEvent(i));
+      if (d < bestDistance) { best = i; bestDistance = d; }
+    });
+    return best;
   }
 
   function currentEventIndex(progress) {
@@ -205,7 +290,7 @@
   }
 
   function routeBounds() {
-    return L.latLngBounds(state.data.events.map(e => [e.lat, e.lng]));
+    return L.latLngBounds(fullRoutePath().map(p => [p.lat, p.lng]));
   }
 
   function fitRoute() {
@@ -216,8 +301,8 @@
     const events = state.data.events;
     const seg = progressToSegment(progress);
     let total = 0;
-    for (let i = 0; i < seg.index; i++) total += haversine(events[i], events[i + 1]);
-    if (events[seg.index + 1]) total += haversine(events[seg.index], events[seg.index + 1]) * seg.local;
+    for (let i = 0; i < seg.index; i++) total += pathDistance(segmentPath(i));
+    if (events[seg.index + 1]) total += pathDistance(segmentPath(seg.index)) * seg.local;
     return total;
   }
 
@@ -228,26 +313,84 @@
       return { lat: e.lat, lng: e.lng, index: events.length - 1, local: 1 };
     }
     const seg = progressToSegment(progress);
-    const a = events[seg.index];
-    const b = events[seg.index + 1];
-    return { lat: lerp(a.lat, b.lat, seg.local), lng: lerp(a.lng, b.lng, seg.local), index: seg.index, local: seg.local };
+    const point = pointAlongPath(segmentPath(seg.index), seg.local);
+    return { lat: point.lat, lng: point.lng, index: seg.index, local: seg.local };
+  }
+
+  function clearRouteDots() {
+    state.routeDotMarkers.forEach(marker => map.removeLayer(marker));
+    state.routeDotMarkers = [];
+  }
+
+  function renderRouteDots() {
+    clearRouteDots();
+    const spacingKm = Number(state.data.routeDotSpacingKm) || 85;
+    for (let i = 0; i < state.data.events.length - 1; i++) {
+      const path = segmentPath(i);
+      const distance = pathDistance(path);
+      if (distance < spacingKm * 0.75) continue;
+      for (let km = spacingKm; km < distance - spacingKm * 0.25; km += spacingKm) {
+        const p = pointAlongPath(path, km / distance);
+        const marker = L.circleMarker([p.lat, p.lng], {
+          radius: 2.6,
+          weight: 1,
+          color: '#f2e9dd',
+          fillColor: '#b62826',
+          fillOpacity: 0.94,
+          opacity: 0.9,
+          interactive: false
+        }).addTo(map);
+        marker._routeProgress = timelinePositionForEvent(i) +
+          (timelinePositionForEvent(i + 1) - timelinePositionForEvent(i)) * (km / distance);
+        state.routeDotMarkers.push(marker);
+      }
+    }
+    updateRouteDotStates();
+  }
+
+  function updateRouteDotStates() {
+    state.routeDotMarkers.forEach(marker => {
+      const passed = marker._routeProgress <= state.progress + 0.0001;
+      marker.setStyle({
+        fillColor: passed ? '#b62826' : '#8b887f',
+        fillOpacity: passed ? 0.96 : 0.42,
+        opacity: passed ? 0.92 : 0.35
+      });
+    });
   }
 
   function updateLinesAndPerson() {
     const events = state.data.events;
     const p = currentPosition(state.progress);
-    const past = events.slice(0, p.index + 1).map(e => [e.lat, e.lng]);
-    if (p.local > 0 && p.index < events.length - 1) past.push([p.lat, p.lng]);
+
     if (state.progress >= 1) {
-      pastLine.setLatLngs(events.map(e => [e.lat, e.lng]));
+      pastLine.setLatLngs(fullRoutePath().map(point => [point.lat, point.lng]));
       currentSegment.setLatLngs([]);
       futureLine.setLatLngs([]);
     } else {
-      pastLine.setLatLngs(past);
-      currentSegment.setLatLngs([[events[p.index].lat, events[p.index].lng], [p.lat, p.lng]]);
-      futureLine.setLatLngs([[p.lat, p.lng], ...events.slice(p.index + 1).map(e => [e.lat, e.lng])]);
+      const split = splitPath(segmentPath(p.index), p.local);
+      const past = [];
+      for (let i = 0; i < p.index; i++) {
+        const path = segmentPath(i);
+        if (!past.length) past.push(...path);
+        else past.push(...path.slice(1));
+      }
+      if (!past.length) past.push(...split.before);
+      else past.push(...split.before.slice(1));
+
+      const future = [...split.after];
+      for (let i = p.index + 1; i < events.length - 1; i++) {
+        const path = segmentPath(i);
+        future.push(...path.slice(1));
+      }
+
+      pastLine.setLatLngs(past.map(point => [point.lat, point.lng]));
+      currentSegment.setLatLngs(split.before.slice(-2).map(point => [point.lat, point.lng]));
+      futureLine.setLatLngs(future.map(point => [point.lat, point.lng]));
     }
+
     personMarker.setLatLng([p.lat, p.lng]);
+    updateRouteDotStates();
     if (state.follow && state.playing) {
       const center = map.getCenter();
       if (map.distance(center, [p.lat, p.lng]) > 220000) {
@@ -290,9 +433,10 @@
   }
 
   function updateClock() {
+    const events = state.data.events;
     const seg = progressToSegment(state.progress);
     const idx = currentEventIndex(state.progress);
-    const event = state.data.events[idx];
+    const event = events[idx];
     els.clockYear.textContent = event.dateLabel || `${Math.round(seg.year)} 年`;
     els.clockPhase.textContent = event.title;
     els.currentPlace.textContent = event.mapLabel || event.place || event.title;
@@ -358,6 +502,14 @@
       });
       e.year = Number(e.year); e.lat = Number(e.lat); e.lng = Number(e.lng);
       if (![e.year, e.lat, e.lng].every(Number.isFinite)) throw new Error(`第 ${i + 1} 个事件的年份或坐标无效。`);
+      if (e.routeFromPrevious !== undefined) {
+        if (!Array.isArray(e.routeFromPrevious)) throw new Error(`第 ${i + 1} 个事件的 routeFromPrevious 必须是数组。`);
+        e.routeFromPrevious.forEach((point, j) => {
+          if (!Array.isArray(point) || point.length !== 2 || !point.every(v => Number.isFinite(Number(v)))) {
+            throw new Error(`第 ${i + 1} 个事件的第 ${j + 1} 个路线控制点无效。`);
+          }
+        });
+      }
     });
     data.events.sort((a, b) => a.year - b.year);
     return data;
@@ -370,6 +522,7 @@
     state.activeIndex = -1;
     renderPersonMeta();
     renderMapMarkers();
+    renderRouteDots();
     renderTimelineEvents();
     updateEventPanel(0);
     render();
