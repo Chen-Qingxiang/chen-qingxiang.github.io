@@ -8,13 +8,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="./style.css" />
-  <style>
-    .mode-nav{display:flex;gap:6px;align-items:center}
-    .mode-nav .ghost-button.active{background:#2f3a33;color:#fff;border-color:#2f3a33}
-    .person-switcher{display:flex;align-items:center;gap:7px;min-height:36px;padding:0 9px;border:1px solid rgba(80,75,65,.24);border-radius:9px;background:rgba(255,253,248,.9);font-size:11px;font-weight:800;color:#5e625d}
-    .person-switcher select{max-width:220px;min-width:150px;height:28px;border:0;background:transparent;color:#262b27;font:inherit;outline:none;cursor:pointer}
-    @media(max-width:900px){.top-actions{flex-wrap:wrap}.person-switcher{order:3;flex:1 1 220px}.person-switcher select{max-width:none;width:100%}}
-  </style>
+  <link rel="stylesheet" href="./single-workbench.css" />
 </head>
 <body>
   <main class="app-shell">
@@ -27,23 +21,24 @@
         </div>
         <p id="personSubtitle">选择一个人物，精确查看其一生的地点、事件与移动。</p>
       </div>
-      <div class="top-actions">
-        <div class="mode-nav" aria-label="模式切换">
-          <a class="ghost-button active" href="./index.html" style="text-decoration:none">单人模式</a>
-          <a class="ghost-button" href="./compare.html" style="text-decoration:none">多人对比</a>
-        </div>
-        <label class="person-switcher" for="personSelect">
-          <span>人物</span>
-          <select id="personSelect" aria-label="选择人物"></select>
-        </label>
-        <button class="ghost-button" id="fitRouteBtn" type="button">总览</button>
-        <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
-        <label class="file-button">
-          <span>载入 JSON</span>
-          <input id="fileInput" type="file" accept="application/json,.json" />
-        </label>
-      </div>
+      <nav class="mode-nav" aria-label="模式切换">
+        <a class="ghost-button active" href="./index.html" aria-current="page">单人模式</a>
+        <a class="ghost-button" href="./compare.html">多人对比</a>
+      </nav>
     </header>
+
+    <section class="single-toolbar" aria-label="单人模式工具栏">
+      <label class="person-switcher" for="personSelect">
+        <span>人物</span>
+        <select id="personSelect" aria-label="选择人物"></select>
+      </label>
+      <button class="ghost-button" id="fitRouteBtn" type="button">总览路线</button>
+      <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
+      <label class="file-button">
+        <span>载入 JSON</span>
+        <input id="fileInput" type="file" accept="application/json,.json" />
+      </label>
+    </section>
 
     <section class="workspace">
       <div class="map-panel">
