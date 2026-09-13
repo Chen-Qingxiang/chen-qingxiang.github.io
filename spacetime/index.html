@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="人物一生足迹与历史事件的交互式时空播放器" />
+  <title>时空行迹 · Spacetime Trails</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="eyebrow">SPACETIME TRAILS · V1</div>
+        <div class="title-row">
+          <h1 id="personName">吕布一生足迹</h1>
+          <span class="period" id="personPeriod">约 160–199</span>
+        </div>
+        <p id="personSubtitle">从并州边地到下邳：把人物移动、事件和时间放在同一张图里。</p>
+      </div>
+      <div class="top-actions">
+        <button class="ghost-button" id="fitRouteBtn" type="button">总览</button>
+        <button class="ghost-button" id="followBtn" type="button" aria-pressed="true">跟随：开</button>
+        <label class="file-button">
+          <span>载入 JSON</span>
+          <input id="fileInput" type="file" accept="application/json,.json" />
+        </label>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <div class="map-panel">
+        <div id="map" aria-label="人物行迹地图"></div>
+        <div class="map-overlay map-stats" aria-live="polite">
+          <div>
+            <span class="stat-label">当前</span>
+            <strong id="currentPlace">九原</strong>
+          </div>
+          <div>
+            <span class="stat-label">累计行迹</span>
+            <strong id="distanceText">0 km</strong>
+          </div>
+        </div>
+        <div class="map-overlay legend">
+          <span><i class="legend-line past"></i> 已走</span>
+          <span><i class="legend-line future"></i> 未走</span>
+          <span><i class="legend-dot"></i> 事件</span>
+        </div>
+      </div>
+
+      <aside class="story-panel" aria-label="当前历史事件">
+        <div class="event-index" id="eventIndex">01 / 11</div>
+        <div class="event-year" id="eventYear">约 180 年代</div>
+        <h2 id="eventTitle">并州九原</h2>
+        <div class="place-line">
+          <span class="place-dot"></span>
+          <span id="eventPlace">五原郡九原县（今内蒙古包头一带）</span>
+        </div>
+        <p class="event-summary" id="eventSummary">吕布出身并州边地。现存史料对其出生年份没有确切记载，因此时间从其早年活动开始作示意。</p>
+        <div class="event-tags" id="eventTags"></div>
+        <div class="source-block">
+          <span>史料提示</span>
+          <p id="eventSource">地点与年份采用便于地图演示的近似值；V1 不把不确定信息伪装成精确 GPS。</p>
+        </div>
+        <div class="event-nav">
+          <button id="prevEventBtn" type="button" aria-label="上一个事件">← 上一站</button>
+          <button id="nextEventBtn" type="button" aria-label="下一个事件">下一站 →</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="timeline-panel" aria-label="时间轴与播放控制">
+      <div class="playback-row">
+        <button class="play-button" id="playBtn" type="button" aria-label="播放">▶</button>
+        <div class="clock">
+          <strong id="clockYear">约 180 年代</strong>
+          <span id="clockPhase">并州九原</span>
+        </div>
+        <div class="speed-group" aria-label="播放速度">
+          <button type="button" data-speed="0.5">0.5×</button>
+          <button type="button" data-speed="1" class="active">1×</button>
+          <button type="button" data-speed="2">2×</button>
+          <button type="button" data-speed="4">4×</button>
+        </div>
+      </div>
+
+      <div class="timeline-wrap">
+        <div class="timeline-track" id="timelineTrack">
+          <div class="timeline-progress" id="timelineProgress"></div>
+          <div class="timeline-events" id="timelineEvents"></div>
+          <input id="timeRange" type="range" min="0" max="1000" value="0" step="1" aria-label="人物生平时间轴" />
+        </div>
+        <div class="timeline-labels">
+          <span id="startYear">180</span>
+          <span id="endYear">199</span>
+        </div>
+      </div>
+      <p class="timeline-hint">拖动时间轴，或直接点地图上的事件节点。路线为历史行迹的示意连接，不代表实际道路。</p>
+    </section>
+  </main>
+
+  <noscript>此工具需要启用 JavaScript。</noscript>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
