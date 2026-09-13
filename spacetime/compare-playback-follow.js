@@ -61,8 +61,6 @@
     return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * base;
   }
 
-  // compare.js still contains its original span-dependent multiplier. We cancel it
-  // here so the visible controls always mean literal historical years per second.
   function coreAutoRate() {
     const d = domain();
     if (!d) return 1;
@@ -93,18 +91,20 @@
     return `${rate.toFixed(1).replace(/\.0$/, '')} 年/秒`;
   }
 
+  function speedNoteText() {
+    const active = document.querySelector('[data-speed].active');
+    if (!active) return '共享历史时钟';
+    const desired = desiredSpeedForButton(active);
+    return active.dataset.speedMode === 'full60'
+      ? `全程约 60 秒 · ${formatHistoricalRate(desired)}`
+      : `共享历史时钟 · ${formatHistoricalRate(desired)}`;
+  }
+
   function updateClockNote() {
     const note = $('clockNote');
     if (!note) return;
-    const active = document.querySelector('[data-speed].active');
-    if (!active) {
-      note.textContent = '共享历史时钟';
-      return;
-    }
-    const desired = desiredSpeedForButton(active);
-    note.textContent = active.dataset.speedMode === 'full60'
-      ? `全程约 60 秒 · ${formatHistoricalRate(desired)}`
-      : `共享历史时钟 · ${formatHistoricalRate(desired)}`;
+    const text = speedNoteText();
+    if (note.textContent !== text) note.textContent = text;
   }
 
   function normalizeSpeedButtons(reapply = true) {
@@ -243,9 +243,7 @@
     const note = $('clockNote');
     if (note) {
       new MutationObserver(() => {
-        // compare.js rewrites this text when the domain changes; restore the
-        // explicit speed display after its synchronous render has finished.
-        queueMicrotask(updateClockNote);
+        if (note.textContent !== speedNoteText()) queueMicrotask(updateClockNote);
       }).observe(note, { childList: true, characterData: true, subtree: true });
     }
 
