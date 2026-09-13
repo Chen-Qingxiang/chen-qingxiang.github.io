@@ -42,6 +42,12 @@
     if (ruler) ruler.innerHTML = '';
     if (legend) legend.innerHTML = '';
     if (overlap) overlap.textContent = '请选择人物后查看时空接近。';
+    ['clockText', 'mapTime', 'statusTime'].forEach(id => {
+      const el = $(id);
+      if (el) el.textContent = '—';
+    });
+    const note = $('clockNote');
+    if (note) note.textContent = '请选择人物';
   }
 
   function toggleAll(event) {
