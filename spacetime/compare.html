@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="北宋人物多人时空行迹比较：苏轼、王安石、司马光共享历史时间轴同步移动。" />
+  <title>多人时空对比 · Spacetime Trails</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="./compare.css" />
+</head>
+<body>
+  <main class="compare-shell">
+    <header class="compare-header">
+      <div>
+        <div class="eyebrow">SPACETIME TRAILS · OVERLAP PROTOTYPE</div>
+        <h1>北宋人物 · 多人时空对比</h1>
+        <p>勾选人物，共享同一个历史时钟；驻留时停在当地，旅行时按对应时间窗口沿路线移动。</p>
+      </div>
+      <nav class="header-links" aria-label="页面导航">
+        <a href="./sudongpo.html">苏东坡</a>
+        <a href="./wanganshi.html">王安石</a>
+        <a href="./simaguang.html">司马光</a>
+        <a href="./index.html">吕布</a>
+      </nav>
+    </header>
+
+    <section class="toolbar" aria-label="人物与时间范围">
+      <div class="people-picks" id="peoplePicks"></div>
+      <div class="mode-picks" role="group" aria-label="时间范围">
+        <button type="button" data-range-mode="union" class="active">完整年代</button>
+        <button type="button" data-range-mode="common">共同年代</button>
+      </div>
+      <button class="soft-button" id="fitBtn" type="button">总览路线</button>
+    </section>
+
+    <section class="main-grid">
+      <div class="map-wrap">
+        <div id="compareMap" aria-label="多人时空行迹地图"></div>
+        <div class="map-card map-time-card">
+          <span>当前历史时间</span>
+          <strong id="mapTime">—</strong>
+        </div>
+        <div class="map-card terrain-card">
+          <label><input id="terrainToggle" type="checkbox" checked /> 地形</label>
+          <input id="terrainOpacity" type="range" min="0" max="70" value="30" step="1" aria-label="地形强度" />
+          <output id="terrainValue">30%</output>
+        </div>
+        <div class="map-legend" id="mapLegend"></div>
+      </div>
+
+      <aside class="status-panel">
+        <div class="status-head">
+          <span>同一时刻</span>
+          <strong id="statusTime">—</strong>
+        </div>
+        <div id="personStatusList" class="status-list"></div>
+        <div class="overlap-box">
+          <div class="overlap-title">时空接近</div>
+          <div id="overlapList" class="overlap-list">当前没有检测到人物在同一地区。</div>
+          <p>这里只表示地图位置在同一时刻接近，不等于史料确认见面。</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="timeline-section">
+      <div class="playback-bar">
+        <button id="playBtn" class="play-btn" type="button" aria-label="播放">▶</button>
+        <div class="clock-block">
+          <strong id="clockText">—</strong>
+          <span id="clockNote">共享历史时钟</span>
+        </div>
+        <div class="speed-picks" role="group" aria-label="播放速度">
+          <button type="button" data-speed="0.5">0.5×</button>
+          <button type="button" data-speed="1" class="active">1×</button>
+          <button type="button" data-speed="2">2×</button>
+          <button type="button" data-speed="4">4×</button>
+        </div>
+      </div>
+
+      <div class="ruler-wrap">
+        <div class="ruler-spacer">人物</div>
+        <div class="ruler" id="ruler"></div>
+        <div class="ruler-status">当前状态</div>
+      </div>
+      <div class="tracks-wrap" id="tracksWrap"></div>
+      <div class="slider-row">
+        <div></div>
+        <div class="slider-box">
+          <input id="masterRange" type="range" min="0" max="10000" step="1" value="0" aria-label="共享历史时间轴" />
+        </div>
+        <div></div>
+      </div>
+      <p class="timeline-note">粗色段表示驻留；细色段表示旅行窗口。时间轴的每一年宽度相同；1× 播放约为 1 秒 = 1 个历史年。</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script src="./sudongpo-data1.js"></script>
+  <script src="./sudongpo-data2.js"></script>
+  <script src="./sudongpo-timing.js"></script>
+  <script>
+    window.COMPARE_PEOPLE = { sudongpo: JSON.parse(JSON.stringify(window.SUDONGPO)) };
+  </script>
+
+  <script src="./wanganshi-data.js"></script>
+  <script>
+    window.COMPARE_PEOPLE.wanganshi = JSON.parse(JSON.stringify(window.SPACETIME_PERSON));
+  </script>
+
+  <script src="./simaguang-data.js"></script>
+  <script>
+    window.COMPARE_PEOPLE.simaguang = JSON.parse(JSON.stringify(window.SPACETIME_PERSON));
+    delete window.SPACETIME_PERSON;
+  </script>
+
+  <script src="./compare.js"></script>
+</body>
+</html>
