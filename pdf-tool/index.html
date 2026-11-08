@@ -7,6 +7,12 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; object-src 'self' blob:; frame-src 'self' blob:; base-uri 'self'; form-action 'none'" />
   <meta id="meta-description" name="description" content="A browser-only local PDF toolkit for extracting pages, merging PDFs, and combining two-sided ID scans." />
   <title>PDF Local · Browser-only PDF toolkit</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="PDF Local">
+
   <link rel="stylesheet" href="./styles.css" />
   <link rel="stylesheet" href="./language.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -140,10 +146,11 @@
     <section class="privacy-note">
       <h2 data-i18n="privacy.title">Privacy and implementation</h2>
       <p data-i18n-html="privacy.body">This tool has no file-upload endpoint, backend service, account system, or analytics. PDFs are read by your browser and processed in memory with a pinned version of <code>pdf-lib</code>. Generated files are downloaded directly by the browser.</p>
-      <p class="fineprint" data-i18n-html="privacy.dependency">Note: the page loads <code>pdf-lib 1.17.1</code> from jsDelivr when opened, so an internet connection is needed for the library. Your selected PDF files are not sent to jsDelivr or this site's server.</p>
+      <p class="fineprint" data-i18n-html="privacy.dependency">The first online visit loads <code>pdf-lib 1.17.1</code> from jsDelivr; the PWA can cache it for later offline use. Your selected PDF files are not sent to jsDelivr or this site's server.</p>
     </section>
   </main>
 
   <footer class="footer">PDF Local · Personal browser-only toolkit</footer>
+  <script defer src="./pwa-register.js"></script>
 </body>
 </html>

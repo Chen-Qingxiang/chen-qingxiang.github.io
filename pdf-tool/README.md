@@ -92,3 +92,7 @@ http://localhost:8000/pdf-tool/
 ## Design principle
 
 This is a personal utility, not an attempt to reproduce a full online PDF suite. New features should only be added when they solve a recurring workflow while preserving the browser-only privacy model.
+
+## PWA and offline operation
+
+Install from iOS Safari (Add to Home Screen), macOS Safari (Add to Dock), or Chromium install menu. App shell files are cached locally. The pinned jsDelivr `pdf-lib 1.17.1` script is cached separately when successfully fetched online, including during the PWA installation. If that download was blocked, the first offline visit cannot process PDFs. The Service Worker does not read, upload, cache, or persist user-supplied PDFs; existing in-memory file handling is unchanged. Online requests refresh public assets, while offline requests use the last cached copy.
