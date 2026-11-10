@@ -1,5 +1,4 @@
 ---
-layout: default
 title: "Logistic Map Explorer — a small demo of chaos"
 tags: [complexity, chaos, logistic-map, visualization]
 description: A lightweight interactive page for exploring the logistic map, bifurcation, cobweb diagrams, and sensitivity to initial conditions.

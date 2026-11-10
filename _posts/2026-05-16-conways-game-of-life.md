@@ -1,5 +1,4 @@
 ---
-layout: default
 title: "Conway's Game of Life — local rules and moving patterns"
 tags: [complexity, game-of-life, cellular-automata, visualization]
 description: An interactive Conway's Game of Life page with block, blinker, glider, and Gosper glider gun presets.

@@ -1,5 +1,4 @@
 ---
-layout: default
 title: "Network Science Lab — graphs, hubs, spreading, and fragility"
 tags: [complexity, network-science, graphs, scale-free, visualization]
 description: An interactive network science lab with random graphs, small-world networks, preferential attachment, robustness, diffusion, and centrality.

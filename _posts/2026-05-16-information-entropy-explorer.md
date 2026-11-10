@@ -1,5 +1,4 @@
 ---
-layout: default
 title: "Information Entropy Explorer — uncertainty in bits"
 tags: [complexity, information-theory, entropy, shannon, visualization]
 description: An interactive page for exploring Shannon information, entropy, probability distributions, random sequences, and compressibility.

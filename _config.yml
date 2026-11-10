@@ -1,12 +1,34 @@
 title: Qingxiang Chen
-description: Personal site & blog
+description: Small interactive tools for learning and research — complexity, physics, history and geography.
 url: https://chen-qingxiang.github.io
-language: en
+baseurl: ""
+lang: en
 timezone: Australia/Sydney
 permalink: /blog/:title/
+
 # GitHub Pages built-in theme
 theme: jekyll-theme-cayman
-# Optional: add more metadata later (twitter, linkedin, etc.)
+
 author:
-name: Chen Qingxiang
+  name: Qingxiang Chen
 github_username: chen-qingxiang
+
+# All three plugins are whitelisted on GitHub Pages
+plugins:
+  - jekyll-feed      # /feed.xml (RSS/Atom)
+  - jekyll-sitemap   # /sitemap.xml
+  - jekyll-seo-tag   # <title>, description, Open Graph tags
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+
+# Development files that do not need to be published
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

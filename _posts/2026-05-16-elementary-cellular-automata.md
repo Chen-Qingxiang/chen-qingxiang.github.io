@@ -1,5 +1,4 @@
 ---
-layout: default
 title: "Elementary Cellular Automata — tiny rules, large patterns"
 tags: [complexity, cellular-automata, rule-30, rule-110, visualization]
 description: An interactive visualizer for one-dimensional elementary cellular automata, including Rule 30, Rule 90, Rule 110, and Rule 184.

@@ -1,5 +1,4 @@
 ---
-layout: default
 title: "Genetic Algorithm Playground — fitness landscapes in action"
 tags: [complexity, genetic-algorithm, fitness-landscape, nk-landscape, visualization]
 description: An interactive playground comparing a simple genetic algorithm on OneMax, deceptive trap functions, and NK landscapes.

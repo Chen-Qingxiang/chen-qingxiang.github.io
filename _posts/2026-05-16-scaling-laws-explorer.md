@@ -1,5 +1,4 @@
 ---
-layout: default
 title: "Scaling Laws Explorer — power laws and log-log plots"
 tags: [complexity, scaling-laws, power-laws, allometry, visualization]
 description: An interactive visualizer for power laws, log-log plots, biological allometry, and scaling exponents.
